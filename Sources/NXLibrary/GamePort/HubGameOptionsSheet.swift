@@ -229,6 +229,10 @@ struct HubGameOptionsSheet: View {
                 Toggle("x87 acceleration", isOn: Binding(
                     get: { profile.x87Acceleration ?? false },
                     set: { on in gp.updateProfile(profile.id) { $0.x87Acceleration = on ? true : nil } }))
+                Toggle("Metal HUD", isOn: Binding(
+                    get: { profile.metalHUD },
+                    set: { on in gp.updateProfile(profile.id) { $0.metalHUD = on } }))
+                    .help("Shows Apple's frame rate and GPU overlay in the game.")
             }
             HStack {
                 Button("Take Snapshot") {

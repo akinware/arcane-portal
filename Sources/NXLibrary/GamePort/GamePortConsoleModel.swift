@@ -446,22 +446,29 @@ final class GamePortConsoleModel: ObservableObject {
         )
     }
 
-    func job(_ title: String, _ work: @escaping @Sendable (GamePort, @escaping ProgressHandler) async throws -> String?) {
+    /// Runs `work` in the background with progress in the status line. `then` runs on the main actor after a
+    /// successful job, once the lists are refreshed.
+    func job(_ title: String, then: (@MainActor () -> Void)? = nil,
+             _ work: @escaping @Sendable (GamePort, @escaping ProgressHandler) async throws -> String?) {
         guard busy == nil else { return }
         busy = title
         say("▶ \(title)")
         let kit = self.gameport
         Task.detached {
             let progress: ProgressHandler = { msg in Task { @MainActor in self.say("  \(msg)") } }
+            let succeeded: Bool
             do {
                 let done = try await work(kit, progress)
                 await MainActor.run { self.say("✓ \(done ?? title)") }
+                succeeded = true
             } catch {
                 await MainActor.run { self.say("✗ \(error)") }
+                succeeded = false
             }
-            await MainActor.run {
+            await MainActor.run { [succeeded] in
                 self.busy = nil
                 self.refresh()
+                if succeeded { then?() }
             }
         }
     }

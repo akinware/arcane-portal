@@ -191,7 +191,7 @@ extension HubPlayRoute {
     /// The route starts the game (rather than installing or setting it up).
     var isPlayable: Bool {
         switch self {
-        case .macSteam, .bridge, .windowsSteam, .profile, .battleNet, .crossOverBottle, .storefront, .obelisk, .siliconium:
+        case .macSteam, .bridge, .windowsSteam, .profile, .battleNet, .crossOverBottle, .gamePortWine, .storefront, .obelisk, .siliconium:
             return true
         default:
             return false

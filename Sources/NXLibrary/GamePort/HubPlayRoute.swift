@@ -28,6 +28,9 @@ enum HubPlayRoute: Equatable {
     /// No profile yet: create the game's Windows copy.
     case setUp(appID: Int)
     case crossOverBottle(CrossOverBottleLaunchItem)
+    /// Run a CrossOver bottle's game with GamePort's own Wine: the bottle is APFS-cloned into a profile once
+    /// (seconds, no extra space; the bottle is never changed), then the game starts.
+    case gamePortWine(CrossOverBottleLaunchItem)
     case storefront(StorefrontGame)
     case epicDownload(StorefrontGame)
     case storesSetup
@@ -37,7 +40,7 @@ enum HubPlayRoute: Equatable {
     /// The pill's title.
     var title: String {
         switch self {
-        case .macSteam, .bridge, .windowsSteam, .profile, .crossOverBottle, .storefront: return "Play"
+        case .macSteam, .bridge, .windowsSteam, .profile, .crossOverBottle, .storefront, .gamePortWine: return "Play"
         case .installMac: return "Install"
         case .battleNet: return "Open Battle.net"
         case .download, .epicDownload: return "Download"
@@ -63,6 +66,7 @@ enum HubPlayRoute: Equatable {
         case .openWindowsSteam: return "Open Windows Steam"
         case .addToWindowsSteam: return "Add this download to Windows Steam"
         case .crossOverBottle(let item): return "Play in CrossOver (\(item.bottleName))"
+        case .gamePortWine: return "Play with GamePort's Wine instead of CrossOver"
         case .obelisk: return "Open Obelisk"
         case .siliconium: return "Open Siliconium"
         default: return title
@@ -85,7 +89,9 @@ enum HubPlayRoute: Equatable {
         case .openWindowsSteam: return "This game uses VAC · install it from Windows Steam"
         case .addToWindowsSteam: return "Windows Steam can use GamePort's download without copying it"
         case .setUp: return "Not set up yet · GamePort prepares a Windows copy for it"
-        case .crossOverBottle(let item): return "Installed in your CrossOver bottle \u{201C}\(item.bottleName)\u{201D}"
+        case .crossOverBottle(let item): return "Installed in your CrossOver bottle \u{201C}\(item.bottleName)\u{201D} · runs with CrossOver"
+        case .gamePortWine(let item):
+            return "From your CrossOver bottle \u{201C}\(item.bottleName)\u{201D} · runs with GamePort's Wine, the bottle stays as it is"
         case .storefront(let game): return "Windows version · runs with \(engine) · \(game.store.displayName)"
         case .epicDownload: return "Not downloaded yet · Epic Games"
         case .storesSetup: return "Sign in to the store to download it"
@@ -134,6 +140,11 @@ extension GamePortConsoleModel {
         return (steam.isInstalled, game.steamAppID.map { steam.isGameInstalled(appID: $0) } ?? false)
     }
 
+    private func bottleItem(of game: UnifiedHubGame) -> CrossOverBottleLaunchItem? {
+        if case .crossOverBottle(let item) = game.kind { return item }
+        return nil
+    }
+
     private func crossOverItem(for game: UnifiedHubGame) -> CrossOverBottleLaunchItem? {
         guard let appID = game.steamAppID else { return nil }
         return crossOverGames.first { $0.kind == .steam(appID: appID) }
@@ -159,6 +170,8 @@ extension GamePortConsoleModel {
 
         switch game.kind {
         case .crossOverBottle(let item):
+            // Without a working CrossOver the bottle's Steam games still play, on GamePort's Wine.
+            if crossOverInstallation?.hasExecutableWine != true, case .steam = item.kind { return .gamePortWine(item) }
             return .crossOverBottle(item)
         case .storefront(let store):
             if store.isInstalled { return .storefront(store) }
@@ -166,7 +179,7 @@ extension GamePortConsoleModel {
         case .ownedSteam(let owned, _):
             if owned.supportsMacOS { return .installMac(appID: owned.appID) }
             if let exe, bridgeReady, !vac { return .bridge(appID: owned.appID, exe: exe, offline: false) }
-            if let item = crossOverItem(for: game) { return .crossOverBottle(item) }
+            if let item = crossOverItem(for: game) { return bottleRoute(item) }
             return vac ? .setUp(appID: owned.appID) : .download(appID: owned.appID)
         case .profile(let profile, let recipe):
             if recipe?.launch == .battlenet { return .battleNet(profileID: profile.id) }
@@ -178,10 +191,14 @@ extension GamePortConsoleModel {
                 return .bridge(appID: appID, exe: exe, offline: false)
             }
             if win.hasGame { return .windowsSteam(profileID: profile.id) }
-            if let item = crossOverItem(for: game) { return .crossOverBottle(item) }
+            if let item = crossOverItem(for: game) { return bottleRoute(item) }
             if !vac { return .download(appID: appID) }
             return win.hasSteam ? .openWindowsSteam(profileID: profile.id) : .installWindowsSteam(profileID: profile.id)
         }
+    }
+
+    private func bottleRoute(_ item: CrossOverBottleLaunchItem) -> HubPlayRoute {
+        crossOverInstallation?.hasExecutableWine == true ? .crossOverBottle(item) : .gamePortWine(item)
     }
 
     /// Every other way this game can be played or installed, for Options.
@@ -206,7 +223,10 @@ extension GamePortConsoleModel {
             else { routes.append(.installWindowsSteam(profileID: profile.id)) }
         }
         if let appID, exe == nil, game.kind.isSteam { routes.append(.download(appID: appID)) }
-        if let item = crossOverItem(for: game) { routes.append(.crossOverBottle(item)) }
+        if let item = crossOverItem(for: game) ?? bottleItem(of: game) {
+            if crossOverInstallation?.hasExecutableWine == true { routes.append(.crossOverBottle(item)) }
+            if case .steam = item.kind, gameport.bottleProfile(for: item) == nil { routes.append(.gamePortWine(item)) }
+        }
         if ExternalEnvironment.suggestsObelisk(for: game.antiCheat), let app = externalEnv.obeliskApp { routes.append(.obelisk(app)) }
         if ExternalEnvironment.suggestsSiliconium(steamAppID: appID), let app = externalEnv.siliconiumApp { routes.append(.siliconium(app)) }
         var seen: [HubPlayRoute] = [primary]
@@ -260,6 +280,15 @@ extension GamePortConsoleModel {
             }
         case .crossOverBottle(let item):
             launchCrossOverGame(item)
+        case .gamePortWine(let item):
+            if let profile = gameport.bottleProfile(for: item) { playAdoptedBottle(profile, game: game); return }
+            job("Moving \(title) to GamePort's Wine", then: { [weak self] in
+                guard let self, let profile = self.gameport.bottleProfile(for: item) else { return }
+                self.playAdoptedBottle(profile, game: game)
+            }) { k, p in
+                _ = try k.adoptCrossOverBottleGame(item, progress: p)
+                return "\(title) runs with GamePort's Wine now. Your CrossOver bottle is unchanged."
+            }
         case .storefront(let store):
             launchStorefrontGame(store)
         case .epicDownload(let store):
@@ -270,6 +299,18 @@ extension GamePortConsoleModel {
             NSWorkspace.shared.open(app)
             say("Opened \(app.deletingPathExtension().lastPathComponent). Start \(title) from there.")
         }
+    }
+
+    /// Plays a bottle game that already has its GamePort profile: through the Bridge when it can (no Windows
+    /// Steam start), else through the bottle's own Windows Steam, which came over signed in.
+    private func playAdoptedBottle(_ profile: Profile, game: UnifiedHubGame) {
+        let recipe = profile.recipeID.flatMap { id in recipes.first { $0.id == id } }
+        let adopted = UnifiedHubGame(id: game.id, title: game.title, runnerBadge: game.runnerBadge, storeBadge: game.storeBadge,
+                                     isReady: true, supportsMacOS: game.supportsMacOS, playtimeMinutes: game.playtimeMinutes,
+                                     lastPlayed: game.lastPlayed, steamAppID: game.steamAppID, localArtwork: game.localArtwork,
+                                     remotePosterURL: game.remotePosterURL, remoteHeroURL: game.remoteHeroURL,
+                                     remoteLogoURL: game.remoteLogoURL, antiCheat: game.antiCheat, kind: .profile(profile, recipe))
+        perform(playRoute(for: adopted), for: adopted)
     }
 
     /// Starts the game through the Steam Bridge, creating its profile first when it has none.
