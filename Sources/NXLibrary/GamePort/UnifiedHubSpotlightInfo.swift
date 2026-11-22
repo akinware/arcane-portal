@@ -304,22 +304,17 @@ struct UnifiedHubSpotlightInfo: View {
     private func launchBridgeForGame(appID: Int, exe: URL) {
         let preferredEngine = gp.preferredWindowsEngineID()
         let defaultRenderer: Renderer = (preferredEngine == CrossOverInstallation.engineID) ? .d3dmetal : .dxmt
-        gp.job("Launching \(game.title) via Bridge") { k, p in
-            let profileID: String
-            if case .profile(let existing, _) = game.kind {
-                profileID = existing.id
+        let kind = game.kind
+        let title = game.title
+        gp.launchViaBridge(title: title, executable: exe) { k, p in
+            if case .profile(let existing, _) = kind { return existing.id }
+            let recipeID: String
+            if case .ownedSteam(_, let existingRecipe) = kind, let existingRecipe {
+                recipeID = existingRecipe.id
             } else {
-                let recipeID: String
-                if case .ownedSteam(_, let existingRecipe) = game.kind, let existingRecipe {
-                    recipeID = existingRecipe.id
-                } else {
-                    recipeID = try k.addCustomSteamGame(appID: appID, title: game.title, renderer: defaultRenderer).id
-                }
-                let created = try k.createProfile(recipeID: recipeID, engineID: preferredEngine, progress: p)
-                profileID = created.id
+                recipeID = try k.addCustomSteamGame(appID: appID, title: title, renderer: defaultRenderer).id
             }
-            _ = try k.launchWithSteamBridge(profileID, executable: exe, progress: p)
-            return "Launched \(exe.lastPathComponent)"
+            return try k.createProfile(recipeID: recipeID, engineID: preferredEngine, progress: p).id
         }
     }
 
@@ -408,10 +403,8 @@ struct UnifiedHubSpotlightInfo: View {
                         Button(isVACBlockedForBridge ? "Play Offline via Bridge (No Win Steam)" : "Play via Bridge (No Win Steam)") {
                             showOptionsSheet = false
                             let overrideVAC = isVACBlockedForBridge
-                            gp.job("Launching \(game.title) via Bridge") { k, p in
-                                _ = try k.launchWithSteamBridge(profile.id, executable: exe, allowVACOverride: overrideVAC, progress: p)
-                                return "Launched \(exe.lastPathComponent) via Bridge"
-                            }
+                            let profileID = profile.id
+                            gp.launchViaBridge(title: game.title, executable: exe, allowVACOverride: overrideVAC) { _, _ in profileID }
                         }
                     }
                     Button("Open Steam") {

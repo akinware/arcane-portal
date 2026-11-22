@@ -51,7 +51,7 @@ struct GameLaunchStatusPanel: View {
                 } else {
                     ProgressView().controlSize(.small)
                 }
-                Text("\(p.stage.title)…")
+                Text("\(p.bridgeStep ?? p.stage.title)…")
                     .font(.system(size: u(17), weight: .semibold))
                     .foregroundColor(SeleneTheme.ink)
                 Text(Self.clock(p.seconds))
@@ -60,9 +60,13 @@ struct GameLaunchStatusPanel: View {
                 Spacer(minLength: 0)
             }
 
-            steps(current: p.stage)
+            if p.bridgeStep == nil {
+                steps(current: p.stage)
+            }
 
-            Text(p.waitingForUser ?? (p.looksStuck
+            Text(p.bridgeStep != nil
+                    ? "Playing without Windows Steam — the game signs in through native Mac Steam."
+                    : p.waitingForUser ?? (p.looksStuck
                     ? "Steam has been on this step for \(p.secondsWithoutProgress) seconds. Its window is hidden — open it to see what it is doing."
                     : p.stage.hint))
                 .font(.system(size: u(13)))
@@ -141,12 +145,17 @@ struct GameLaunchStatusPanel: View {
                 .foregroundColor(SeleneTheme.ink82)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: u(10)) {
-                if let recipe, let first = diagnosis.actions.first {
-                    actionButton("\(first.title) & Retry", icon: "arrow.clockwise", prominent: true) {
-                        gp.applyRecovery(first, to: profile, recipe: recipe, retry: true)
+                if diagnosis.viaBridge {
+                    actionButton("Try Again", icon: "arrow.clockwise", prominent: true) { gp.retryBridgeLaunch() }
+                    actionButton("Open Mac Steam", icon: "macwindow", prominent: false) { openMacSteam() }
+                } else {
+                    if let recipe, let first = diagnosis.actions.first {
+                        actionButton("\(first.title) & Retry", icon: "arrow.clockwise", prominent: true) {
+                            gp.applyRecovery(first, to: profile, recipe: recipe, retry: true)
+                        }
                     }
+                    actionButton("Show Steam", icon: "macwindow", prominent: false) { showSteam() }
                 }
-                actionButton("Show Steam", icon: "macwindow", prominent: false) { showSteam() }
                 actionButton("Dismiss", icon: "xmark", prominent: false) { gp.launchState = .idle }
             }
         }
@@ -161,6 +170,12 @@ struct GameLaunchStatusPanel: View {
         gp.job("Opening Windows Steam") { k, p in
             _ = try k.openSteam(profile.id, progress: p)
             return "Windows Steam window opened"
+        }
+    }
+
+    private func openMacSteam() {
+        if let app = NSWorkspace.shared.urlForApplication(withBundleIdentifier: MacSteam.bundleID) {
+            NSWorkspace.shared.openApplication(at: app, configuration: NSWorkspace.OpenConfiguration())
         }
     }
 

@@ -62,6 +62,7 @@ final class GamePortConsoleModel: ObservableObject {
     private var steamDownloadTask: Task<Void, Never>?
     /// Watchdog that stops the launched game's Wine session if Arcane is force quit.
     private var launchGuard: Process?
+    private var lastBridgeLaunch: (title: String, executable: URL, allowVACOverride: Bool, resolve: @Sendable (GamePort, @escaping ProgressHandler) throws -> String)?
 
     init() {
         communityVerdicts = gameport.telemetry.loadCachedVerdicts()
@@ -282,10 +283,81 @@ final class GamePortConsoleModel: ObservableObject {
         }
     }
 
-    func launchViaBridge(profile: Profile, recipe: Recipe, executable: URL) {
-        job("Launching \(recipe.title) via Bridge") { kit, progress in
-            _ = try kit.launchWithSteamBridge(profile.id, executable: executable, progress: progress)
-            return "Launched \(executable.lastPathComponent) via GamePort Bridge"
+    func launchViaBridge(profile: Profile, recipe: Recipe, executable: URL, allowVACOverride: Bool = false) {
+        launchViaBridge(title: recipe.title, executable: executable, allowVACOverride: allowVACOverride) { _, _ in profile.id }
+    }
+
+    /// Plays a game through the GamePort Steam Bridge (no Windows Steam): makes sure native Mac Steam
+    /// is running and signed in (the game's Steam API needs it), starts the game, and follows it so a
+    /// game that quits right away is explained instead of silently disappearing.
+    /// `resolveProfile` returns the profile to use (it may create one).
+    func launchViaBridge(
+        title: String,
+        executable: URL,
+        allowVACOverride: Bool = false,
+        resolveProfile: @escaping @Sendable (GamePort, @escaping ProgressHandler) throws -> String
+    ) {
+        if launchState.isLaunching { return }
+        if case .running = launchState { return }
+        guard busy == nil else { return }
+        lastBridgeLaunch = (title, executable, allowVACOverride, resolveProfile)
+        launchMonitorTask?.cancel()
+        SoundEffectService.shared.play(.launch)
+        job("Launching \(title) via Bridge") { kit, progress in
+            let profileID = try resolveProfile(kit, progress)
+            let started = Date()
+            @Sendable func show(_ step: String) {
+                let text = step.trimmingCharacters(in: CharacterSet(charactersIn: "… ."))
+                Task { @MainActor in
+                    if case .needsAttention = self.launchState { return }
+                    self.launchState = .preparing(profileID: profileID, progress: LaunchProgress(
+                        title: title, stage: .startingSteam, seconds: Int(Date().timeIntervalSince(started)),
+                        secondsWithoutProgress: 0, bridgeStep: text))
+                }
+            }
+            show("Getting Mac Steam ready")
+            let gameLog = kit.profiles.logs(profileID).appendingPathComponent("bridge-game.log")
+            let gameLogStart = (try? FileManager.default.attributesOfItem(atPath: gameLog.path)[.size] as? UInt64) ?? 0
+            let process: Process
+            do {
+                process = try kit.launchWithSteamBridge(profileID, executable: executable, allowVACOverride: allowVACOverride) { msg in
+                    progress(msg)
+                    if !msg.hasPrefix("Automatic snapshot"), !msg.hasPrefix("Launching ") { show(msg) }
+                }
+            } catch {
+                await MainActor.run {
+                    self.launchState = .needsAttention(profileID: profileID, diagnosis: LaunchDiagnosis.bridgeLaunchFailed(error))
+                }
+                throw error
+            }
+            let guardProcess = try? kit.startOwnerExitGuard(profileID)
+            await MainActor.run {
+                self.launchGuard?.terminate()
+                self.launchGuard = guardProcess
+                self.startBridgeWatcher(profileID: profileID, title: title, process: process, gameLogStart: gameLogStart)
+            }
+            return "Started \(title) via the Steam Bridge (native Mac Steam)"
+        }
+    }
+
+    /// Repeats the last Bridge launch (after fixing what stopped it, e.g. signing in to Mac Steam).
+    func retryBridgeLaunch() {
+        guard let last = lastBridgeLaunch else { launchState = .idle; return }
+        launchState = .idle
+        launchViaBridge(title: last.title, executable: last.executable, allowVACOverride: last.allowVACOverride, resolveProfile: last.resolve)
+    }
+
+    private func startBridgeWatcher(profileID: String, title: String, process: Process, gameLogStart: UInt64) {
+        launchMonitorTask?.cancel()
+        let kit = self.gameport
+        launchMonitorTask = Task.detached(priority: .utility) {
+            await kit.monitorBridgeLaunch(profileID: profileID, title: title, process: process, gameLogStart: gameLogStart) { state in
+                Task { @MainActor in
+                    self.launchState = state
+                    if case .idle = state { self.endLaunchGuard() }
+                    if case .needsAttention = state { self.endLaunchGuard() }
+                }
+            }
         }
     }
 
