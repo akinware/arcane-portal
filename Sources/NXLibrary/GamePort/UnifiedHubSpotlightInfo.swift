@@ -231,12 +231,13 @@ struct UnifiedHubSpotlightInfo: View {
 
     private func setupOwnedSteamGame(owned: OwnedSteamGame, recipe: Recipe?) {
         let preferredEngine = gp.preferredWindowsEngineID()
+        let defaultRenderer: Renderer = (preferredEngine == CrossOverInstallation.engineID) ? .d3dmetal : .dxmt
         gp.job("Setting up \(game.title)") { k, p in
             let recipeID: String
             if let recipe {
                 recipeID = recipe.id
             } else {
-                let added = try k.addCustomSteamGame(appID: owned.appID, title: game.title, renderer: .dxmt)
+                let added = try k.addCustomSteamGame(appID: owned.appID, title: game.title, renderer: defaultRenderer)
                 recipeID = added.id
             }
             let created = try k.createProfile(recipeID: recipeID, engineID: preferredEngine, progress: p)
@@ -246,6 +247,7 @@ struct UnifiedHubSpotlightInfo: View {
 
     private func launchBridgeForGame(appID: Int, exe: URL) {
         let preferredEngine = gp.preferredWindowsEngineID()
+        let defaultRenderer: Renderer = (preferredEngine == CrossOverInstallation.engineID) ? .d3dmetal : .dxmt
         gp.job("Launching \(game.title) via Bridge") { k, p in
             let profileID: String
             if case .profile(let existing, _) = game.kind {
@@ -255,7 +257,7 @@ struct UnifiedHubSpotlightInfo: View {
                 if case .ownedSteam(_, let existingRecipe) = game.kind, let existingRecipe {
                     recipeID = existingRecipe.id
                 } else {
-                    recipeID = try k.addCustomSteamGame(appID: appID, title: game.title, renderer: .dxmt).id
+                    recipeID = try k.addCustomSteamGame(appID: appID, title: game.title, renderer: defaultRenderer).id
                 }
                 let created = try k.createProfile(recipeID: recipeID, engineID: preferredEngine, progress: p)
                 profileID = created.id
