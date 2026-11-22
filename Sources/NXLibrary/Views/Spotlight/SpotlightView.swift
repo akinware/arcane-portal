@@ -25,6 +25,8 @@ struct SpotlightView: View {
     @ObservedObject var playSessions: PlaySessionStore
     /// Steam Play phases drive the A hint.
     @ObservedObject var steamPlayer = SteamPlayCoordinator.shared
+    /// Unified Steam / CrossOver / PowerKit / Epic / GOG / Battle.net games on the main carousel.
+    @ObservedObject var hub = GamePortConsoleModel.shared
     @ObservedObject var runningGames: RunningGameMonitor
     @ObservedObject var artwork: ArtworkStore
 
@@ -139,14 +141,41 @@ struct SpotlightView: View {
     var rowGames: [CatalogGame] {
         LibraryQuery(filter: filter).applyCatalog(to: viewModel.visibleCatalogGames, history: playSessions)
     }
+
+    var filteredHubGames: [UnifiedHubGame] {
+        let existingSteamAppIDs = Set(viewModel.visibleCatalogGames.compactMap { $0.steamGame.map { Int($0.appID) } })
+        let base = hub.unifiedGames.filter { game in
+            if let aid = game.steamAppID, existingSteamAppIDs.contains(aid) { return false }
+            return true
+        }
+        switch filter {
+        case .all:
+            return base
+        case .installed:
+            return base.filter(\.isReady)
+        case .recentlyPlayed:
+            return base.filter { $0.lastPlayed != nil || $0.isReady }
+        case .notPlayed:
+            return base.filter { $0.playtimeMinutes == 0 }
+        case .favorites:
+            return []
+        }
+    }
+
     var selectedCatalogGame: CatalogGame? {
         guard case .game(let id) = selectedItem else { return nil }
         return viewModel.visibleCatalogGames.first { $0.id == id }
     }
-    var items: [SpotlightItem] { rowItems(for: rowGames) }
 
-    private func rowItems(for games: [CatalogGame]) -> [SpotlightItem] {
-        let ids = games.map(\.id)
+    var selectedHubGame: UnifiedHubGame? {
+        guard case .game(let id) = selectedItem else { return nil }
+        return hub.unifiedGamesByID[id]
+    }
+
+    var items: [SpotlightItem] { rowItems(for: rowGames, hubGames: filteredHubGames) }
+
+    private func rowItems(for games: [CatalogGame], hubGames: [UnifiedHubGame]) -> [SpotlightItem] {
+        let ids = games.map(\.id) + hubGames.map(\.id)
         return SpotlightRow.build(gameIDs: ids,
                                   enabledCards: settings.settings.visibleSpotlightCards,
                                   order: viewModel.spotlight.lift?.order ?? settings.settings.spotlightOrder,
@@ -170,20 +199,26 @@ struct SpotlightView: View {
         let selectedGame: PortedGame?
         let catalogGamesByID: [UUID: CatalogGame]
         let selectedCatalogGame: CatalogGame?
+        let hubGamesByID: [UUID: UnifiedHubGame]
+        let selectedHubGame: UnifiedHubGame?
     }
 
     private func snapshot() -> Snapshot {
         let visible = viewModel.visibleCatalogGames
         let rowGames = LibraryQuery(filter: filter).applyCatalog(to: visible, history: playSessions)
-        let items = rowItems(for: rowGames)
+        let hubGames = filteredHubGames
+        let items = rowItems(for: rowGames, hubGames: hubGames)
         let gamesByID = Dictionary(viewModel.libraryGames.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         let item = viewModel.spotlight.selectedItem(in: items)
         let catalog = Dictionary(visible.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let hubMap = hub.unifiedGamesByID
         let id: UUID?
         if case .game(let selected) = item { id = selected } else { id = nil }
-        return Snapshot(items: items, rowGameCount: rowGames.count, gamesByID: gamesByID, selectedItem: item,
+        return Snapshot(items: items, rowGameCount: rowGames.count + hubGames.count, gamesByID: gamesByID, selectedItem: item,
                         selectedGame: id.flatMap { gamesByID[$0] }, catalogGamesByID: catalog,
-                        selectedCatalogGame: id.flatMap { catalog[$0] })
+                        selectedCatalogGame: id.flatMap { catalog[$0] },
+                        hubGamesByID: hubMap,
+                        selectedHubGame: id.flatMap { hubMap[$0] })
     }
 
     /// One pill while the selected game ports, three otherwise.
@@ -336,6 +371,10 @@ struct SpotlightView: View {
         .task(id: art.steamHeroTaskKey(model.selectedCatalogGame)) {
             await art.loadSteamHero(game: model.selectedCatalogGame, current: { selectedCatalogGame?.id }, artwork: artwork, settle: 420_000_000)
             if model.selectedCatalogGame?.integration == .steam, !Task.isCancelled { modsBackdrop = false }
+        }
+        .task(id: art.hubHeroTaskKey(model.selectedHubGame)) {
+            await art.loadHubHero(game: model.selectedHubGame, current: { selectedHubGame?.id })
+            if model.selectedHubGame != nil, !Task.isCancelled { modsBackdrop = false }
         }
         .task(id: art.logoTaskKey(model.selectedGame, metadata: model.selectedGame.flatMap { store.storeMetadata[$0.id] })) { await loadLogo(model.selectedGame) }
     }

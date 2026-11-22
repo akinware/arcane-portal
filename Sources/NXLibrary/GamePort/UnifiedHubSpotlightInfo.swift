@@ -1,0 +1,413 @@
+import AppKit
+import GamePortKit
+import NXLibraryCore
+import SwiftUI
+
+/// Native Arcane Selene info view rendered directly below the main Spotlight carousel
+/// whenever a unified Steam / CrossOver / PowerKit / Epic / GOG / Battle.net tile is focused.
+struct UnifiedHubSpotlightInfo: View {
+    @Environment(\.seleneCanvas) private var canvas
+    @ObservedObject var gp = GamePortConsoleModel.shared
+
+    let game: UnifiedHubGame
+    let onOpenCatalog: () -> Void
+
+    @State private var showOptionsSheet = false
+    @State private var showBridgeDownloadSheet = false
+    @State private var bridgeSteamUser = ""
+
+    private var downloadedDepotExe: URL? {
+        guard let appID = game.steamAppID else { return nil }
+        return gp.gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title)
+    }
+
+    private var isVACBlockedForBridge: Bool {
+        if case .blocked = SteamBridge.vacDecision(for: game.antiCheat) { return true }
+        return false
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: canvas.u(14)) {
+            // Game logo (from local Steam librarycache logo.png) or bold Selene headline
+            if let logoURL = game.preferredLogoURL, logoURL.isFileURL, let nsImg = NSImage(contentsOf: logoURL) {
+                Image(nsImage: nsImg)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: canvas.u(480), maxHeight: canvas.u(120), alignment: .leading)
+                    .shadow(color: .black.opacity(0.55), radius: canvas.u(10))
+            } else {
+                Text(game.title)
+                    .seleneFont(40, .bold)
+                    .foregroundColor(SeleneTheme.ink)
+                    .lineLimit(2)
+                    .shadow(color: .black.opacity(0.55), radius: canvas.u(8))
+            }
+
+            // Clean metadata row (zero jargon!)
+            HStack(spacing: canvas.u(14)) {
+                pillBadge(game.storeBadge, tint: .white.opacity(0.16))
+                pillBadge(game.runnerBadge, tint: game.supportsMacOS ? Color.green.opacity(0.28) : Color.cyan.opacity(0.25))
+                if let pt = game.playtimeSummary {
+                    Text(pt)
+                        .seleneFont(16, .medium)
+                        .foregroundColor(SeleneTheme.ink82)
+                }
+                if let ac = game.antiCheat {
+                    pillBadge(
+                        ac.risk == .blocked ? "Anti-Cheat Blocked" : ac.antiCheats.joined(separator: ", "),
+                        tint: ac.risk == .blocked ? Color.red.opacity(0.35) : Color.orange.opacity(0.28)
+                    )
+                }
+            }
+
+            // Primary + Secondary Arcane Glass Action Pills
+            HStack(spacing: canvas.u(14)) {
+                primaryActionButton
+
+                if case .ownedSteam(let owned, _) = game.kind, owned.supportsMacOS,
+                   let url = URL(string: "steam://install/\(owned.appID)") {
+                    glassPill("Install Mac Native", icon: "desktopcomputer", prominent: false) {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
+
+                if let appID = game.steamAppID, !isVACBlockedForBridge, gp.bridgeStatus.overlayInstalled {
+                    if let exe = downloadedDepotExe {
+                        glassPill("Play (No Win Steam)", icon: "bolt.horizontal.fill", prominent: false) {
+                            launchBridgeForGame(appID: appID, exe: exe)
+                        }
+                    } else if !game.isReady {
+                        glassPill("Download Depot", icon: "arrow.down.circle", prominent: false) {
+                            showBridgeDownloadSheet = true
+                        }
+                    }
+                }
+
+                glassPill("Options", icon: "slider.horizontal.3", prominent: false) {
+                    showOptionsSheet = true
+                }
+            }
+            .padding(.top, canvas.u(4))
+            .disabled(gp.busy != nil)
+
+            if let busy = gp.busy {
+                HStack(spacing: canvas.u(10)) {
+                    ProgressView().controlSize(.small)
+                    Text(busy)
+                        .seleneFont(15, .medium)
+                        .foregroundColor(SeleneTheme.ink90)
+                    if let last = gp.statusLog.last {
+                        Text("· \(last)")
+                            .seleneFont(14)
+                            .foregroundColor(SeleneTheme.ink60)
+                            .lineLimit(1)
+                    }
+                }
+                .padding(.top, canvas.u(4))
+            }
+        }
+        .frame(width: canvas.u(960), alignment: .leading)
+        .sheet(isPresented: $showOptionsSheet) { optionsSheet }
+        .sheet(isPresented: $showBridgeDownloadSheet) { bridgeDownloadSheet }
+    }
+
+    @ViewBuilder
+    private var primaryActionButton: some View {
+        switch game.kind {
+        case .profile(let profile, let recipe):
+            if recipe?.launch == .battlenet {
+                glassPill("Open Battle.net", icon: "play.fill", prominent: true) {
+                    gp.job("Opening \(game.title)") { k, p in
+                        _ = try k.openBattleNet(profile.id, progress: p)
+                        return "Battle.net opened"
+                    }
+                }
+            } else {
+                glassPill("Play", icon: "play.fill", prominent: true) {
+                    if let recipe {
+                        gp.launchGame(profile: profile, recipe: recipe)
+                    } else {
+                        gp.job("Starting \(game.title)") { k, p in
+                            _ = try k.play(profile.id, progress: p)
+                            return "Launched \(game.title)"
+                        }
+                    }
+                }
+            }
+
+        case .crossOverBottle(let item):
+            glassPill("Play", icon: "play.fill", prominent: true) {
+                gp.launchCrossOverGame(item)
+            }
+
+        case .storefront(let sfGame):
+            if sfGame.isInstalled {
+                glassPill("Play", icon: "play.fill", prominent: true) {
+                    gp.launchStorefrontGame(sfGame)
+                }
+            } else if sfGame.store == .epic {
+                glassPill("Download", icon: "arrow.down.circle.fill", prominent: true) {
+                    gp.downloadEpicGame(sfGame)
+                }
+            } else {
+                glassPill("Stores & Setup", icon: "arrow.down.circle", prominent: true) {
+                    onOpenCatalog()
+                }
+            }
+
+        case .ownedSteam(let owned, let recipe):
+            if gp.externalEnv.macSteamGame(appID: owned.appID) != nil,
+               let url = URL(string: "steam://rungameid/\(owned.appID)") {
+                glassPill("Play", icon: "play.fill", prominent: true) {
+                    NSWorkspace.shared.open(url)
+                }
+            } else if let exe = downloadedDepotExe, gp.bridgeStatus.isReadyToLaunch, !isVACBlockedForBridge {
+                glassPill("Play", icon: "play.fill", prominent: true) {
+                    launchBridgeForGame(appID: owned.appID, exe: exe)
+                }
+            } else if owned.supportsMacOS, let url = URL(string: "steam://install/\(owned.appID)") {
+                glassPill("Install & Play", icon: "arrow.down.circle.fill", prominent: true) {
+                    NSWorkspace.shared.open(url)
+                }
+            } else {
+                glassPill("Set Up (\(game.runnerBadge))", icon: "plus.circle.fill", prominent: true) {
+                    setupOwnedSteamGame(owned: owned, recipe: recipe)
+                }
+            }
+        }
+    }
+
+    private func setupOwnedSteamGame(owned: OwnedSteamGame, recipe: Recipe?) {
+        let preferredEngine = gp.preferredWindowsEngineID()
+        gp.job("Setting up \(game.title)") { k, p in
+            let recipeID: String
+            if let recipe {
+                recipeID = recipe.id
+            } else {
+                let added = try k.addCustomSteamGame(appID: owned.appID, title: game.title, renderer: .dxmt)
+                recipeID = added.id
+            }
+            let created = try k.createProfile(recipeID: recipeID, engineID: preferredEngine, progress: p)
+            return "Ready: \(created.id)"
+        }
+    }
+
+    private func launchBridgeForGame(appID: Int, exe: URL) {
+        let preferredEngine = gp.preferredWindowsEngineID()
+        gp.job("Launching \(game.title) via Bridge") { k, p in
+            let profileID: String
+            if case .profile(let existing, _) = game.kind {
+                profileID = existing.id
+            } else {
+                let recipeID: String
+                if case .ownedSteam(_, let existingRecipe) = game.kind, let existingRecipe {
+                    recipeID = existingRecipe.id
+                } else {
+                    recipeID = try k.addCustomSteamGame(appID: appID, title: game.title, renderer: .dxmt).id
+                }
+                let created = try k.createProfile(recipeID: recipeID, engineID: preferredEngine, progress: p)
+                profileID = created.id
+            }
+            _ = try k.launchWithSteamBridge(profileID, executable: exe, progress: p)
+            return "Launched \(exe.lastPathComponent)"
+        }
+    }
+
+    private func pillBadge(_ text: String, tint: Color) -> some View {
+        Text(text)
+            .seleneFont(14, .semibold)
+            .foregroundColor(SeleneTheme.ink)
+            .padding(.horizontal, canvas.u(12))
+            .padding(.vertical, canvas.u(5))
+            .background(tint, in: Capsule())
+    }
+
+    private func glassPill(_ title: String, icon: String, prominent: Bool, action: @escaping () -> Void) -> some View {
+        Button {
+            SoundEffectService.shared.play(.click)
+            action()
+        } label: {
+            HStack(spacing: canvas.u(8)) {
+                Image(systemName: icon)
+                    .font(.system(size: canvas.u(16), weight: .semibold))
+                Text(title)
+                    .seleneFont(17, .semibold)
+            }
+            .foregroundColor(prominent ? .black : SeleneTheme.ink)
+            .padding(.horizontal, canvas.u(22))
+            .padding(.vertical, canvas.u(12))
+            .background(
+                Capsule()
+                    .fill(prominent ? Color.white : SeleneTheme.glass)
+                    .overlay(Capsule().strokeBorder(SeleneTheme.ink15, lineWidth: max(1, canvas.u(1))))
+            )
+            .shadow(color: .black.opacity(0.45), radius: canvas.u(8))
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Options Sheet (Advanced tuning tucked cleanly away from home screen)
+
+    private var optionsSheet: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("\(game.title) — Options").font(.title3.bold())
+                Spacer()
+                Button("Done") { showOptionsSheet = false }
+            }
+            Text("Runner: \(game.runnerBadge) · Store: \(game.storeBadge)")
+                .font(.callout).foregroundStyle(.secondary)
+
+            if case .profile(let profile, let recipe) = game.kind {
+                Divider()
+                HStack(spacing: 14) {
+                    Picker("Renderer", selection: Binding<Renderer>(
+                        get: { profile.renderer ?? recipe?.renderer ?? .dxmt },
+                        set: { r in gp.updateProfile(profile.id) { $0.renderer = r } }
+                    )) {
+                        ForEach(Renderer.allCases, id: \.self) { Text($0.rawValue.uppercased()).tag($0) }
+                    }
+                    Toggle("MetalFX", isOn: Binding(
+                        get: { profile.metalFX ?? false },
+                        set: { on in gp.updateProfile(profile.id) { $0.metalFX = on } }
+                    ))
+                    Toggle("P-Cores", isOn: Binding(
+                        get: { profile.performanceCores ?? true },
+                        set: { on in gp.updateProfile(profile.id) { $0.performanceCores = on } }
+                    ))
+                    Toggle("x87 JIT", isOn: Binding(
+                        get: { profile.x87Acceleration ?? false },
+                        set: { on in gp.updateProfile(profile.id) { $0.x87Acceleration = on } }
+                    ))
+                }
+                HStack {
+                    Button("Take APFS Snapshot") {
+                        gp.job("Snapshot \(game.title)") { k, _ in
+                            try k.profiles.createSnapshot(profile.id, name: nil).name
+                        }
+                    }
+                    if recipe?.steamAppID != nil {
+                        Button("Benchmark FPS (Lab)") {
+                            gp.job("Lab Benchmark") { k, p in
+                                let res = try await k.lab(profile.id, seconds: 45, progress: p)
+                                return "Lab finished: \(res.verdict.rawValue)"
+                            }
+                        }
+                    }
+                    Button("Open Steam") {
+                        gp.job("Opening Steam") { k, p in _ = try k.openSteam(profile.id, progress: p); return "Steam opened" }
+                    }
+                    Button("Stop") {
+                        gp.job("Stopping") { k, _ in try k.stop(profile.id); return "Stopped" }
+                    }
+                }
+            }
+
+            Divider()
+            HStack {
+                if ExternalEnvironment.suggestsObelisk(for: game.antiCheat), let app = gp.externalEnv.obeliskApp {
+                    Button("Run with Obelisk") { NSWorkspace.shared.open(app) }
+                }
+                if ExternalEnvironment.suggestsSiliconium(steamAppID: game.steamAppID), let app = gp.externalEnv.siliconiumApp {
+                    Button("Run with Siliconium") { NSWorkspace.shared.open(app) }
+                }
+                Spacer()
+                Button("Open Full Store Catalog & Setup…") {
+                    showOptionsSheet = false
+                    onOpenCatalog()
+                }
+            }
+        }
+        .padding(20)
+        .frame(width: 560)
+    }
+
+    private var bridgeDownloadSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Download Windows Depot — \(game.title)").font(.headline)
+            Text("Downloads Windows game files natively via Valve steamcmd (no Windows Steam client needed). Leave username blank for anonymous free depots.")
+                .font(.callout).foregroundStyle(.secondary)
+            TextField("Steam username (or leave blank for anonymous)", text: $bridgeSteamUser)
+                .textFieldStyle(.roundedBorder)
+            HStack {
+                Spacer()
+                Button("Cancel") { showBridgeDownloadSheet = false }
+                Button("Start Native Download") {
+                    showBridgeDownloadSheet = false
+                    if let appID = game.steamAppID {
+                        gp.launchInteractiveBridgeDownload(appID: appID, username: bridgeSteamUser, title: game.title)
+                    }
+                }.buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(20)
+        .frame(width: 440)
+    }
+}
+
+/// Square glossy tile artwork rendered inside Arcane's `SpotlightRowView` for every `UnifiedHubGame`.
+/// Uses instant 0 ms local Steam `librarycache` images first, falling back to Steam CDN / Epic art.
+struct UnifiedHubTileArtwork: View {
+    let game: UnifiedHubGame
+    let side: CGFloat
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            if let url = game.preferredTileURL, url.isFileURL, let img = NSImage(contentsOf: url) {
+                Image(nsImage: img)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: side, height: side)
+            } else if let url = game.preferredTileURL, !url.isFileURL {
+                AsyncImage(url: url) { phase in
+                    if let img = phase.image {
+                        img.resizable().aspectRatio(contentMode: .fill)
+                    } else {
+                        placeholderFace
+                    }
+                }
+                .frame(width: side, height: side)
+            } else {
+                placeholderFace
+            }
+
+            // Subtle bottom gradient + small status dot/badge so ready vs not-installed is clear at a glance
+            LinearGradient(colors: [.clear, .black.opacity(0.68)], startPoint: .center, endPoint: .bottom)
+                .frame(width: side, height: side)
+                .allowsHitTesting(false)
+
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(game.isReady ? Color.green : Color.white.opacity(0.45))
+                    .frame(width: max(5, side * 0.045), height: max(5, side * 0.045))
+                Text(game.supportsMacOS ? "Mac" : (game.storeBadge == "Steam" ? game.runnerBadge : game.storeBadge))
+                    .font(.system(size: max(9, side * 0.068), weight: .semibold))
+                    .foregroundColor(.white.opacity(0.92))
+                    .lineLimit(1)
+            }
+            .padding(.horizontal, max(6, side * 0.05))
+            .padding(.vertical, max(3, side * 0.025))
+            .background(.black.opacity(0.55), in: Capsule())
+            .padding(max(6, side * 0.05))
+        }
+        .frame(width: side, height: side)
+        .clipped()
+    }
+
+    private var placeholderFace: some View {
+        ZStack {
+            LinearGradient(
+                colors: [Color(red: 0.14, green: 0.18, blue: 0.28), Color(red: 0.08, green: 0.10, blue: 0.16)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            Text(game.title)
+                .font(.system(size: max(12, side * 0.095), weight: .bold))
+                .foregroundColor(.white.opacity(0.88))
+                .multilineTextAlignment(.center)
+                .lineLimit(3)
+                .padding(max(10, side * 0.08))
+        }
+        .frame(width: side, height: side)
+    }
+}

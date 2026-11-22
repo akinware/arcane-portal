@@ -20,7 +20,7 @@ extension SpotlightView {
             mutate { $0.startingTabApplied = true }
             viewModel.librarySelection.query.filter = LibraryFilter(startingTab: settings.settings.startingTab)
         }
-        hadGames = !viewModel.visibleCatalogGames.isEmpty
+        hadGames = !viewModel.visibleCatalogGames.isEmpty || !hub.unifiedGames.isEmpty
         reconcile()
         selectionChanged()
         pillFilter = filter
@@ -64,7 +64,7 @@ extension SpotlightView {
         store.preloadCachedStoreMetadata()
         // The whole library, not the filtered row: a filter change never
         // counts as "the library arrived".
-        let hasGames = !viewModel.visibleCatalogGames.isEmpty
+        let hasGames = !viewModel.visibleCatalogGames.isEmpty || !hub.unifiedGames.isEmpty
         // The library loads after the first frame: a card picked while it was
         // empty gives way to the restored (or first) game.
         if !hadGames, hasGames, case .card = selectedItem {

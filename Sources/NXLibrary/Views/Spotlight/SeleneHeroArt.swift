@@ -83,6 +83,37 @@ final class SeleneHeroArt: ObservableObject {
         key = loaded.map { loadedFor + "\(ObjectIdentifier($0).hashValue)" } ?? "none"
     }
 
+    func hubHeroTaskKey(_ game: UnifiedHubGame?) -> String {
+        guard let game else { return "none" }
+        return "hub-hero|\(game.id)|\(game.preferredHeroURL?.absoluteString ?? "")"
+    }
+
+    /// Loads full-screen hero backdrop art for a UnifiedHubGame (prefers instant 0ms local Steam
+    /// librarycache files, falling back cleanly to Steam CDN / Epic artwork decoded off the main thread).
+    func loadHubHero(game: UnifiedHubGame?, current: () -> UUID?, settle: UInt64 = 120_000_000) async {
+        guard let game else { return }
+        let loadedFor = "\(game.id.uuidString)|hub|"
+        if key.hasPrefix(loadedFor) { return }
+        try? await Task.sleep(nanoseconds: settle)
+        guard !Task.isCancelled, current() == game.id else { return }
+        guard let url = game.preferredHeroURL else { return }
+        let loaded: NSImage?
+        if url.isFileURL {
+            loaded = await GameArtLoader.decodeHero(at: url)
+        } else {
+            loaded = await Task.detached(priority: .utility) { () -> NSImage? in
+                guard let (data, resp) = try? await URLSession.shared.data(from: url),
+                      (resp as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+                return NSImage(data: data)
+            }.value
+        }
+        guard !Task.isCancelled, current() == game.id else { return }
+        if let loaded {
+            image = loaded
+            key = loadedFor + "\(ObjectIdentifier(loaded).hashValue)"
+        }
+    }
+
     func loadLogo(game: PortedGame?, metadata: NintendoStoreMetadata?,
                   artwork: ArtworkStore, personalizations: CatalogPersonalizations) async {
         guard let game, GameArtLoader.shared.cachedLogo(for: game) == nil else { return }

@@ -71,6 +71,7 @@ extension SpotlightView {
                     items: items,
                     gamesByID: model.gamesByID,
                     catalogGamesByID: model.catalogGamesByID,
+                    hubGamesByID: model.hubGamesByID,
                     selectedKey: state.selectedKey,
                     liftedKey: state.lift?.key,
                     isEmptyFilter: LibraryEmptyState.showsMessage(
@@ -242,6 +243,10 @@ extension SpotlightView {
                         .transition(.opacity)
                 }
             }
+        } else if let hubGame = model.selectedHubGame {
+            UnifiedHubSpotlightInfo(game: hubGame, onOpenCatalog: { router.openWindowsGames() })
+                .id(hubGame.id)
+                .spotlightBlock(.head)
         } else if model.selectedItem == .card(.mods) {
             VStack(alignment: .leading, spacing: 0) {
                 SpotlightCardInfoView(
@@ -329,7 +334,9 @@ extension SpotlightView {
     /// loads when browsing from game to game (never another game's art right after a card). The rule answers for
     /// the selection this render sees, so the art never drops out for the render before `onChange` runs.
     func shownArt(_ model: Snapshot) -> NSImage? {
-        let id = model.selectedGame?.id ?? model.selectedCatalogGame.flatMap { $0.integration == .steam ? $0.id : nil }
+        let id = model.selectedGame?.id
+            ?? model.selectedCatalogGame.flatMap { $0.integration == .steam ? $0.id : nil }
+            ?? model.selectedHubGame?.id
         guard let id, let image = art.image else { return nil }
         return art.key.hasPrefix(id.uuidString)
             || artRule.keepsOtherArt(selection: viewModel.spotlight.selectedKey, isGame: true) ? image : nil

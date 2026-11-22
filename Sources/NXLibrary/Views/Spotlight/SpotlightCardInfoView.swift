@@ -52,7 +52,7 @@ struct SpotlightCardInfoView: View {
 
     private var headline: String {
         switch card {
-        case .windowsGames: return "Windows Games"
+        case .windowsGames: return "Stores & Catalog"
         case .collection: return "Collection"
         case .surprise: return "Surprise me"
         case .activity: return L10n.text("Activity")
@@ -63,7 +63,7 @@ struct SpotlightCardInfoView: View {
 
     private var about: String {
         switch card {
-        case .windowsGames: return "Play Windows Steam games with GamePort — DXMT, DXVK, D3DMetal, P-cores, x87sidecar & APFS snapshots."
+        case .windowsGames: return "Connect Steam, Epic Games, GOG, Battle.net, or browse 810+ Windows games."
         case .collection: return L10n.text("Every game in your library, in one row.")
         case .surprise: return L10n.text("Can't decide? Pick a game for me.")
         case .activity: return L10n.text("What you played this week.")
@@ -87,172 +87,13 @@ struct SpotlightCardInfoView: View {
     private var detail: some View {
         switch card {
         case .windowsGames:
-            VStack(alignment: .leading, spacing: canvas.u(16)) {
-                let gp = GamePortConsoleModel.shared
-                HStack(spacing: canvas.u(26)) {
-                    stat("MY STEAM", "\(gp.matchedOwnedSteamRecipes.count)")
-                    divider
-                    stat("READY", "\(gp.profiles.count)")
-                    divider
-                    stat("CROSSOVER", "\(gp.crossOverGames.count)")
-                    divider
-                    stat("BRIDGE", gp.bridgeStatus.isReadyToLaunch ? "READY" : (gp.bridgeStatus.overlayInstalled ? "BUILT" : "OFF"))
-                    divider
-                    stat("ENGINES", "\(gp.installedEngines.count)")
-                }
-                if !gp.profiles.isEmpty || !gp.matchedOwnedSteamRecipes.isEmpty || !gp.crossOverGames.isEmpty || !gp.storefrontGames.isEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: canvas.u(14)) {
-                            ForEach(gp.profiles.prefix(8), id: \.id) { profile in
-                                let recipe = profile.recipeID.flatMap { id in gp.recipes.first { $0.id == id } }
-                                Button {
-                                    if let recipe {
-                                        if recipe.launch == .battlenet {
-                                            gp.job("Opening \(recipe.title)") { k, p in
-                                                _ = try k.openBattleNet(profile.id, progress: p)
-                                                return "Battle.net opened"
-                                            }
-                                        } else {
-                                            gp.launchGame(profile: profile, recipe: recipe)
-                                        }
-                                    }
-                                } label: {
-                                    HStack(spacing: canvas.u(10)) {
-                                        if let appID = recipe?.steamAppID, let url = GamePortConsoleModel.steamPosterURL(appID: appID) {
-                                            AsyncImage(url: url) { phase in
-                                                if let img = phase.image { img.resizable().aspectRatio(contentMode: .fill) }
-                                                else { Color.white.opacity(0.10) }
-                                            }
-                                            .frame(width: canvas.u(42), height: canvas.u(56))
-                                            .clipShape(RoundedRectangle(cornerRadius: canvas.u(6)))
-                                        } else {
-                                            Image(systemName: recipe?.launch == .battlenet ? "flame.fill" : "play.rectangle.fill")
-                                                .font(.system(size: canvas.u(20)))
-                                                .foregroundColor(.cyan)
-                                                .frame(width: canvas.u(42), height: canvas.u(56))
-                                                .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: canvas.u(6)))
-                                        }
-                                        VStack(alignment: .leading, spacing: canvas.u(3)) {
-                                            Text(recipe?.title ?? profile.title)
-                                                .seleneFont(15, .semibold)
-                                                .foregroundColor(SeleneTheme.ink)
-                                                .lineLimit(1)
-                                            Text(recipe?.launch == .battlenet ? "Battle.net · 1-Click" : "PowerKit · 1-Click")
-                                                .seleneFont(12)
-                                                .foregroundColor(SeleneTheme.ink60)
-                                        }
-                                    }
-                                    .padding(.horizontal, canvas.u(12))
-                                    .padding(.vertical, canvas.u(8))
-                                    .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: canvas.u(10)))
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            let readyIDs = Set(gp.profiles.compactMap(\.recipeID))
-                            ForEach(gp.matchedOwnedSteamRecipes.filter { !readyIDs.contains($0.id) }.prefix(8)) { recipe in
-                                Button {
-                                    gp.job("Setting up \(recipe.title)") { k, p in
-                                        try k.createProfile(recipeID: recipe.id, progress: p).id
-                                    }
-                                } label: {
-                                    HStack(spacing: canvas.u(10)) {
-                                        if let appID = recipe.steamAppID, let url = GamePortConsoleModel.steamPosterURL(appID: appID) {
-                                            AsyncImage(url: url) { phase in
-                                                if let img = phase.image { img.resizable().aspectRatio(contentMode: .fill) }
-                                                else { Color.blue.opacity(0.14) }
-                                            }
-                                            .frame(width: canvas.u(42), height: canvas.u(56))
-                                            .clipShape(RoundedRectangle(cornerRadius: canvas.u(6)))
-                                        }
-                                        VStack(alignment: .leading, spacing: canvas.u(3)) {
-                                            Text(recipe.title)
-                                                .seleneFont(15, .semibold)
-                                                .foregroundColor(SeleneTheme.ink)
-                                                .lineLimit(1)
-                                            Text("My Steam · Set Up")
-                                                .seleneFont(12)
-                                                .foregroundColor(.cyan.opacity(0.9))
-                                        }
-                                    }
-                                    .padding(.horizontal, canvas.u(12))
-                                    .padding(.vertical, canvas.u(8))
-                                    .background(Color.blue.opacity(0.14), in: RoundedRectangle(cornerRadius: canvas.u(10)))
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            ForEach(gp.crossOverGames.prefix(6)) { item in
-                                Button {
-                                    gp.launchCrossOverGame(item)
-                                } label: {
-                                    HStack(spacing: canvas.u(10)) {
-                                        if case .steam(let appID) = item.kind, let url = GamePortConsoleModel.steamPosterURL(appID: appID) {
-                                            AsyncImage(url: url) { phase in
-                                                if let img = phase.image { img.resizable().aspectRatio(contentMode: .fill) }
-                                                else { Color.orange.opacity(0.14) }
-                                            }
-                                            .frame(width: canvas.u(42), height: canvas.u(56))
-                                            .clipShape(RoundedRectangle(cornerRadius: canvas.u(6)))
-                                        } else {
-                                            Image(systemName: "shippingbox.fill")
-                                                .font(.system(size: canvas.u(20)))
-                                                .foregroundColor(.orange)
-                                                .frame(width: canvas.u(42), height: canvas.u(56))
-                                                .background(Color.orange.opacity(0.14), in: RoundedRectangle(cornerRadius: canvas.u(6)))
-                                        }
-                                        VStack(alignment: .leading, spacing: canvas.u(3)) {
-                                            Text(item.title)
-                                                .seleneFont(15, .semibold)
-                                                .foregroundColor(SeleneTheme.ink)
-                                                .lineLimit(1)
-                                            Text("CrossOver · \(item.bottleName)")
-                                                .seleneFont(12)
-                                                .foregroundColor(.orange.opacity(0.9))
-                                        }
-                                    }
-                                    .padding(.horizontal, canvas.u(12))
-                                    .padding(.vertical, canvas.u(8))
-                                    .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: canvas.u(10)))
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            ForEach(gp.storefrontGames.prefix(6)) { game in
-                                Button {
-                                    gp.launchStorefrontGame(game)
-                                } label: {
-                                    HStack(spacing: canvas.u(10)) {
-                                        if let url = game.artworkURL {
-                                            AsyncImage(url: url) { phase in
-                                                if let img = phase.image { img.resizable().aspectRatio(contentMode: .fill) }
-                                                else { Color.purple.opacity(0.18) }
-                                            }
-                                            .frame(width: canvas.u(42), height: canvas.u(56))
-                                            .clipShape(RoundedRectangle(cornerRadius: canvas.u(6)))
-                                        } else {
-                                            Image(systemName: "gamecontroller.fill")
-                                                .font(.system(size: canvas.u(20)))
-                                                .foregroundColor(.purple)
-                                                .frame(width: canvas.u(42), height: canvas.u(56))
-                                                .background(Color.purple.opacity(0.18), in: RoundedRectangle(cornerRadius: canvas.u(6)))
-                                        }
-                                        VStack(alignment: .leading, spacing: canvas.u(3)) {
-                                            Text(game.title)
-                                                .seleneFont(15, .semibold)
-                                                .foregroundColor(SeleneTheme.ink)
-                                                .lineLimit(1)
-                                            Text(game.store.displayName)
-                                                .seleneFont(12)
-                                                .foregroundColor(.purple.opacity(0.95))
-                                        }
-                                    }
-                                    .padding(.horizontal, canvas.u(12))
-                                    .padding(.vertical, canvas.u(8))
-                                    .background(Color.purple.opacity(0.14), in: RoundedRectangle(cornerRadius: canvas.u(10)))
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                    }
-                }
+            let gp = GamePortConsoleModel.shared
+            HStack(spacing: canvas.u(26)) {
+                stat("LIBRARY", "\(gp.unifiedGames.count)")
+                divider
+                stat("RUNNER", gp.crossOverInstallation.map { "CrossOver \($0.version ?? "")" } ?? "PowerKit")
+                divider
+                stat("STORES", "Steam · Epic · GOG · Battle.net")
             }
         case .collection:
             HStack(spacing: canvas.u(26)) {

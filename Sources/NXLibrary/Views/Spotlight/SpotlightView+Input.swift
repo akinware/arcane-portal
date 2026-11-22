@@ -303,6 +303,11 @@ extension SpotlightView {
             if let steam = viewModel.visibleCatalogGames.first(where: { $0.id == id }), steam.integration == .steam {
                 SoundEffectService.shared.play(.click); SteamPlayCoordinator.shared.press(steam); return
             }
+            if let hubGame = hub.unifiedGamesByID[id] {
+                SoundEffectService.shared.play(.click)
+                hub.activateUnifiedGame(hubGame)
+                return
+            }
             guard let game = viewModel.libraryGames.first(where: { $0.id == id }) else { return }
             if viewModel.portingPills(game) == .porting {
                 SoundEffectService.shared.play(.click)

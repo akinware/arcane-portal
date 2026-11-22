@@ -37,6 +37,8 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var storefrontGames: [StorefrontGame] = []
     @Published var epicLibrary: [StorefrontGame] = []
     @Published var matchedOwnedSteamRecipes: [Recipe] = []
+    @Published var unifiedGames: [UnifiedHubGame] = []
+    @Published var unifiedGamesByID: [UUID: UnifiedHubGame] = [:]
     @Published var externalEnv: ExternalEnvironment = .empty
     @Published var communityVerdicts: [Int: [CommunityVerdict]] = [:]
     @Published var launchState: LaunchState = .idle
@@ -90,11 +92,69 @@ final class GamePortConsoleModel: ObservableObject {
         externalEnv = ExternalDiscovery.scan()
         let recipeByAppID = Dictionary(recipes.compactMap { r in r.steamAppID.map { ($0, r) } }, uniquingKeysWith: { first, _ in first })
         matchedOwnedSteamRecipes = externalEnv.macSteamOwnedGames.compactMap { recipeByAppID[$0.appID] }
+        rebuildUnifiedGames()
         if epicInstalled && epicSignedIn {
             refreshEpicLibrary()
         } else {
             epicAccount = nil
             epicLibrary = []
+        }
+    }
+
+    func rebuildUnifiedGames() {
+        let list = UnifiedHubGame.buildAll(
+            profiles: profiles,
+            recipes: recipes,
+            externalEnv: externalEnv,
+            crossOverInstallation: crossOverInstallation,
+            crossOverGames: crossOverGames,
+            storefrontGames: storefrontGames,
+            epicLibrary: epicLibrary,
+            steamDepot: gameport.steamDepot
+        )
+        unifiedGames = list
+        unifiedGamesByID = Dictionary(list.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    /// Prefers user's installed CrossOver.app (0 MB) when available unless another default is explicitly pinned.
+    func preferredWindowsEngineID() -> String? {
+        if let cx = crossOverInstallation, cx.hasExecutableWine {
+            return CrossOverInstallation.engineID
+        }
+        return gameport.engines.defaultEngineID() ?? installedEngines.first?.id
+    }
+
+    /// Primary 1-click action when pressing Enter / A / double-clicking a UnifiedHubGame tile on Spotlight.
+    func activateUnifiedGame(_ game: UnifiedHubGame) {
+        switch game.kind {
+        case .profile(let profile, let recipe):
+            if recipe?.launch == .battlenet {
+                job("Opening \(game.title)") { k, p in _ = try k.openBattleNet(profile.id, progress: p); return "Battle.net opened" }
+            } else if let recipe {
+                launchGame(profile: profile, recipe: recipe)
+            } else {
+                job("Starting \(game.title)") { k, p in _ = try k.play(profile.id, progress: p); return "Launched" }
+            }
+        case .crossOverBottle(let item):
+            launchCrossOverGame(item)
+        case .storefront(let sfGame):
+            if sfGame.isInstalled { launchStorefrontGame(sfGame) }
+            else if sfGame.store == .epic { downloadEpicGame(sfGame) }
+        case .ownedSteam(let owned, let recipe):
+            if externalEnv.macSteamGame(appID: owned.appID) != nil,
+               let url = URL(string: "steam://rungameid/\(owned.appID)") {
+                NSWorkspace.shared.open(url)
+            } else if owned.supportsMacOS, let url = URL(string: "steam://install/\(owned.appID)") {
+                NSWorkspace.shared.open(url)
+            } else {
+                let engineID = preferredWindowsEngineID()
+                job("Setting up \(game.title)") { k, p in
+                    let rid: String
+                    if let recipe { rid = recipe.id }
+                    else { rid = try k.addCustomSteamGame(appID: owned.appID, title: game.title, renderer: .dxmt).id }
+                    return try k.createProfile(recipeID: rid, engineID: engineID, progress: p).id
+                }
+            }
         }
     }
 
@@ -106,6 +166,7 @@ final class GamePortConsoleModel: ObservableObject {
             await MainActor.run {
                 self.epicAccount = acct
                 self.epicLibrary = games
+                self.rebuildUnifiedGames()
             }
         }
     }
