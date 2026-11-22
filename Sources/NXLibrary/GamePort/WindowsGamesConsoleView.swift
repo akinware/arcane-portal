@@ -14,9 +14,10 @@ struct WindowsGamesConsoleView: View {
 
     enum FilterTab: String, CaseIterable, Identifiable {
         case installed = "My Games"
-        case all = "All (805)"
-        case verified = "Verified"
+        case all = "All"
+        case battlenet = "Battle.net"
         case cod = "Call of Duty"
+        case verified = "Verified"
         var id: String { rawValue }
     }
 
@@ -38,6 +39,8 @@ struct WindowsGamesConsoleView: View {
             base = mine.isEmpty && query.isEmpty ? Array(gp.recipes.prefix(40)) : mine
         case .all:
             base = gp.recipes
+        case .battlenet:
+            base = gp.recipes.filter { $0.launch == .battlenet }
         case .verified:
             base = gp.recipes.filter { $0.status == .verified }
         case .cod:
@@ -392,19 +395,44 @@ struct WindowsGamesConsoleView: View {
                 }
                 .buttonStyle(.borderedProminent).controlSize(.large)
             } else if let profile {
-                Button {
-                    gp.launchGame(profile: profile, recipe: recipe)
-                } label: {
-                    Label("Play", systemImage: "play.fill")
-                }
-                .buttonStyle(.borderedProminent).controlSize(.large)
+                if recipe.launch == .battlenet {
+                    let bnInstalled = (try? gp.gameport.battleNet(for: profile.id).isInstalled) == true
+                    if bnInstalled {
+                        Button {
+                            gp.job("Opening Battle.net (\(recipe.title))") { k, p in
+                                _ = try k.openBattleNet(profile.id, progress: p)
+                                return "Battle.net opened"
+                            }
+                        } label: {
+                            Label("Open Battle.net", systemImage: "play.fill")
+                        }
+                        .buttonStyle(.borderedProminent).controlSize(.large)
+                    } else {
+                        Button {
+                            gp.job("Installing Battle.net") { k, p in
+                                _ = try await k.battleNet(for: profile.id).install(progress: p)
+                                return "Battle.net installer launched"
+                            }
+                        } label: {
+                            Label("Install Battle.net", systemImage: "arrow.down.circle.fill")
+                        }
+                        .buttonStyle(.borderedProminent).controlSize(.large)
+                    }
+                } else {
+                    Button {
+                        gp.launchGame(profile: profile, recipe: recipe)
+                    } label: {
+                        Label("Play", systemImage: "play.fill")
+                    }
+                    .buttonStyle(.borderedProminent).controlSize(.large)
 
-                Button {
-                    gp.job("Opening Steam") { k, p in _ = try k.openSteam(profile.id, progress: p); return "Steam opened" }
-                } label: {
-                    Label("Open Steam", systemImage: "arrow.down.circle")
+                    Button {
+                        gp.job("Opening Steam") { k, p in _ = try k.openSteam(profile.id, progress: p); return "Steam opened" }
+                    } label: {
+                        Label("Open Steam", systemImage: "arrow.down.circle")
+                    }
+                    .buttonStyle(.bordered).controlSize(.large)
                 }
-                .buttonStyle(.bordered).controlSize(.large)
 
                 Button {
                     gp.job("Stopping \(recipe.title)") { k, _ in try k.stop(profile.id); return "Stopped" }
