@@ -14,9 +14,11 @@ struct WindowsGamesConsoleView: View {
 
     enum FilterTab: String, CaseIterable, Identifiable {
         case installed = "My Games"
-        case all = "All"
+        case epicGog = "Epic & GOG"
+        case crossOver = "CrossOver"
         case battlenet = "Battle.net"
         case cod = "Call of Duty"
+        case all = "All"
         case verified = "Verified"
         var id: String { rawValue }
     }
@@ -31,6 +33,9 @@ struct WindowsGamesConsoleView: View {
     @State private var showTools = false
     @State private var showBridgeDownload = false
     @State private var bridgeSteamUser = ""
+    @State private var authPrompt: StorefrontKind?
+    @State private var authCode = ""
+    @State private var gogDownloadID = ""
 
     private var filteredRecipes: [Recipe] {
         let base: [Recipe]
@@ -47,6 +52,8 @@ struct WindowsGamesConsoleView: View {
             base = gp.recipes.filter { $0.status == .verified }
         case .cod:
             base = gp.recipes.filter { $0.title.localizedCaseInsensitiveContains("call of duty") }
+        case .epicGog, .crossOver:
+            base = []
         }
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !q.isEmpty else { return Array(base.prefix(80)) }
@@ -73,8 +80,16 @@ struct WindowsGamesConsoleView: View {
                     leftCatalogColumn
                         .frame(width: 340)
                     Divider().background(SeleneTheme.ink15)
-                    rightStageColumn
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    if tab == .epicGog && query.isEmpty {
+                        epicGogStage
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if tab == .crossOver && query.isEmpty {
+                        crossOverStage
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        rightStageColumn
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
                 if let busy = gp.busy {
                     HStack(spacing: 10) {
@@ -125,6 +140,28 @@ struct WindowsGamesConsoleView: View {
         }
         .sheet(isPresented: $showAddSteam) { addSteamSheet }
         .sheet(isPresented: $showBridgeDownload) { bridgeDownloadSheet }
+        .sheet(item: $authPrompt) { kind in
+            VStack(alignment: .leading, spacing: 12) {
+                Text(kind == .epic ? "Sign In to Epic Games" : "Sign In to GOG").font(.headline)
+                Text(kind == .epic
+                     ? "Sign in on the Epic page that opened in your browser, copy the authorizationCode value, and paste it below."
+                     : "Sign in on the GOG page that opened in your browser, copy the code= value from the final URL, and paste it below.")
+                    .font(.callout).foregroundStyle(.secondary)
+                TextField("Authorization code", text: $authCode).textFieldStyle(.roundedBorder)
+                HStack {
+                    Spacer()
+                    Button("Cancel") { authPrompt = nil }
+                    Button("Connect") {
+                        let code = authCode
+                        authPrompt = nil
+                        if kind == .epic { gp.signInEpic(code: code) }
+                        else { gp.signInGOG(code: code) }
+                    }.buttonStyle(.borderedProminent).disabled(authCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            .padding(20)
+            .frame(width: 440)
+        }
     }
 
     private func stepSelection(by delta: Int) {
@@ -211,8 +248,55 @@ struct WindowsGamesConsoleView: View {
 
             ScrollView {
                 LazyVStack(spacing: 6) {
-                    ForEach(filteredRecipes) { recipe in
-                        catalogRow(recipe)
+                    if tab == .epicGog && query.isEmpty {
+                        let allStoreGames = mergedEpicAndGOGGames
+                        if allStoreGames.isEmpty {
+                            Text("Sign in to Epic or GOG on the right to see your games here.")
+                                .font(.caption).foregroundStyle(.white.opacity(0.6)).padding(14)
+                        } else {
+                            ForEach(allStoreGames) { g in
+                                HStack(spacing: 10) {
+                                    Image(systemName: g.isInstalled ? "play.circle.fill" : "arrow.down.circle")
+                                        .foregroundStyle(g.isInstalled ? .green : .purple)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(g.title).font(.callout.weight(.medium)).foregroundStyle(.white).lineLimit(1)
+                                        Text("\(g.store.displayName) · \(g.isInstalled ? "Installed" : "Owned")")
+                                            .font(.caption2).foregroundStyle(.white.opacity(0.6))
+                                    }
+                                    Spacer()
+                                }
+                                .padding(8)
+                                .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+                            }
+                        }
+                    } else if tab == .crossOver && query.isEmpty {
+                        if gp.crossOverGames.isEmpty {
+                            Text(gp.crossOverInstallation != nil
+                                 ? "CrossOver detected — no Steam/Battle.net/Epic/GOG bottle games found yet."
+                                 : "CrossOver.app not installed. PowerKit engines handle everything automatically.")
+                                .font(.caption).foregroundStyle(.white.opacity(0.6)).padding(14)
+                        } else {
+                            ForEach(gp.crossOverGames) { item in
+                                Button { gp.launchCrossOverGame(item) } label: {
+                                    HStack(spacing: 10) {
+                                        Image(systemName: "shippingbox.fill").foregroundStyle(.orange)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(item.title).font(.callout.weight(.medium)).foregroundStyle(.white).lineLimit(1)
+                                            Text("Bottle: \(item.bottleName)").font(.caption2).foregroundStyle(.orange.opacity(0.85))
+                                        }
+                                        Spacer()
+                                        Image(systemName: "play.fill").font(.caption).foregroundStyle(.white.opacity(0.75))
+                                    }
+                                    .padding(8)
+                                    .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    } else {
+                        ForEach(filteredRecipes) { recipe in
+                            catalogRow(recipe)
+                        }
                     }
                 }
                 .padding(.horizontal, 12).padding(.bottom, 16)
@@ -676,6 +760,188 @@ struct WindowsGamesConsoleView: View {
         }
         .padding(12)
         .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private var mergedEpicAndGOGGames: [StorefrontGame] {
+        var combined = gp.epicLibrary
+        let epicIDs = Set(combined.map(\.id))
+        for g in gp.storefrontGames where !epicIDs.contains(g.id) {
+            combined.append(g)
+        }
+        return combined.sorted {
+            if $0.isInstalled != $1.isInstalled { return $0.isInstalled }
+            return $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var epicGogStage: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Epic Games, GOG & Heroic").font(.largeTitle.bold()).foregroundStyle(.white)
+                Text("Download Windows games natively at full macOS speed and launch straight on CrossOver.app (0 MB) or GamePort PowerKit — zero Epic Games Launcher or GOG Galaxy in RAM.")
+                    .font(.callout).foregroundStyle(.white.opacity(0.75))
+
+                HStack(spacing: 12) {
+                    // Epic Games card
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Epic Games (legendary \(EpicStorefront.version))", systemImage: "gamecontroller.fill")
+                            .font(.headline).foregroundStyle(.purple)
+                        Text(gp.epicSignedIn ? "Connected\(gp.epicAccount.map { " as \($0)" } ?? "") · \(gp.epicLibrary.count) Windows titles" : (gp.epicInstalled ? "Installed · Ready to sign in" : "Native arm64 binary · 13.5 MB"))
+                            .font(.caption).foregroundStyle(.white.opacity(0.75))
+                        HStack {
+                            if !gp.epicInstalled {
+                                Button("Install legendary") {
+                                    gp.job("Installing Epic legendary") { k, p in _ = try await k.epic.install(progress: p); return "Installed legendary" }
+                                }.buttonStyle(.borderedProminent)
+                            } else if !gp.epicSignedIn {
+                                Button("Sign In to Epic") {
+                                    NSWorkspace.shared.open(EpicStorefront.loginURL)
+                                    authCode = ""
+                                    authPrompt = .epic
+                                }.buttonStyle(.borderedProminent)
+                            } else {
+                                Button("Refresh Library") { gp.refreshEpicLibrary() }.buttonStyle(.bordered)
+                                Button("Sign Out") { try? gp.gameport.epic.signOut(); gp.refresh() }.buttonStyle(.bordered)
+                            }
+                        }.disabled(gp.busy != nil)
+                    }
+                    .padding(14).frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.purple.opacity(0.14), in: RoundedRectangle(cornerRadius: 12))
+
+                    // GOG card
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("GOG (gogdl \(GOGStorefront.version) · DRM-Free)", systemImage: "opticaldisc.fill")
+                            .font(.headline).foregroundStyle(.cyan)
+                        Text(gp.gogSignedIn ? "Connected · DRM-free native downloads" : (gp.gogInstalled ? "Installed · Ready to sign in" : "Native arm64 binary · 11.1 MB"))
+                            .font(.caption).foregroundStyle(.white.opacity(0.75))
+                        HStack {
+                            if !gp.gogInstalled {
+                                Button("Install gogdl") {
+                                    gp.job("Installing GOG gogdl") { k, p in _ = try await k.gog.install(progress: p); return "Installed gogdl" }
+                                }.buttonStyle(.borderedProminent)
+                            } else if !gp.gogSignedIn {
+                                Button("Sign In to GOG") {
+                                    NSWorkspace.shared.open(GOGStorefront.loginURL)
+                                    authCode = ""
+                                    authPrompt = .gog
+                                }.buttonStyle(.borderedProminent)
+                            } else {
+                                TextField("GOG Game ID", text: $gogDownloadID).textFieldStyle(.roundedBorder).frame(maxWidth: 130)
+                                Button("Download") {
+                                    let id = gogDownloadID
+                                    gogDownloadID = ""
+                                    gp.downloadGOGGame(gameID: id)
+                                }.buttonStyle(.borderedProminent).disabled(gogDownloadID.trimmingCharacters(in: .whitespaces).isEmpty)
+                                Button("Sign Out") { gp.gameport.gog.signOut(); gp.refresh() }.buttonStyle(.bordered)
+                            }
+                        }.disabled(gp.busy != nil)
+                    }
+                    .padding(14).frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.cyan.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
+                }
+
+                let games = mergedEpicAndGOGGames
+                if !games.isEmpty {
+                    Text("Your Epic, GOG & Heroic Library (\(games.count))").font(.headline).foregroundStyle(.white)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 14)], spacing: 14) {
+                        ForEach(games) { game in
+                            VStack(alignment: .leading, spacing: 8) {
+                                if let url = game.artworkURL {
+                                    AsyncImage(url: url) { phase in
+                                        if let img = phase.image { img.resizable().aspectRatio(contentMode: .fill) }
+                                        else { Color.white.opacity(0.08) }
+                                    }
+                                    .frame(height: 120).clipped()
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
+                                Text(game.title).font(.callout.bold()).foregroundStyle(.white).lineLimit(1)
+                                Text(game.store.displayName).font(.caption2).foregroundStyle(.white.opacity(0.65))
+                                HStack {
+                                    if game.isInstalled {
+                                        Button {
+                                            gp.launchStorefrontGame(game)
+                                        } label: {
+                                            Label("Play", systemImage: "play.fill").frame(maxWidth: .infinity)
+                                        }
+                                        .buttonStyle(.borderedProminent).controlSize(.small)
+                                    } else if game.store == .epic {
+                                        Button {
+                                            gp.downloadEpicGame(game)
+                                        } label: {
+                                            Label("Download", systemImage: "arrow.down.circle").frame(maxWidth: .infinity)
+                                        }
+                                        .buttonStyle(.bordered).controlSize(.small)
+                                    }
+                                }.disabled(gp.busy != nil)
+                            }
+                            .padding(12)
+                            .background(Color.white.opacity(0.07), in: RoundedRectangle(cornerRadius: 12))
+                        }
+                    }
+                }
+            }
+            .padding(24)
+        }
+    }
+
+    private var crossOverStage: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                Text("CrossOver Mode (0 MB Engine & 1-Click Bottles)").font(.largeTitle.bold()).foregroundStyle(.white)
+                if let cx = gp.crossOverInstallation {
+                    HStack(spacing: 12) {
+                        Image(systemName: "checkmark.seal.fill").font(.title2).foregroundStyle(.green)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("CrossOver \(cx.version ?? "") connected at \(cx.appURL.path)").font(.headline).foregroundStyle(.white)
+                            Text("Available as a 0 MB system engine for all PowerKit, Epic, GOG & Steam Bridge games — plus 1-click bottle launch below.")
+                                .font(.caption).foregroundStyle(.white.opacity(0.75))
+                        }
+                    }
+                    .padding(14).frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.green.opacity(0.14), in: RoundedRectangle(cornerRadius: 12))
+                } else {
+                    HStack(spacing: 12) {
+                        Image(systemName: "sparkles").font(.title2).foregroundStyle(.cyan)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("CrossOver.app not installed — GamePort PowerKit is active").font(.headline).foregroundStyle(.white)
+                            Text("You don't need CrossOver! GamePort PowerKit runs your games with free built-in engines, DXMT/DXVK/D3DMetal, and APFS snapshots.")
+                                .font(.caption).foregroundStyle(.white.opacity(0.75))
+                        }
+                    }
+                    .padding(14).frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.cyan.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
+                }
+
+                if !gp.crossOverGames.isEmpty {
+                    Text("Discovered CrossOver Bottle Games (\(gp.crossOverGames.count))").font(.headline).foregroundStyle(.white)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 14)], spacing: 14) {
+                        ForEach(gp.crossOverGames) { item in
+                            VStack(alignment: .leading, spacing: 8) {
+                                if case .steam(let appID) = item.kind, let url = GamePortConsoleModel.steamHeroURL(appID: appID) {
+                                    AsyncImage(url: url) { phase in
+                                        if let img = phase.image { img.resizable().aspectRatio(contentMode: .fill) }
+                                        else { Color.orange.opacity(0.12) }
+                                    }
+                                    .frame(height: 100).clipped()
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
+                                Text(item.title).font(.callout.bold()).foregroundStyle(.white).lineLimit(1)
+                                Text("Bottle: \(item.bottleName)").font(.caption2).foregroundStyle(.orange)
+                                Button {
+                                    gp.launchCrossOverGame(item)
+                                } label: {
+                                    Label("1-Click Play", systemImage: "play.fill").frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.borderedProminent).controlSize(.small)
+                            }
+                            .padding(12)
+                            .background(Color.orange.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
+                        }
+                    }
+                }
+            }
+            .padding(24)
+        }
     }
 
     private var storefrontGamesStrip: some View {

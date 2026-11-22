@@ -31,9 +31,11 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var crossOverGames: [CrossOverBottleLaunchItem] = []
     @Published var epicInstalled = false
     @Published var epicSignedIn = false
+    @Published var epicAccount: String?
     @Published var gogInstalled = false
     @Published var gogSignedIn = false
     @Published var storefrontGames: [StorefrontGame] = []
+    @Published var epicLibrary: [StorefrontGame] = []
     @Published var externalEnv: ExternalEnvironment = .empty
     @Published var communityVerdicts: [Int: [CommunityVerdict]] = [:]
     @Published var launchState: LaunchState = .idle
@@ -85,6 +87,24 @@ final class GamePortConsoleModel: ObservableObject {
         gogSignedIn = gameport.gog.isSignedIn
         storefrontGames = gameport.discoverStorefrontGames(includeUninstalledEpic: false)
         externalEnv = ExternalDiscovery.scan()
+        if epicInstalled && epicSignedIn {
+            refreshEpicLibrary()
+        } else {
+            epicAccount = nil
+            epicLibrary = []
+        }
+    }
+
+    func refreshEpicLibrary() {
+        let epic = gameport.epic
+        Task.detached(priority: .utility) {
+            let acct = epic.accountDisplayName()
+            let games = (try? epic.listGames(includeUninstalled: true)) ?? []
+            await MainActor.run {
+                self.epicAccount = acct
+                self.epicLibrary = games
+            }
+        }
     }
 
     func refreshCommunityVerdicts() {
@@ -130,6 +150,34 @@ final class GamePortConsoleModel: ObservableObject {
         job("Launching \(game.title) (\(game.store.displayName))") { kit, progress in
             _ = try kit.launchStorefrontGame(game, progress: progress)
             return "Launched \(game.title)"
+        }
+    }
+
+    func signInEpic(code: String) {
+        job("Signing in to Epic Games") { kit, _ in
+            try kit.epic.authenticate(authorizationCode: code)
+            return "Signed in to Epic Games"
+        }
+    }
+
+    func signInGOG(code: String) {
+        job("Signing in to GOG") { kit, _ in
+            try kit.gog.authenticate(authorizationCode: code)
+            return "Signed in to GOG"
+        }
+    }
+
+    func downloadEpicGame(_ game: StorefrontGame) {
+        job("Downloading \(game.title) (Epic)") { kit, progress in
+            _ = try await kit.epic.download(appName: game.appID, progress: progress)
+            return "Downloaded \(game.title)"
+        }
+    }
+
+    func downloadGOGGame(gameID: String) {
+        job("Downloading GOG \(gameID)") { kit, progress in
+            _ = try await kit.gog.download(gameID: gameID, progress: progress)
+            return "Downloaded GOG game \(gameID)"
         }
     }
 

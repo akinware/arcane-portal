@@ -9,6 +9,8 @@ import UniformTypeIdentifiers
 struct SettingsGamePortSection: View {
     @ObservedObject var gp = GamePortConsoleModel.shared
     let onActions: ([SettingsRowAction]) -> Void
+    @State private var authPrompt: StorefrontKind?
+    @State private var authCode = ""
 
     var body: some View {
         VStack(spacing: 9) {
@@ -132,9 +134,11 @@ struct SettingsGamePortSection: View {
             SettingsSubheading("Epic Games, GOG & Heroic (Zero Store Launcher)")
             SeleneValueRow(
                 "Epic Games (legendary \(EpicStorefront.version))",
-                subtitle: "Native arm64 downloader & launcher — runs straight on CrossOver.app or PowerKit with zero Epic Launcher in RAM.",
+                subtitle: gp.epicSignedIn
+                    ? "Connected\(gp.epicAccount.map { " as \($0)" } ?? "") · \(gp.epicLibrary.count) Windows titles available."
+                    : "Native arm64 downloader & launcher — runs straight on CrossOver.app or PowerKit with zero Epic Launcher in RAM.",
                 value: gp.epicInstalled ? (gp.epicSignedIn ? "Connected" : "Installed") : "Not Installed",
-                actionTitle: gp.epicInstalled ? (gp.epicSignedIn ? "Refresh" : "Open Login") : "Install"
+                actionTitle: gp.epicInstalled ? (gp.epicSignedIn ? "Sign Out" : "Sign In") : "Install"
             ) {
                 if !gp.epicInstalled {
                     gp.job("Installing Epic legendary") { k, p in
@@ -143,7 +147,10 @@ struct SettingsGamePortSection: View {
                     }
                 } else if !gp.epicSignedIn {
                     NSWorkspace.shared.open(EpicStorefront.loginURL)
+                    authCode = ""
+                    authPrompt = .epic
                 } else {
+                    try? gp.gameport.epic.signOut()
                     gp.refresh()
                 }
             }
@@ -151,7 +158,7 @@ struct SettingsGamePortSection: View {
                 "GOG (gogdl \(GOGStorefront.version) · DRM-Free)",
                 subtitle: "Native arm64 DRM-free GOG downloader — launches directly with zero GOG Galaxy.",
                 value: gp.gogInstalled ? (gp.gogSignedIn ? "Connected" : "Installed") : "Not Installed",
-                actionTitle: gp.gogInstalled ? (gp.gogSignedIn ? "Refresh" : "Open Login") : "Install"
+                actionTitle: gp.gogInstalled ? (gp.gogSignedIn ? "Sign Out" : "Sign In") : "Install"
             ) {
                 if !gp.gogInstalled {
                     gp.job("Installing GOG gogdl") { k, p in
@@ -160,7 +167,10 @@ struct SettingsGamePortSection: View {
                     }
                 } else if !gp.gogSignedIn {
                     NSWorkspace.shared.open(GOGStorefront.loginURL)
+                    authCode = ""
+                    authPrompt = .gog
                 } else {
+                    gp.gameport.gog.signOut()
                     gp.refresh()
                 }
             }
@@ -218,6 +228,28 @@ struct SettingsGamePortSection: View {
                 },
                 .init(id: "gp-storage", title: "Choose External SSD", activate: chooseStorageFolder),
             ])
+        }
+        .sheet(item: $authPrompt) { kind in
+            VStack(alignment: .leading, spacing: 12) {
+                Text(kind == .epic ? "Sign In to Epic Games" : "Sign In to GOG").font(.headline)
+                Text(kind == .epic
+                     ? "Sign in on the Epic page that opened in your browser, copy the authorizationCode value, and paste it below."
+                     : "Sign in on the GOG page that opened in your browser, copy the code= value from the final URL, and paste it below.")
+                    .font(.callout).foregroundStyle(.secondary)
+                TextField("Authorization code", text: $authCode).textFieldStyle(.roundedBorder)
+                HStack {
+                    Spacer()
+                    Button("Cancel") { authPrompt = nil }
+                    Button("Connect") {
+                        let code = authCode
+                        authPrompt = nil
+                        if kind == .epic { gp.signInEpic(code: code) }
+                        else { gp.signInGOG(code: code) }
+                    }.buttonStyle(.borderedProminent).disabled(authCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            .padding(20)
+            .frame(width: 440)
         }
     }
 
