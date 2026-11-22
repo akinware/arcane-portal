@@ -8,6 +8,7 @@ extension Notification.Name {
     static let nxSettingsGamepadAction = Notification.Name("NXSettingsGamepadAction")
     static let nxLocalePickerGamepadAction = Notification.Name("NXLocalePickerGamepadAction")
     static let nxAddGameGamepadAction = Notification.Name("NXAddGameGamepadAction")
+    static let nxWindowsGamesGamepadAction = Notification.Name("NXWindowsGamesGamepadAction")
     static let nxConsoleGamepadAction = Notification.Name("NXConsoleGamepadAction")
     static let nxDetailGamepadAction = Notification.Name("NXDetailGamepadAction")
     static let nxSpotlightGamepadAction = Notification.Name("NXSpotlightGamepadAction")

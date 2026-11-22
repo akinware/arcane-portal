@@ -51,6 +51,7 @@ struct SpotlightCardInfoView: View {
 
     private var headline: String {
         switch card {
+        case .windowsGames: return "Windows Games"
         case .collection: return "Collection"
         case .surprise: return "Surprise me"
         case .activity: return L10n.text("Activity")
@@ -61,6 +62,7 @@ struct SpotlightCardInfoView: View {
 
     private var about: String {
         switch card {
+        case .windowsGames: return "Play Windows Steam games with GamePort — DXMT, DXVK, D3DMetal, P-cores, x87sidecar & APFS snapshots."
         case .collection: return L10n.text("Every game in your library, in one row.")
         case .surprise: return L10n.text("Can't decide? Pick a game for me.")
         case .activity: return L10n.text("What you played this week.")
@@ -71,6 +73,7 @@ struct SpotlightCardInfoView: View {
 
     private var action: String? {
         switch card {
+        case .windowsGames: return "Open"
         case .collection: return "Open"
         case .surprise: return "Pick"
         // Activity and Mods have no button here: the hint in the corner says it once.
@@ -82,6 +85,14 @@ struct SpotlightCardInfoView: View {
     @ViewBuilder
     private var detail: some View {
         switch card {
+        case .windowsGames:
+            HStack(spacing: canvas.u(26)) {
+                stat("READY", "\(GamePortConsoleModel.shared.profiles.count)")
+                divider
+                stat("CATALOG", "\(GamePortConsoleModel.shared.recipes.count)")
+                divider
+                stat("ENGINES", "\(GamePortConsoleModel.shared.installedEngines.count)")
+            }
         case .collection:
             HStack(spacing: canvas.u(26)) {
                 stat(L10n.text("GAMES"), "\(gameCount)")

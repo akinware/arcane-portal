@@ -163,6 +163,9 @@ extension AppShellView {
             } else {
                 router.openPowerMenu()
             }
+        case .windowsGames:
+            router.closeMenu()
+            router.openWindowsGames()
         case .addGame:
             router.closeMenu()
             openFreshAddGame()

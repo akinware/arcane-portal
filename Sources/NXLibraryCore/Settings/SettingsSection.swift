@@ -8,6 +8,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable, Equatable {
     case search, changed
     case startUp, navigation, spotlight, soundMusic, look, controllers, apiServices
     case sources, libraryGames, storage
+    case gamePort
     case engine, keys, library, games, cloudSaves, portingStorage
     case about, console
 
@@ -33,6 +34,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable, Equatable {
         case .sources: return "Settings section: Sources"
         case .libraryGames: return "Games"
         case .storage: return "Storage"
+        case .gamePort: return "Windows & Engines"
         case .engine: return "Setup and engine"
         case .keys: return "Keys"
         case .library: return "Library"
@@ -58,6 +60,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable, Equatable {
         case .sources: return L10n.text("Steam libraries, refresh and how Play opens Steam.")
         case .libraryGames: return L10n.text("Launch screen, Surprise me, session card and hidden games.")
         case .storage: return L10n.text("Storage usage, logs, metadata and artwork caches, save backups.")
+        case .gamePort: return "GamePort engines (CrossOver, Wine 11.21), External APFS SSD, x87sidecar, AArchX, and external launchers."
         case .engine: return L10n.text("Engine pin, toolchain gate and setup.")
         case .keys: return L10n.text("Import, replace or detect prod.keys.")
         case .library: return L10n.text("Folders, scans and box covers.")
@@ -84,6 +87,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable, Equatable {
         case .sources: return .collections
         case .libraryGames: return .play
         case .storage: return .storage
+        case .gamePort: return .monitor
         case .engine: return .build
         case .keys: return .key
         case .library: return .collections
@@ -130,6 +134,7 @@ public struct SettingsSidebarGroup: Identifiable, Equatable {
         .init(heading: nil, sections: [.search, .changed], isPlatform: false),
         .init(heading: "Settings group: General", sections: [.startUp, .navigation, .spotlight, .soundMusic, .look, .controllers, .apiServices], isPlatform: false),
         .init(heading: "Settings group: Library", sections: [.sources, .libraryGames, .storage], isPlatform: false),
+        .init(heading: "Windows (GamePort)", sections: [.gamePort], isPlatform: true),
         .init(heading: "Settings group: Porting", sections: [.engine, .keys, .library, .games, .cloudSaves, .portingStorage], isPlatform: true),
         .init(heading: "Settings group: System", sections: [.about, .console], isPlatform: false),
     ]

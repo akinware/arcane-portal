@@ -30,6 +30,13 @@ extension AppShellView {
                     .transition(overlayTransition)
                     .zIndex(0.8)
             }
+            if router.route == .windowsGames {
+                WindowsGamesConsoleView(router: router, showsHints: settings.settings.showButtonHints)
+                    .opacity(opacityBelowCover(0.8))
+                    .allowsHitTesting(!currentBackdropCover.covers(0.8))
+                    .transition(overlayTransition)
+                    .zIndex(0.8)
+            }
             if router.route == .console {
                 ConsoleView(viewModel: viewModel, router: router,
                             showsHints: settings.settings.showButtonHints)

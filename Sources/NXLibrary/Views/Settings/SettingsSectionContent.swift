@@ -50,6 +50,8 @@ struct SettingsSectionContent: View {
             SettingsSourcesSection(viewModel: viewModel, settings: settings, onActions: onActions)
         case .storage:
             SettingsStorageSection(viewModel: viewModel, artwork: artwork, onActions: onActions)
+        case .gamePort:
+            SettingsGamePortSection(onActions: onActions)
         case .portingStorage:
             SettingsPortingStorageSection(viewModel: viewModel, onActions: onActions)
         case .engine:

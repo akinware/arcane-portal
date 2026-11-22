@@ -144,3 +144,9 @@ Images are fetched only at runtime when source access permits, attributed in the
 artwork picker, and are not distributed with NX Library. Artwork rights remain
 with their respective owners. The Swift resolver is an independent implementation;
 no source from the GPL-licensed Fritchii icon_search.cpp is included.
+
+---
+
+## GamePort Integration
+
+This fork (`akinware/arcane-gameport`) integrates **GamePortKit** (`https://github.com/akinware/gameport`, licensed under PolyForm Noncommercial License 1.0.0) alongside Arcane's MIT-licensed shell (`Bium23/NxLibrary`). All original Arcane copyright and MIT notices remain intact.

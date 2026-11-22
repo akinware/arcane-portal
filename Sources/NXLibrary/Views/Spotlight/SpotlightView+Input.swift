@@ -310,6 +310,9 @@ extension SpotlightView {
                 return
             }
             play(game)
+        case .card(.windowsGames):
+            SoundEffectService.shared.play(.click)
+            router.openWindowsGames()
         case .card(.collection):
             SoundEffectService.shared.play(.click)
             router.openCollection()

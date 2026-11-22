@@ -9,10 +9,11 @@ public enum AppRoute: Equatable {
     case detail(UUID)
     case settings(SettingsSection)
     case addGame
+    case windowsGames
     case console
 
     /// Drawn over the screen it was opened from, which stays behind, blurred.
-    public var isOverlay: Bool { self == .addGame || self == .console }
+    public var isOverlay: Bool { self == .addGame || self == .windowsGames || self == .console }
 }
 
 /// A full-screen page covers lower UI layers while their shared background stays mounted.
@@ -112,6 +113,7 @@ public final class AppRouter: ObservableObject {
     public func showDetail(_ id: UUID) { navigate(to: .detail(id)) }
     public func openSettings(_ section: SettingsSection = .startUp) { navigate(to: .settings(section)) }
     public func openAddGame() { navigate(to: .addGame) }
+    public func openWindowsGames() { navigate(to: .windowsGames) }
     public func openConsole() { navigate(to: .console) }
     public func openCollection() { navigate(to: .collection) }
 

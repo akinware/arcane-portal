@@ -245,6 +245,8 @@ struct AppShellView: View {
                 // SettingsView handles its own Esc.
             } else if case .addGame = router.route {
                 // AddGameView handles its own Esc.
+            } else if case .windowsGames = router.route {
+                // WindowsGamesConsoleView handles its own Esc.
             } else if case .console = router.route {
                 // ConsoleView handles its own Esc.
             } else {
@@ -318,6 +320,9 @@ struct AppShellView: View {
                          artwork: artwork)
         case .addGame:
             // Never the underlying route; Add game is drawn over `content`.
+            Color.clear
+        case .windowsGames:
+            // Never the underlying route; Windows Games is drawn over `content`.
             Color.clear
         case .console:
             // Never the underlying route; the console is drawn over `content`.

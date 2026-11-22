@@ -144,6 +144,12 @@ extension AppShellView {
                 } else {
                     NotificationCenter.default.post(name: .nxAddGameGamepadAction, object: action)
                 }
+            case .windowsGames:
+                if action == .menu {
+                    router.isMenuPresented = true
+                } else {
+                    NotificationCenter.default.post(name: .nxWindowsGamesGamepadAction, object: action)
+                }
             case .console:
                 if action == .menu {
                     router.isMenuPresented = true

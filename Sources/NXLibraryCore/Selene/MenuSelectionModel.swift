@@ -2,11 +2,12 @@ import Foundation
 
 /// The control-center row, left to right (Selene's menu.png).
 public enum MenuAction: String, CaseIterable, Identifiable, Equatable {
-    case addGame, refreshLibrary, settings, theme, console, setupCheck, manageSources, power
+    case windowsGames, addGame, refreshLibrary, settings, theme, console, setupCheck, manageSources, power
     public var id: String { rawValue }
 
     public var title: String {
         switch self {
+        case .windowsGames: return "Windows Games"
         case .addGame: return L10n.text("Add Game")
         case .refreshLibrary: return L10n.text("Library refresh")
         case .settings: return L10n.text("Settings")
@@ -20,6 +21,7 @@ public enum MenuAction: String, CaseIterable, Identifiable, Equatable {
 
     public var icon: MaterialIcon {
         switch self {
+        case .windowsGames: return .monitor
         case .addGame: return .add
         case .refreshLibrary: return .sync
         case .settings: return .tune
