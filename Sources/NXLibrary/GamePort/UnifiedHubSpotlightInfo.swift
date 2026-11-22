@@ -109,7 +109,10 @@ struct UnifiedHubSpotlightInfo: View {
             .padding(.top, canvas.u(4))
             .disabled(gp.busy != nil)
 
-            if let busy = gp.busy {
+            if case .profile(let profile, let recipe) = game.kind, gp.launchState.profileID == profile.id {
+                GameLaunchStatusPanel(profile: profile, recipe: recipe, scale: canvas.u(1))
+                    .padding(.top, canvas.u(4))
+            } else if let busy = gp.busy {
                 HStack(spacing: canvas.u(10)) {
                     ProgressView().controlSize(.small)
                     Text(busy)
@@ -202,6 +205,12 @@ struct UnifiedHubSpotlightInfo: View {
                             }
                         }
                     }
+                } else if gp.launchState.profileID == profile.id, gp.launchState.isLaunching {
+                    glassPill("Launching…", icon: "hourglass", prominent: true) {}
+                        .allowsHitTesting(false)
+                } else if case .running(let id, _, _) = gp.launchState, id == profile.id {
+                    glassPill("Running", icon: "play.circle.fill", prominent: true) {}
+                        .allowsHitTesting(false)
                 } else {
                     glassPill("Play", icon: "play.fill", prominent: true) {
                         if let recipe {

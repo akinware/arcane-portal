@@ -414,6 +414,8 @@ final class GamePortConsoleModel: ObservableObject {
     }
 
     func launchGame(profile: Profile, recipe: Recipe) {
+        // A second press while Windows Steam is still starting would only queue another launch.
+        if launchState.isLaunching, launchState.profileID == profile.id { return }
         launchMonitorTask?.cancel()
         launchState = .startingSteam(profileID: profile.id)
         SoundEffectService.shared.play(.launch)
@@ -427,22 +429,44 @@ final class GamePortConsoleModel: ObservableObject {
         }
         let cefStart = fileSize(cefLog)
         let bootstrapStart = fileSize(bootstrapLog)
+        let marks = kit.steamLaunchLogMarks(profile.id)
 
         job("Launching \(recipe.title)") { kit, progress in
-            _ = try kit.play(profile.id, progress: progress)
-            await MainActor.run {
-                self.startLaunchWatcher(profile: profile, recipe: recipe, cefStart: cefStart, bootstrapStart: bootstrapStart)
+            do {
+                _ = try kit.play(profile.id, progress: progress)
+            } catch {
+                await MainActor.run { self.launchState = .idle }
+                throw error
             }
-            return "Launch requested for \(recipe.title)"
+            await MainActor.run {
+                self.startLaunchWatcher(profile: profile, recipe: recipe, cefStart: cefStart, bootstrapStart: bootstrapStart, marks: marks)
+            }
+            return "Starting \(recipe.title) through Windows Steam"
         }
     }
 
-    private func startLaunchWatcher(profile: Profile, recipe: Recipe, cefStart: UInt64, bootstrapStart: UInt64) {
+    private func startLaunchWatcher(profile: Profile, recipe: Recipe, cefStart: UInt64, bootstrapStart: UInt64, marks: SteamLaunchLogMarks? = nil) {
         launchMonitorTask?.cancel()
         let kit = self.gameport
         launchMonitorTask = Task.detached(priority: .utility) {
-            await kit.monitorLaunch(profile: profile, recipe: recipe, cefStart: cefStart, bootstrapStart: bootstrapStart) { state in
+            await kit.monitorLaunch(profile: profile, recipe: recipe, cefStart: cefStart, bootstrapStart: bootstrapStart, marks: marks) { state in
                 Task { @MainActor in self.launchState = state }
+            }
+        }
+    }
+
+    /// Stops a launch in progress or the running game (Windows Steam and the game in that profile).
+    func stopLaunch(profileID: String) {
+        launchMonitorTask?.cancel()
+        launchMonitorTask = nil
+        launchState = .idle
+        let kit = gameport
+        Task.detached {
+            do {
+                try kit.stop(profileID)
+                await MainActor.run { self.say("✓ Stopped") }
+            } catch {
+                await MainActor.run { self.say("✗ \(error)") }
             }
         }
     }

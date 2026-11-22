@@ -587,6 +587,8 @@ struct WindowsGamesConsoleView: View {
                 ProgressView().controlSize(.small)
                 Text("Launching \(title)…").foregroundStyle(.white)
             }.padding(12).background(Color.blue.opacity(0.2), in: RoundedRectangle(cornerRadius: 10))
+        case .preparing(let id, _) where id == profile.id:
+            GameLaunchStatusPanel(profile: profile, recipe: recipe)
         case .running(let id, let sec, let fps) where id == profile.id:
             HStack(spacing: 8) {
                 Image(systemName: "play.circle.fill").foregroundStyle(.green)
