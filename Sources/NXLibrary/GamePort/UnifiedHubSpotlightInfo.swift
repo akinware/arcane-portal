@@ -184,6 +184,16 @@ struct UnifiedHubSpotlightInfo: View {
                     glassPill("Play (No Win Steam)", icon: "bolt.horizontal.fill", prominent: true) {
                         launchBridgeForGame(appID: appID, exe: exe)
                     }
+                    // The download can be played through Windows Steam too.
+                    if hasWinSteam {
+                        glassPill("Add to Windows Steam", icon: "plus.square.on.square", prominent: false) {
+                            addDepotToWindowsSteam(profileID: profile.id)
+                        }
+                    } else {
+                        glassPill("Install Win Steam", icon: "square.and.arrow.down", prominent: false) {
+                            installWindowsSteam(profileID: profile.id)
+                        }
+                    }
                 } else if !hasWinSteam && game.steamAppID != nil {
                     if isVACBlockedForBridge {
                         glassPill("Install Win Steam", icon: "square.and.arrow.down.fill", prominent: true) {
@@ -293,6 +303,15 @@ struct UnifiedHubSpotlightInfo: View {
         gp.startSteamDownload(appID: appID, title: game.title, origin: .spotlight, vacNote: isVACBlockedForBridge)
     }
 
+    /// Clones the downloaded game into this profile's Windows Steam library (no extra disk space),
+    /// so the main button becomes Play through Windows Steam.
+    private func addDepotToWindowsSteam(profileID: String) {
+        gp.job("Adding \(game.title) to Windows Steam") { k, p in
+            _ = try k.addDepotToWindowsSteam(profileID, progress: p)
+            return "\(game.title) is in Windows Steam's library"
+        }
+    }
+
     private func installWindowsSteam(profileID: String) {
         gp.job("Installing Windows Steam in \(game.title)") { k, p in
             let steam = try k.steam(for: profileID)
@@ -382,6 +401,20 @@ struct UnifiedHubSpotlightInfo: View {
 
             if case .profile(let profile, let recipe) = game.kind {
                 Divider()
+                if gp.installedEngines.count > 1 {
+                    Picker("Engine", selection: Binding<String>(
+                        get: { profile.engineID },
+                        set: { id in
+                            gp.job("Switching \(game.title) to another engine") { k, p in
+                                let moved = try k.switchEngine(profile.id, to: id, progress: p)
+                                return "\(game.title) now uses \(moved.engineID)"
+                            }
+                        }
+                    )) {
+                        ForEach(gp.installedEngines, id: \.id) { Text($0.manifest.displayName).tag($0.id) }
+                    }
+                    .help("Which Wine runs this game. A snapshot is taken first, so you can go back.")
+                }
                 HStack(spacing: 14) {
                     Picker("Renderer", selection: Binding<Renderer>(
                         get: { profile.renderer ?? recipe?.renderer ?? .dxmt },
