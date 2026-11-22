@@ -200,6 +200,14 @@ struct SettingsGamePortSection: View {
                 }
             }
             SeleneValueRow(
+                "Stop All Windows Apps",
+                subtitle: "Quits Windows Steam, games and any Wine processes still running in the background, in every profile and CrossOver bottle.",
+                value: "",
+                actionTitle: "Stop All"
+            ) {
+                gp.stopAllWindowsApps()
+            }
+            SeleneValueRow(
                 "In-App Steam Downloads (DepotDownloader \(DepotDownloaderTool.version))",
                 subtitle: "Downloads Windows Steam games inside Arcane. Sign in once with the Steam Mobile App QR code — no password, no Windows Steam.",
                 value: steamDownloadAccountSummary,

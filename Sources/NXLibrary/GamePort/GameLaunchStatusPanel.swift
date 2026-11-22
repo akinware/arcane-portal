@@ -24,6 +24,16 @@ struct GameLaunchStatusPanel: View {
             running(seconds: seconds, fps: fps)
         case .needsAttention(let id, let diagnosis) where id == profile.id:
             attention(diagnosis)
+        case .closing(let id) where id == profile.id:
+            HStack(spacing: u(10)) {
+                ProgressView().controlSize(.small)
+                Text("Game closed — shutting down Windows Steam (finishing Steam Cloud sync)…")
+                    .font(.system(size: u(14), weight: .medium))
+                    .foregroundColor(SeleneTheme.ink82)
+            }
+            .padding(.horizontal, u(16))
+            .padding(.vertical, u(10))
+            .background(SeleneTheme.glass, in: RoundedRectangle(cornerRadius: u(16), style: .continuous))
         default:
             EmptyView()
         }

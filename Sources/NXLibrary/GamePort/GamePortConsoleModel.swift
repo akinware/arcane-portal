@@ -60,6 +60,8 @@ final class GamePortConsoleModel: ObservableObject {
     private var labResultsByProfile: [String: [LabResult]] = [:]
     private var launchMonitorTask: Task<Void, Never>?
     private var steamDownloadTask: Task<Void, Never>?
+    /// Watchdog that stops the launched game's Wine session if Arcane is force quit.
+    private var launchGuard: Process?
 
     init() {
         communityVerdicts = gameport.telemetry.loadCachedVerdicts()
@@ -70,6 +72,12 @@ final class GamePortConsoleModel: ObservableObject {
         ) { _ in
             MainActor.assumeIsolated {
                 let model = GamePortConsoleModel.shared
+                // Windows Steam / the game started from Arcane end with Arcane.
+                if let profileID = model.launchState.profileID {
+                    model.launchMonitorTask?.cancel()
+                    try? model.gameport.stop(profileID)
+                }
+                model.launchGuard?.terminate()
                 guard let s = model.steamDownload, s.isActive else { return }
                 model.steamDownloadTask?.cancel()
                 let dir = model.gameport.steamDepot.depotDirectory(appID: s.appID)
@@ -414,8 +422,13 @@ final class GamePortConsoleModel: ObservableObject {
     }
 
     func launchGame(profile: Profile, recipe: Recipe) {
-        // A second press while Windows Steam is still starting would only queue another launch.
-        if launchState.isLaunching, launchState.profileID == profile.id { return }
+        // A second press while Windows Steam is starting (or closing) would only queue another launch.
+        if launchState.profileID == profile.id {
+            switch launchState {
+            case .startingSteam, .waitingForGame, .preparing, .running, .closing: return
+            default: break
+            }
+        }
         launchMonitorTask?.cancel()
         launchState = .startingSteam(profileID: profile.id)
         SoundEffectService.shared.play(.launch)
@@ -438,7 +451,10 @@ final class GamePortConsoleModel: ObservableObject {
                 await MainActor.run { self.launchState = .idle }
                 throw error
             }
+            let guardProcess = try? kit.startOwnerExitGuard(profile.id)
             await MainActor.run {
+                self.launchGuard?.terminate()
+                self.launchGuard = guardProcess
                 self.startLaunchWatcher(profile: profile, recipe: recipe, cefStart: cefStart, bootstrapStart: bootstrapStart, marks: marks)
             }
             return "Starting \(recipe.title) through Windows Steam"
@@ -449,8 +465,33 @@ final class GamePortConsoleModel: ObservableObject {
         launchMonitorTask?.cancel()
         let kit = self.gameport
         launchMonitorTask = Task.detached(priority: .utility) {
-            await kit.monitorLaunch(profile: profile, recipe: recipe, cefStart: cefStart, bootstrapStart: bootstrapStart, marks: marks) { state in
-                Task { @MainActor in self.launchState = state }
+            await kit.monitorLaunch(profile: profile, recipe: recipe, cefStart: cefStart, bootstrapStart: bootstrapStart,
+                                    marks: marks, closeSteamWhenGameExits: true) { state in
+                Task { @MainActor in
+                    self.launchState = state
+                    if case .idle = state { self.endLaunchGuard() }
+                    if case .needsAttention = state { self.endLaunchGuard() }
+                }
+            }
+        }
+    }
+
+    private func endLaunchGuard() {
+        launchGuard?.terminate()
+        launchGuard = nil
+    }
+
+    /// Stops every Windows program (all profiles, CrossOver bottles, and leftovers from earlier sessions).
+    func stopAllWindowsApps() {
+        launchMonitorTask?.cancel()
+        launchMonitorTask = nil
+        launchState = .idle
+        endLaunchGuard()
+        let kit = gameport
+        Task.detached {
+            let n = kit.stopAllWindowsProcesses()
+            await MainActor.run {
+                self.say(n == 0 ? "✓ No Windows apps were running" : "✓ Stopped \(n) Windows process\(n == 1 ? "" : "es")")
             }
         }
     }
@@ -460,6 +501,7 @@ final class GamePortConsoleModel: ObservableObject {
         launchMonitorTask?.cancel()
         launchMonitorTask = nil
         launchState = .idle
+        endLaunchGuard()
         let kit = gameport
         Task.detached {
             do {

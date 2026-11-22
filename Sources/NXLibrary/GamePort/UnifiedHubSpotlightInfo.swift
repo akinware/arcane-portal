@@ -211,6 +211,9 @@ struct UnifiedHubSpotlightInfo: View {
                 } else if case .running(let id, _, _) = gp.launchState, id == profile.id {
                     glassPill("Running", icon: "play.circle.fill", prominent: true) {}
                         .allowsHitTesting(false)
+                } else if case .closing(let id) = gp.launchState, id == profile.id {
+                    glassPill("Closing…", icon: "hourglass", prominent: true) {}
+                        .allowsHitTesting(false)
                 } else {
                     glassPill("Play", icon: "play.fill", prominent: true) {
                         if let recipe {
@@ -429,6 +432,11 @@ struct UnifiedHubSpotlightInfo: View {
                     Button("Run with Siliconium") { NSWorkspace.shared.open(app) }
                 }
                 Spacer()
+                Button("Stop All Windows Apps") {
+                    showOptionsSheet = false
+                    gp.stopAllWindowsApps()
+                }
+                .help("Quits Windows Steam, games and any Wine processes left running, in every profile.")
                 Button("Open Full Store Catalog & Setup…") {
                     showOptionsSheet = false
                     onOpenCatalog()
