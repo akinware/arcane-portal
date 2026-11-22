@@ -15,6 +15,7 @@ struct UnifiedHubSpotlightInfo: View {
     @State private var showOptionsSheet = false
     @State private var showBridgeDownloadSheet = false
     @State private var bridgeSteamUser = ""
+    @State private var editingBridgeSteamUser = false
 
     private var downloadedDepotExe: URL? {
         guard let appID = game.steamAppID else { return nil }
@@ -259,9 +260,18 @@ struct UnifiedHubSpotlightInfo: View {
     }
 
     private func openBridgeDownloadSheet() {
-        if bridgeSteamUser.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-           let detected = ExternalDiscovery.macSteamAccountName() {
+        let detected = ExternalDiscovery.macSteamAccountName()
+        if let detected, !detected.isEmpty {
             bridgeSteamUser = detected
+            editingBridgeSteamUser = false
+            // 1-click native download for non-VAC games when Mac Steam account is already known —
+            // no popup or editable username field to accidentally clear.
+            if !isVACBlockedForBridge, let appID = game.steamAppID {
+                gp.launchInteractiveBridgeDownload(appID: appID, username: detected, title: game.title)
+                return
+            }
+        } else {
+            editingBridgeSteamUser = true
         }
         showBridgeDownloadSheet = true
     }
@@ -434,16 +444,27 @@ struct UnifiedHubSpotlightInfo: View {
 
     private var bridgeDownloadSheet: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Download Windows Depot — \(game.title)").font(.headline)
-            Text("Downloads Windows game files natively via Valve steamcmd (no Windows Steam client needed). Leave username blank for anonymous free depots.")
+            Text("Download Game — \(game.title)").font(.headline)
+            Text("Downloads the Windows game files natively via Valve steamcmd (no Windows Steam client needed).")
                 .font(.callout).foregroundStyle(.secondary)
             if isVACBlockedForBridge {
                 Text("Note: This game uses VAC. Bridge Mode (No Win Steam) is for offline / local bot matches only — use Install Win Steam for online VAC matchmaking.")
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
-            TextField("Steam username (or leave blank for anonymous)", text: $bridgeSteamUser)
-                .textFieldStyle(.roundedBorder)
+            if !editingBridgeSteamUser, !bridgeSteamUser.isEmpty {
+                HStack {
+                    Label("Using your logged-in Mac Steam account (\(bridgeSteamUser))", systemImage: "person.crop.circle.badge.checkmark")
+                        .font(.callout)
+                    Spacer()
+                    Button("Switch…") { editingBridgeSteamUser = true }
+                        .buttonStyle(.link)
+                        .font(.caption)
+                }
+            } else {
+                TextField("Steam login username (blank for free demos)", text: $bridgeSteamUser)
+                    .textFieldStyle(.roundedBorder)
+            }
             HStack {
                 Spacer()
                 Button("Cancel") { showBridgeDownloadSheet = false }
@@ -456,7 +477,7 @@ struct UnifiedHubSpotlightInfo: View {
             }
         }
         .padding(20)
-        .frame(width: 440)
+        .frame(width: 460)
     }
 }
 
