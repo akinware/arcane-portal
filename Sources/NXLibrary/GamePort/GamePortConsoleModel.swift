@@ -26,7 +26,16 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var x87Version: String?
     @Published var aarchxInstalled = false
     @Published var aarchxVersion: String?
-    @Published var bridgeStatus: SteamBridgeStatus = SteamBridge(paths: Paths.default()).status()
+    @Published var bridgeStatus: SteamBridgeStatus = SteamBridgeStatus(
+        macSteamInstalled: false,
+        macSteamRunning: false,
+        steamClientDylib: nil,
+        steamClientHasX86_64: false,
+        overlayDir: Paths.default().tools.appendingPathComponent("steam-bridge", isDirectory: true),
+        overlayInstalled: false,
+        probeExecutable: Paths.default().tools.appendingPathComponent("steam-bridge/bridge_probe.exe"),
+        steamCmdInstalled: false
+    )
     @Published var crossOverInstallation: CrossOverInstallation?
     @Published var crossOverGames: [CrossOverBottleLaunchItem] = []
     @Published var epicInstalled = false
@@ -51,8 +60,12 @@ final class GamePortConsoleModel: ObservableObject {
 
     init() {
         communityVerdicts = gameport.telemetry.loadCachedVerdicts()
-        refresh()
-        refreshCommunityVerdicts()
+        // Defer full disk/engine/Steam discovery off the static `shared` dispatch_once initializer
+        // so SwiftUI never re-enters `shared` during startup layout.
+        Task { @MainActor in
+            self.refresh()
+            self.refreshCommunityVerdicts()
+        }
     }
 
     func reloadStorage() {
