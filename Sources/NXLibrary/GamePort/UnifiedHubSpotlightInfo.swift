@@ -92,8 +92,11 @@ struct UnifiedHubSpotlightInfo: View {
 
                 if let appID = game.steamAppID, !isVACBlockedForBridge, gp.bridgeStatus.overlayInstalled {
                     if let exe = downloadedDepotExe {
-                        glassPill("Play (No Win Steam)", icon: "bolt.horizontal.fill", prominent: false) {
-                            launchBridgeForGame(appID: appID, exe: exe)
+                        // The primary pill is often this same Bridge launch already; don't show it twice.
+                        if !primaryLaunchesViaBridge {
+                            glassPill("Play (No Win Steam)", icon: "bolt.horizontal.fill", prominent: false) {
+                                launchBridgeForGame(appID: appID, exe: exe)
+                            }
                         }
                     } else if !game.isReady {
                         glassPill("Download Depot", icon: "arrow.down.circle", prominent: false) {
@@ -145,6 +148,20 @@ struct UnifiedHubSpotlightInfo: View {
         .frame(width: canvas.u(960), alignment: .leading)
         .sheet(isPresented: $showOptionsSheet) { optionsSheet }
         .sheet(item: gp.steamDownloadSheetBinding(for: .spotlight)) { _ in SteamQRDownloadSheet() }
+    }
+
+    /// True when `primaryActionButton` already starts the downloaded depot through the Steam Bridge.
+    private var primaryLaunchesViaBridge: Bool {
+        guard downloadedDepotExe != nil, let appID = game.steamAppID, gp.bridgeStatus.isReadyToLaunch else { return false }
+        switch game.kind {
+        case .profile(let profile, let recipe):
+            guard recipe?.launch != .battlenet else { return false }
+            return (try? gp.gameport.steam(for: profile.id))?.isGameInstalled(appID: appID) != true
+        case .ownedSteam(let owned, _):
+            return gp.externalEnv.macSteamGame(appID: owned.appID) == nil && !isVACBlockedForBridge
+        case .crossOverBottle, .storefront:
+            return false
+        }
     }
 
     @ViewBuilder
