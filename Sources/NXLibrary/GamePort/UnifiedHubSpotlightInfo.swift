@@ -150,6 +150,21 @@ struct UnifiedHubSpotlightInfo: View {
         .sheet(item: gp.steamDownloadSheetBinding(for: .spotlight)) { _ in SteamQRDownloadSheet() }
     }
 
+    /// The recipe the Windows games screen should open on for this game.
+    private var focusRecipeID: String? {
+        switch game.kind {
+        case .profile(let profile, let recipe): return recipe?.id ?? profile.recipeID
+        case .ownedSteam(_, let recipe): return recipe?.id
+        case .crossOverBottle, .storefront: return nil
+        }
+    }
+
+    /// Opens the Windows games screen on this game rather than on whatever it showed last.
+    private func openCatalogForThisGame() {
+        gp.focusRecipeID = focusRecipeID
+        onOpenCatalog()
+    }
+
     /// True when `primaryActionButton` already starts the downloaded depot through the Steam Bridge.
     private var primaryLaunchesViaBridge: Bool {
         guard downloadedDepotExe != nil, let appID = game.steamAppID, gp.bridgeStatus.isReadyToLaunch else { return false }
@@ -480,9 +495,9 @@ struct UnifiedHubSpotlightInfo: View {
                     gp.stopAllWindowsApps()
                 }
                 .help("Quits Windows Steam, games and any Wine processes left running, in every profile.")
-                Button("Open Full Store Catalog & Setup…") {
+                Button(focusRecipeID == nil ? "Open Full Store Catalog & Setup…" : "More Settings for This Game…") {
                     showOptionsSheet = false
-                    onOpenCatalog()
+                    openCatalogForThisGame()
                 }
             }
         }

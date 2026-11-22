@@ -67,6 +67,24 @@ struct WindowsGamesConsoleView: View {
         }.prefix(80))
     }
 
+    /// Selects the game Spotlight asked for (Options → More Settings for This Game), on a tab that lists it.
+    @discardableResult
+    private func applyFocus() -> Bool {
+        guard let id = gp.focusRecipeID else { return false }
+        gp.focusRecipeID = nil
+        guard let recipe = gp.recipes.first(where: { $0.id == id }) else { return false }
+        if gp.profiles.contains(where: { $0.recipeID == id }) {
+            tab = .installed
+            query = ""
+        } else {
+            // "All" lists only the first matches, so search for the game to keep it in view.
+            tab = .all
+            query = recipe.title
+        }
+        selectedRecipeID = id
+        return true
+    }
+
     private var selectedRecipe: Recipe? {
         if let id = selectedRecipeID, let r = gp.recipes.first(where: { $0.id == id }) { return r }
         if let firstProfile = gp.profiles.first?.recipeID, let r = gp.recipes.first(where: { $0.id == firstProfile }) { return r }
@@ -117,8 +135,9 @@ struct WindowsGamesConsoleView: View {
         }
         .onAppear {
             gp.refresh()
-            if selectedRecipeID == nil { selectedRecipeID = selectedRecipe?.id }
+            if !applyFocus(), selectedRecipeID == nil { selectedRecipeID = selectedRecipe?.id }
         }
+        .onChange(of: gp.focusRecipeID) { _, _ in _ = applyFocus() }
         .onReceive(NotificationCenter.default.publisher(for: .nxWindowsGamesGamepadAction)) { note in
             guard let action = note.object as? GamepadAction else { return }
             switch action {

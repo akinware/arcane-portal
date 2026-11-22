@@ -15,6 +15,9 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var installedEngines: [InstalledEngine] = []
     @Published var recipes: [Recipe] = []
     @Published var profiles: [Profile] = []
+    /// The game the Windows games screen should show next time it opens (set by Spotlight's
+    /// Options, cleared once the screen has selected it).
+    @Published var focusRecipeID: String?
     @Published var steamBase: SteamBase.Stamp?
     @Published var storageInfo: StorageInfo = StorageInfo.inspect(
         Paths.default().root,
