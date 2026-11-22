@@ -63,6 +63,19 @@ final class GamePortConsoleModel: ObservableObject {
 
     init() {
         communityVerdicts = gameport.telemetry.loadCachedVerdicts()
+        // DepotDownloader is a separate process: quitting Arcane must not leave it downloading
+        // on its own (a later download of the same game would then fight it for the files).
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.willTerminateNotification, object: nil, queue: .main
+        ) { _ in
+            MainActor.assumeIsolated {
+                let model = GamePortConsoleModel.shared
+                guard let s = model.steamDownload, s.isActive else { return }
+                model.steamDownloadTask?.cancel()
+                let dir = model.gameport.steamDepot.depotDirectory(appID: s.appID)
+                model.gameport.steamQRDownloader.tool.stopRunning(directory: dir, timeout: 2)
+            }
+        }
         // Defer full disk/engine/Steam discovery off the static `shared` dispatch_once initializer
         // so SwiftUI never re-enters `shared` during startup layout.
         Task { @MainActor in
