@@ -13,6 +13,7 @@ struct WindowsGamesConsoleView: View {
     let showsHints: Bool
 
     enum FilterTab: String, CaseIterable, Identifiable {
+        case mySteam = "My Steam"
         case installed = "My Games"
         case epicGog = "Epic & GOG"
         case crossOver = "CrossOver"
@@ -23,7 +24,7 @@ struct WindowsGamesConsoleView: View {
         var id: String { rawValue }
     }
 
-    @State private var tab: FilterTab = .installed
+    @State private var tab: FilterTab = .mySteam
     @State private var query = ""
     @State private var selectedRecipeID: String?
     @State private var showAddSteam = false
@@ -40,6 +41,10 @@ struct WindowsGamesConsoleView: View {
     private var filteredRecipes: [Recipe] {
         let base: [Recipe]
         switch tab {
+        case .mySteam:
+            base = gp.matchedOwnedSteamRecipes.isEmpty
+                ? Array(gp.recipes.prefix(40))
+                : gp.matchedOwnedSteamRecipes
         case .installed:
             let set = Set(gp.profiles.compactMap(\.recipeID))
             let mine = gp.recipes.filter { set.contains($0.id) }

@@ -36,6 +36,7 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var gogSignedIn = false
     @Published var storefrontGames: [StorefrontGame] = []
     @Published var epicLibrary: [StorefrontGame] = []
+    @Published var matchedOwnedSteamRecipes: [Recipe] = []
     @Published var externalEnv: ExternalEnvironment = .empty
     @Published var communityVerdicts: [Int: [CommunityVerdict]] = [:]
     @Published var launchState: LaunchState = .idle
@@ -87,6 +88,8 @@ final class GamePortConsoleModel: ObservableObject {
         gogSignedIn = gameport.gog.isSignedIn
         storefrontGames = gameport.discoverStorefrontGames(includeUninstalledEpic: false)
         externalEnv = ExternalDiscovery.scan()
+        let recipeByAppID = Dictionary(recipes.compactMap { r in r.steamAppID.map { ($0, r) } }, uniquingKeysWith: { first, _ in first })
+        matchedOwnedSteamRecipes = externalEnv.macSteamOwnedGames.compactMap { recipeByAppID[$0.appID] }
         if epicInstalled && epicSignedIn {
             refreshEpicLibrary()
         } else {

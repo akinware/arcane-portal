@@ -90,7 +90,9 @@ struct SpotlightCardInfoView: View {
             VStack(alignment: .leading, spacing: canvas.u(16)) {
                 let gp = GamePortConsoleModel.shared
                 HStack(spacing: canvas.u(26)) {
-                    stat("POWERKIT", "\(gp.profiles.count)")
+                    stat("MY STEAM", "\(gp.matchedOwnedSteamRecipes.count)")
+                    divider
+                    stat("READY", "\(gp.profiles.count)")
                     divider
                     stat("CROSSOVER", "\(gp.crossOverGames.count)")
                     divider
@@ -98,7 +100,7 @@ struct SpotlightCardInfoView: View {
                     divider
                     stat("ENGINES", "\(gp.installedEngines.count)")
                 }
-                if !gp.profiles.isEmpty || !gp.crossOverGames.isEmpty || !gp.storefrontGames.isEmpty {
+                if !gp.profiles.isEmpty || !gp.matchedOwnedSteamRecipes.isEmpty || !gp.crossOverGames.isEmpty || !gp.storefrontGames.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: canvas.u(14)) {
                             ForEach(gp.profiles.prefix(8), id: \.id) { profile in
@@ -143,6 +145,38 @@ struct SpotlightCardInfoView: View {
                                     .padding(.horizontal, canvas.u(12))
                                     .padding(.vertical, canvas.u(8))
                                     .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: canvas.u(10)))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            let readyIDs = Set(gp.profiles.compactMap(\.recipeID))
+                            ForEach(gp.matchedOwnedSteamRecipes.filter { !readyIDs.contains($0.id) }.prefix(8)) { recipe in
+                                Button {
+                                    gp.job("Setting up \(recipe.title)") { k, p in
+                                        try k.createProfile(recipeID: recipe.id, progress: p).id
+                                    }
+                                } label: {
+                                    HStack(spacing: canvas.u(10)) {
+                                        if let appID = recipe.steamAppID, let url = GamePortConsoleModel.steamPosterURL(appID: appID) {
+                                            AsyncImage(url: url) { phase in
+                                                if let img = phase.image { img.resizable().aspectRatio(contentMode: .fill) }
+                                                else { Color.blue.opacity(0.14) }
+                                            }
+                                            .frame(width: canvas.u(42), height: canvas.u(56))
+                                            .clipShape(RoundedRectangle(cornerRadius: canvas.u(6)))
+                                        }
+                                        VStack(alignment: .leading, spacing: canvas.u(3)) {
+                                            Text(recipe.title)
+                                                .seleneFont(15, .semibold)
+                                                .foregroundColor(SeleneTheme.ink)
+                                                .lineLimit(1)
+                                            Text("My Steam · Set Up")
+                                                .seleneFont(12)
+                                                .foregroundColor(.cyan.opacity(0.9))
+                                        }
+                                    }
+                                    .padding(.horizontal, canvas.u(12))
+                                    .padding(.vertical, canvas.u(8))
+                                    .background(Color.blue.opacity(0.14), in: RoundedRectangle(cornerRadius: canvas.u(10)))
                                 }
                                 .buttonStyle(.plain)
                             }
