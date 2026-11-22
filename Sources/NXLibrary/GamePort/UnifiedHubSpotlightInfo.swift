@@ -125,6 +125,18 @@ struct UnifiedHubSpotlightInfo: View {
                     }
                 }
                 .padding(.top, canvas.u(4))
+            } else if let last = gp.statusLog.last, !last.isEmpty {
+                let isErr = last.hasPrefix("✗")
+                HStack(spacing: canvas.u(8)) {
+                    Image(systemName: isErr ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
+                        .font(.system(size: canvas.u(14)))
+                        .foregroundColor(isErr ? .orange : .green)
+                    Text(last)
+                        .seleneFont(14, .medium)
+                        .foregroundColor(isErr ? Color.orange.opacity(0.95) : SeleneTheme.ink82)
+                        .lineLimit(2)
+                }
+                .padding(.top, canvas.u(4))
             }
         }
         .frame(width: canvas.u(960), alignment: .leading)
@@ -144,13 +156,32 @@ struct UnifiedHubSpotlightInfo: View {
                     }
                 }
             } else {
-                glassPill("Play", icon: "play.fill", prominent: true) {
-                    if let recipe {
-                        gp.launchGame(profile: profile, recipe: recipe)
-                    } else {
-                        gp.job("Starting \(game.title)") { k, p in
-                            _ = try k.play(profile.id, progress: p)
-                            return "Launched \(game.title)"
+                let hasWinSteam = (try? gp.gameport.steam(for: profile.id).isInstalled) == true
+                if !hasWinSteam, let exe = downloadedDepotExe, let appID = game.steamAppID, gp.bridgeStatus.isReadyToLaunch {
+                    glassPill("Play (No Win Steam)", icon: "bolt.horizontal.fill", prominent: true) {
+                        launchBridgeForGame(appID: appID, exe: exe)
+                    }
+                } else if !hasWinSteam && game.steamAppID != nil {
+                    glassPill("Download Game (No Win Steam)", icon: "arrow.down.circle.fill", prominent: true) {
+                        showBridgeDownloadSheet = true
+                    }
+                    glassPill("Install Win Steam", icon: "square.and.arrow.down", prominent: false) {
+                        gp.job("Installing Windows Steam in \(game.title)") { k, p in
+                            let steam = try k.steam(for: profile.id)
+                            try await steam.install(progress: p)
+                            _ = try k.openSteam(profile.id, progress: p)
+                            return "Steam installed & opened"
+                        }
+                    }
+                } else {
+                    glassPill("Play", icon: "play.fill", prominent: true) {
+                        if let recipe {
+                            gp.launchGame(profile: profile, recipe: recipe)
+                        } else {
+                            gp.job("Starting \(game.title)") { k, p in
+                                _ = try k.play(profile.id, progress: p)
+                                return "Launched \(game.title)"
+                            }
                         }
                     }
                 }
