@@ -24,6 +24,10 @@ struct SteamDownloadSession: Identifiable, Equatable {
     var phase: Phase
     var account: String?
     var statusLine: String?
+    /// Updating a game that is already downloaded (only changed files are fetched).
+    var isUpdate = false
+    /// After an update: false when the game was already up to date.
+    var updateChanged: Bool?
 
     var isActive: Bool {
         switch phase {
@@ -58,6 +62,8 @@ struct SteamDownloadSession: Identifiable, Equatable {
             phase = .preparing("Signed in as \(acct) — preparing download…")
         case .downloading(let pct, let detail):
             phase = .downloading(percent: pct, detail: detail)
+        case .updateChecked(let changed):
+            updateChanged = changed
         case .completed(_, let exe):
             phase = .completed(executable: exe)
         }
@@ -105,7 +111,7 @@ struct SteamQRDownloadSheet: View {
             case .downloading(let pct, let detail):
                 downloading(percent: pct, detail: detail, status: session.statusLine)
             case .completed(let exe):
-                completed(exe)
+                completed(exe, updateChanged: session.updateChanged)
             case .failed(let message):
                 failed(message)
             }
@@ -126,7 +132,7 @@ struct SteamQRDownloadSheet: View {
                 .font(.system(size: 26, weight: .semibold))
                 .foregroundColor(SeleneTheme.ink)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Download \(session.title)")
+                Text(session.isUpdate ? "Update \(session.title)" : "Download \(session.title)")
                     .font(.system(size: 19, weight: .bold))
                     .foregroundColor(SeleneTheme.ink)
                     .lineLimit(1)
@@ -200,10 +206,16 @@ struct SteamQRDownloadSheet: View {
         }
     }
 
-    private func completed(_ exe: URL?) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+    private func completed(_ exe: URL?, updateChanged: Bool?) -> some View {
+        let text: String
+        switch updateChanged {
+        case false?: text = "Already up to date — nothing to download"
+        case true?: text = "Updated to the latest version — ready to play"
+        case nil: text = exe.map { "Ready to play — \($0.lastPathComponent)" } ?? "Download finished"
+        }
+        return VStack(alignment: .leading, spacing: 10) {
             GlassProgressBar(fraction: 1).frame(height: 10)
-            Label(exe.map { "Ready to play — \($0.lastPathComponent)" } ?? "Download finished", systemImage: "checkmark.circle.fill")
+            Label(text, systemImage: "checkmark.circle.fill")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.green)
         }

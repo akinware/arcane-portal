@@ -368,7 +368,9 @@ final class GamePortConsoleModel: ObservableObject {
 
     /// Starts (or re-shows) the native in-app Windows game download for a Steam AppID.
     /// The first download shows a Steam Mobile App QR code; later ones reuse the remembered session.
-    func startSteamDownload(appID: Int, title: String, origin: SteamDownloadSession.Origin, vacNote: Bool = false) {
+    /// Downloads a game without Windows Steam, or with `update`, brings an already downloaded one
+    /// up to date (only changed files are fetched; the game stays playable when nothing changed).
+    func startSteamDownload(appID: Int, title: String, origin: SteamDownloadSession.Origin, vacNote: Bool = false, update: Bool = false) {
         if let current = steamDownload, current.isActive {
             if current.appID == appID {
                 steamDownloadPresented = true
@@ -388,9 +390,11 @@ final class GamePortConsoleModel: ObservableObject {
             vacNote: vacNote,
             phase: .preparing(silent ? "Signing in to Steam…" : "Requesting a sign-in QR code…")
         )
-        steamDownload = session
+        var started = session
+        started.isUpdate = update
+        steamDownload = started
         steamDownloadPresented = true
-        say("▶ Downloading \(title) (Steam \(appID))")
+        say(update ? "▶ Checking \(title) for updates (Steam \(appID))" : "▶ Downloading \(title) (Steam \(appID))")
         let sessionID = session.id
 
         steamDownloadTask?.cancel()
@@ -401,7 +405,11 @@ final class GamePortConsoleModel: ObservableObject {
                     guard let self, self.steamDownload?.id == sessionID else { return }
                     self.steamDownload?.apply(event)
                     if case .completed(_, let exe) = event {
-                        self.say("✓ Downloaded \(title)\(exe.map { " (\($0.lastPathComponent))" } ?? "")")
+                        switch self.steamDownload?.updateChanged {
+                        case false?: self.say("✓ \(title) is up to date")
+                        case true?: self.say("✓ Updated \(title)")
+                        case nil: self.say("✓ Downloaded \(title)\(exe.map { " (\($0.lastPathComponent))" } ?? "")")
+                        }
                         self.refresh()
                         try? await Task.sleep(nanoseconds: 1_400_000_000)
                         if self.steamDownload?.id == sessionID { self.dismissSteamDownload() }
@@ -442,7 +450,7 @@ final class GamePortConsoleModel: ObservableObject {
     func retrySteamDownload() {
         guard let s = steamDownload else { return }
         steamDownload = nil
-        startSteamDownload(appID: s.appID, title: s.title, origin: s.origin, vacNote: s.vacNote)
+        startSteamDownload(appID: s.appID, title: s.title, origin: s.origin, vacNote: s.vacNote, update: s.isUpdate)
     }
 
     /// Forgets every remembered Steam QR sign-in (DepotDownloader's private token store).

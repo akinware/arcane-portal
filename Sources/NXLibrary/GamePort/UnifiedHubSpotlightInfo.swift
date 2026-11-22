@@ -472,6 +472,14 @@ struct UnifiedHubSpotlightInfo: View {
                             gp.launchViaBridge(title: game.title, executable: exe, allowVACOverride: overrideVAC) { _, _ in profileID }
                         }
                     }
+                    if downloadedDepotExe != nil, let appID = game.steamAppID {
+                        Button("Update Game") {
+                            showOptionsSheet = false
+                            gp.startSteamDownload(appID: appID, title: game.title, origin: .spotlight,
+                                                  vacNote: isVACBlockedForBridge, update: true)
+                        }
+                        .help("Brings the No-Win-Steam copy up to date. Only changed files are downloaded.")
+                    }
                     Button("Open Steam") {
                         gp.job("Opening Steam") { k, p in _ = try k.openSteam(profile.id, progress: p); return "Steam opened" }
                     }
