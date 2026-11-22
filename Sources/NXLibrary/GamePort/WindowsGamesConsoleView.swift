@@ -29,6 +29,8 @@ struct WindowsGamesConsoleView: View {
     @State private var steamResults: [SteamStore.SearchResult] = []
     @State private var searchingSteam = false
     @State private var showTools = false
+    @State private var showBridgeDownload = false
+    @State private var bridgeSteamUser = ""
 
     private var filteredRecipes: [Recipe] {
         let base: [Recipe]
@@ -122,6 +124,7 @@ struct WindowsGamesConsoleView: View {
             router.back()
         }
         .sheet(isPresented: $showAddSteam) { addSteamSheet }
+        .sheet(isPresented: $showBridgeDownload) { bridgeDownloadSheet }
     }
 
     private func stepSelection(by delta: Int) {
@@ -298,6 +301,16 @@ struct WindowsGamesConsoleView: View {
 
                     // Smart External Launchers (Obelisk for Linux-EAC, Siliconium for CoD, Mac Steam, CrossOver)
                     externalBar(recipe: recipe, ac: ac)
+
+                    // Clean-Room Steam Bridge (Zero Windows Steam)
+                    if let profile, recipe.launch != .battlenet, recipe.steamAppID != nil {
+                        bridgeCard(profile: profile, recipe: recipe, ac: ac)
+                    }
+
+                    // 1-Click CrossOver Bottle Quick-Launch Strip (when CrossOver bottles have games)
+                    if !gp.crossOverGames.isEmpty {
+                        crossOverBottlesStrip
+                    }
 
                     // Compatibility + Live RAM-Tier Verdicts
                     VStack(alignment: .leading, spacing: 8) {
@@ -566,18 +579,120 @@ struct WindowsGamesConsoleView: View {
                         Button("Play in Mac Steam") { NSWorkspace.shared.open(url) }.controlSize(.small)
                     }
                 }
-                if let cxBottle, let app = gp.externalEnv.crossoverApp {
+                if let cxBottle, let appID = recipe.steamAppID, gp.externalEnv.crossoverApp != nil {
                     HStack {
                         Label("Installed in CrossOver bottle \"\(cxBottle.name)\".", systemImage: "shippingbox")
                             .font(.caption).foregroundStyle(.white.opacity(0.85))
                         Spacer()
-                        Button("Open CrossOver") { NSWorkspace.shared.open(app) }.controlSize(.small)
+                        Button("1-Click Play via CrossOver") {
+                            gp.launchCrossOverGame(CrossOverBottleLaunchItem(
+                                bottleName: cxBottle.name,
+                                bottlePath: cxBottle.path,
+                                title: recipe.title,
+                                kind: .steam(appID: appID)
+                            ))
+                        }.controlSize(.small)
                     }
                 }
             }
             .padding(12)
             .background(Color.white.opacity(0.07), in: RoundedRectangle(cornerRadius: 10))
         }
+    }
+
+    @ViewBuilder
+    private func bridgeCard(profile: Profile, recipe: Recipe, ac: AntiCheatEntry?) -> some View {
+        if let appID = recipe.steamAppID, gp.bridgeStatus.overlayInstalled {
+            let vac = SteamBridge.vacDecision(for: ac)
+            let downloadedExe = gp.gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: recipe.title)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 10) {
+                    Label("Zero Windows Steam (GamePort Bridge)", systemImage: "bolt.horizontal.circle.fill")
+                        .font(.callout.bold()).foregroundStyle(.cyan)
+                    Spacer()
+                    if case .blocked = vac {
+                        Text("VAC game · use Windows Steam").font(.caption).foregroundStyle(.orange)
+                    } else if let exe = downloadedExe {
+                        Button("Play via Bridge") {
+                            gp.launchViaBridge(profile: profile, recipe: recipe, executable: exe)
+                        }
+                        .buttonStyle(.borderedProminent).controlSize(.small)
+                        .disabled(!gp.bridgeStatus.isReadyToLaunch || gp.busy != nil)
+                    } else {
+                        Button(gp.bridgeStatus.steamCmdInstalled ? "Download Windows Depot" : "Install steamcmd") {
+                            if gp.bridgeStatus.steamCmdInstalled {
+                                showBridgeDownload = true
+                            } else {
+                                gp.job("Installing Valve steamcmd") { k, p in
+                                    try await k.steamDepot.install(progress: p)
+                                    return "Valve steamcmd installed"
+                                }
+                            }
+                        }
+                        .buttonStyle(.bordered).controlSize(.small)
+                        .disabled(gp.busy != nil)
+                    }
+                }
+                if case .allowed = vac {
+                    Text(downloadedExe != nil
+                         ? "Depot ready (\(downloadedExe!.lastPathComponent)). \(gp.bridgeStatus.isReadyToLaunch ? "Connected to native Mac Steam." : "Install & run native Mac Steam.app to launch.")"
+                         : "Downloads Windows files natively via Valve steamcmd (64-bit + 32-bit WoW64) without running Windows Steam in RAM.")
+                    .font(.caption).foregroundStyle(.white.opacity(0.72))
+                }
+            }
+            .padding(12)
+            .background(Color.cyan.opacity(0.10), in: RoundedRectangle(cornerRadius: 10))
+        }
+    }
+
+    private var crossOverBottlesStrip: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("1-Click CrossOver Bottle Games (\(gp.crossOverGames.count))", systemImage: "shippingbox.fill")
+                .font(.caption.bold()).foregroundStyle(.orange)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(gp.crossOverGames.prefix(12)) { item in
+                        Button {
+                            gp.launchCrossOverGame(item)
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "play.fill").font(.caption2)
+                                Text(item.title).font(.caption.weight(.semibold)).lineLimit(1)
+                                Text("· \(item.bottleName)").font(.caption2).foregroundStyle(.white.opacity(0.65))
+                            }
+                            .padding(.horizontal, 10).padding(.vertical, 6)
+                            .background(Color.orange.opacity(0.18), in: Capsule())
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.white)
+                    }
+                }
+            }
+        }
+        .padding(12)
+        .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private var bridgeDownloadSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Download Windows Depot — \(selectedRecipe?.title ?? "Steam Game")").font(.headline)
+            Text("Opens Terminal running Valve's official steamcmd so you can sign in with Steam Guard safely (GamePort never sees your password). Leave blank for anonymous free depots.")
+                .font(.callout).foregroundStyle(.secondary)
+            TextField("Steam username (or leave blank for anonymous)", text: $bridgeSteamUser)
+                .textFieldStyle(.roundedBorder)
+            HStack {
+                Spacer()
+                Button("Cancel") { showBridgeDownload = false }
+                Button("Start Native Download") {
+                    showBridgeDownload = false
+                    if let r = selectedRecipe, let appID = r.steamAppID {
+                        gp.launchInteractiveBridgeDownload(appID: appID, username: bridgeSteamUser, title: r.title)
+                    }
+                }.buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(20)
+        .frame(width: 440)
     }
 
     private func performancePackCard(profile: Profile, recipe: Recipe) -> some View {

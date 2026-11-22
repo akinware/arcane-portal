@@ -27,6 +27,8 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var aarchxInstalled = false
     @Published var aarchxVersion: String?
     @Published var bridgeStatus: SteamBridgeStatus = SteamBridge(paths: Paths.default()).status()
+    @Published var crossOverInstallation: CrossOverInstallation?
+    @Published var crossOverGames: [CrossOverBottleLaunchItem] = []
     @Published var externalEnv: ExternalEnvironment = .empty
     @Published var communityVerdicts: [Int: [CommunityVerdict]] = [:]
     @Published var launchState: LaunchState = .idle
@@ -70,6 +72,8 @@ final class GamePortConsoleModel: ObservableObject {
         aarchxInstalled = gameport.aarchx.isInstalled
         aarchxVersion = gameport.aarchx.versionString()
         bridgeStatus = gameport.steamBridge.status()
+        crossOverInstallation = CrossOverSupport.detect()
+        crossOverGames = CrossOverSupport.discoverBottleGames()
         externalEnv = ExternalDiscovery.scan()
     }
 
@@ -101,6 +105,31 @@ final class GamePortConsoleModel: ObservableObject {
     func say(_ line: String) {
         statusLog.append(line)
         if statusLog.count > 200 { statusLog.removeFirst(statusLog.count - 200) }
+    }
+
+    func launchCrossOverGame(_ item: CrossOverBottleLaunchItem) {
+        do {
+            _ = try CrossOverSupport.launch(item: item, installation: crossOverInstallation)
+            say("✓ Launched \(item.title) via CrossOver bottle \"\(item.bottleName)\"")
+        } catch {
+            say("✗ \(error)")
+        }
+    }
+
+    func launchViaBridge(profile: Profile, recipe: Recipe, executable: URL) {
+        job("Launching \(recipe.title) via Bridge") { kit, progress in
+            _ = try kit.launchWithSteamBridge(profile.id, executable: executable, progress: progress)
+            return "Launched \(executable.lastPathComponent) via GamePort Bridge"
+        }
+    }
+
+    func launchInteractiveBridgeDownload(appID: Int, username: String, title: String) {
+        do {
+            try gameport.steamDepot.launchInteractiveTerminalDownload(appID: appID, username: username)
+            say("✓ Opened Terminal for native steamcmd download of \(title) (\(appID))")
+        } catch {
+            say("✗ \(error)")
+        }
     }
 
     func job(_ title: String, _ work: @escaping @Sendable (GamePort, @escaping ProgressHandler) async throws -> String?) {

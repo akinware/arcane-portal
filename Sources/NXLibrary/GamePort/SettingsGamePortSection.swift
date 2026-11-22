@@ -121,8 +121,10 @@ struct SettingsGamePortSection: View {
                 if let app = gp.externalEnv.siliconiumApp { NSWorkspace.shared.open(app) }
                 else if let url = URL(string: ExternalEnvironment.siliconiumWebsite) { NSWorkspace.shared.open(url) }
             }
-            SeleneValueRow("CrossOver", subtitle: "Detected CrossOver bottles.",
-                           value: gp.externalEnv.hasCrossOver ? "\(gp.externalEnv.crossoverBottles.count) bottle(s)" : "Not installed",
+            SeleneValueRow("CrossOver (0 MB System Engine)", subtitle: gp.crossOverInstallation != nil
+                           ? "Detected CrossOver \(gp.crossOverInstallation?.version ?? "") · \(gp.crossOverGames.count) 1-click bottle game(s)."
+                           : "Optional: if installed in /Applications, GamePort uses CrossOver directly with 0 MB engine download.",
+                           value: gp.crossOverInstallation != nil ? "Connected (\(gp.crossOverGames.count))" : "Not installed",
                            actionTitle: "Refresh") {
                 gp.refresh()
             }
