@@ -26,6 +26,7 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var x87Version: String?
     @Published var aarchxInstalled = false
     @Published var aarchxVersion: String?
+    @Published var bridgeStatus: SteamBridgeStatus = SteamBridge(paths: Paths.default()).status()
     @Published var externalEnv: ExternalEnvironment = .empty
     @Published var communityVerdicts: [Int: [CommunityVerdict]] = [:]
     @Published var launchState: LaunchState = .idle
@@ -68,6 +69,7 @@ final class GamePortConsoleModel: ObservableObject {
         x87Version = gameport.x87sidecar.versionString()
         aarchxInstalled = gameport.aarchx.isInstalled
         aarchxVersion = gameport.aarchx.versionString()
+        bridgeStatus = gameport.steamBridge.status()
         externalEnv = ExternalDiscovery.scan()
     }
 

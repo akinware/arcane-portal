@@ -127,6 +127,40 @@ struct SettingsGamePortSection: View {
                 gp.refresh()
             }
 
+            SettingsSubheading("GamePort Steam Bridge (Zero Windows Steam)")
+            SeleneValueRow(
+                "Clean-Room Mac Steam Bridge",
+                subtitle: gp.bridgeStatus.readinessSummary,
+                value: gp.bridgeStatus.isReadyToLaunch ? "Ready" : (gp.bridgeStatus.overlayInstalled ? "Needs Mac Steam" : "Not Built"),
+                actionTitle: gp.bridgeStatus.overlayInstalled && !gp.installedEngines.isEmpty ? "Self-Test" : "Refresh"
+            ) {
+                if gp.bridgeStatus.overlayInstalled, let engine = gp.installedEngines.first {
+                    gp.job("Probing Steam Bridge") { k, _ in
+                        let useMock = k.steamBridge.status().steamClientDylib == nil
+                        let res = try k.steamBridge.probe(engine: engine, mockMode: useMock)
+                        if res.success { return "Bridge OK on \(res.engineID)" }
+                        throw GamePortError.process("Bridge probe", res.exitCode)
+                    }
+                } else {
+                    gp.refresh()
+                }
+            }
+            SeleneValueRow(
+                "Valve steamcmd (Native Windows Depot Downloader)",
+                subtitle: "Downloads Windows Steam game files natively on macOS without running Windows Steam.",
+                value: gp.bridgeStatus.steamCmdInstalled ? "Installed" : "Not Installed",
+                actionTitle: gp.bridgeStatus.steamCmdInstalled ? "Refresh" : "Install"
+            ) {
+                if gp.bridgeStatus.steamCmdInstalled {
+                    gp.refresh()
+                } else {
+                    gp.job("Installing Valve steamcmd") { k, p in
+                        try await k.steamDepot.install(progress: p)
+                        return "Valve steamcmd installed"
+                    }
+                }
+            }
+
             SettingsSubheading("Community Compatibility Sharing")
             SeleneToggleRow(
                 "Share anonymous RAM-tier FPS results",
