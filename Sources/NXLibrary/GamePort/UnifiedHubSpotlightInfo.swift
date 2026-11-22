@@ -18,7 +18,28 @@ struct UnifiedHubSpotlightInfo: View {
 
     private var downloadedDepotExe: URL? {
         guard let appID = game.steamAppID else { return nil }
-        return gp.gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title)
+        if let depot = gp.gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title) {
+            return depot
+        }
+        // Also discover games already installed inside an existing GamePort profile's Steam folder
+        if case .profile(let profile, _) = game.kind {
+            let steamapps = gp.gameport.paths.profile(profile.id)
+                .appendingPathComponent("prefix/drive_c/Program Files (x86)/Steam/steamapps", isDirectory: true)
+            let manifest = steamapps.appendingPathComponent("appmanifest_\(appID).acf")
+            if let text = try? String(contentsOf: manifest, encoding: .utf8),
+               let range = text.range(of: #""installdir"\s+"([^"]+)""#, options: .regularExpression) {
+                let line = String(text[range])
+                if let lastQuote = line.lastIndex(of: "\""),
+                   let prevQuote = line[..<lastQuote].lastIndex(of: "\"") {
+                    let installDirName = String(line[line.index(after: prevQuote)..<lastQuote])
+                    let gameDir = steamapps.appendingPathComponent("common/\(installDirName)", isDirectory: true)
+                    if let found = SteamDepotManager.discoverMainExecutable(in: gameDir, preferredName: game.title) {
+                        return found
+                    }
+                }
+            }
+        }
+        return nil
     }
 
     private var isVACBlockedForBridge: Bool {
@@ -291,6 +312,16 @@ struct UnifiedHubSpotlightInfo: View {
                             gp.job("Lab Benchmark") { k, p in
                                 let res = try await k.lab(profile.id, seconds: 45, progress: p)
                                 return "Lab finished: \(res.verdict.rawValue)"
+                            }
+                        }
+                    }
+                    if let exe = downloadedDepotExe, gp.bridgeStatus.isReadyToLaunch {
+                        Button(isVACBlockedForBridge ? "Play Offline via Bridge (No Win Steam)" : "Play via Bridge (No Win Steam)") {
+                            showOptionsSheet = false
+                            let overrideVAC = isVACBlockedForBridge
+                            gp.job("Launching \(game.title) via Bridge") { k, p in
+                                _ = try k.launchWithSteamBridge(profile.id, executable: exe, allowVACOverride: overrideVAC, progress: p)
+                                return "Launched \(exe.lastPathComponent) via Bridge"
                             }
                         }
                     }
