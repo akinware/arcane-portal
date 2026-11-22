@@ -12,6 +12,12 @@ struct SettingsGamePortSection: View {
     @State private var authPrompt: StorefrontKind?
     @State private var authCode = ""
 
+    private var steamDownloadAccountSummary: String {
+        let tool = gp.gameport.steamQRDownloader.tool
+        if let account = tool.rememberedAccounts().first { return "Signed in as \(account)" }
+        return tool.isInstalled ? "Ready (QR sign-in on first download)" : "Installs on first download"
+    }
+
     var body: some View {
         VStack(spacing: 9) {
             SeleneButtonRow(
@@ -194,18 +200,15 @@ struct SettingsGamePortSection: View {
                 }
             }
             SeleneValueRow(
-                "Valve steamcmd (Native Windows Depot Downloader)",
-                subtitle: "Downloads Windows Steam game files natively on macOS without running Windows Steam.",
-                value: gp.bridgeStatus.steamCmdInstalled ? "Installed" : "Not Installed",
-                actionTitle: gp.bridgeStatus.steamCmdInstalled ? "Refresh" : "Install"
+                "In-App Steam Downloads (DepotDownloader \(DepotDownloaderTool.version))",
+                subtitle: "Downloads Windows Steam games inside Arcane. Sign in once with the Steam Mobile App QR code — no password, no Windows Steam.",
+                value: steamDownloadAccountSummary,
+                actionTitle: gp.gameport.steamQRDownloader.tool.rememberedAccounts().isEmpty ? "Refresh" : "Sign Out"
             ) {
-                if gp.bridgeStatus.steamCmdInstalled {
+                if gp.gameport.steamQRDownloader.tool.rememberedAccounts().isEmpty {
                     gp.refresh()
                 } else {
-                    gp.job("Installing Valve steamcmd") { k, p in
-                        try await k.steamDepot.install(progress: p)
-                        return "Valve steamcmd installed"
-                    }
+                    gp.signOutSteamDownloads()
                 }
             }
 

@@ -32,8 +32,6 @@ struct WindowsGamesConsoleView: View {
     @State private var steamResults: [SteamStore.SearchResult] = []
     @State private var searchingSteam = false
     @State private var showTools = false
-    @State private var showBridgeDownload = false
-    @State private var bridgeSteamUser = ""
     @State private var authPrompt: StorefrontKind?
     @State private var authCode = ""
     @State private var gogDownloadID = ""
@@ -144,7 +142,7 @@ struct WindowsGamesConsoleView: View {
             router.back()
         }
         .sheet(isPresented: $showAddSteam) { addSteamSheet }
-        .sheet(isPresented: $showBridgeDownload) { bridgeDownloadSheet }
+        .sheet(item: gp.steamDownloadSheetBinding(for: .console)) { _ in SteamQRDownloadSheet() }
         .sheet(item: $authPrompt) { kind in
             VStack(alignment: .leading, spacing: 12) {
                 Text(kind == .epic ? "Sign In to Epic Games" : "Sign In to GOG").font(.headline)
@@ -713,24 +711,16 @@ struct WindowsGamesConsoleView: View {
                         .buttonStyle(.borderedProminent).controlSize(.small)
                         .disabled(!gp.bridgeStatus.isReadyToLaunch || gp.busy != nil)
                     } else {
-                        Button(gp.bridgeStatus.steamCmdInstalled ? "Download Windows Depot" : "Install steamcmd") {
-                            if gp.bridgeStatus.steamCmdInstalled {
-                                showBridgeDownload = true
-                            } else {
-                                gp.job("Installing Valve steamcmd") { k, p in
-                                    try await k.steamDepot.install(progress: p)
-                                    return "Valve steamcmd installed"
-                                }
-                            }
+                        Button(gp.steamDownload?.appID == appID && gp.steamDownload?.isActive == true ? "Show Download" : "Download Game") {
+                            gp.startSteamDownload(appID: appID, title: recipe.title, origin: .console)
                         }
                         .buttonStyle(.bordered).controlSize(.small)
-                        .disabled(gp.busy != nil)
                     }
                 }
                 if case .allowed = vac {
                     Text(downloadedExe != nil
                          ? "Depot ready (\(downloadedExe!.lastPathComponent)). \(gp.bridgeStatus.isReadyToLaunch ? "Connected to native Mac Steam." : "Install & run native Mac Steam.app to launch.")"
-                         : "Downloads Windows files natively via Valve steamcmd (64-bit + 32-bit WoW64) without running Windows Steam in RAM.")
+                         : "Downloads the Windows game in-app (sign in once with the Steam Mobile App QR code) without running Windows Steam.")
                     .font(.caption).foregroundStyle(.white.opacity(0.72))
                 }
             }
@@ -975,28 +965,6 @@ struct WindowsGamesConsoleView: View {
         }
         .padding(12)
         .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
-    }
-
-    private var bridgeDownloadSheet: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Download Windows Depot — \(selectedRecipe?.title ?? "Steam Game")").font(.headline)
-            Text("Opens Terminal running Valve's official steamcmd so you can sign in with Steam Guard safely (GamePort never sees your password). Leave blank for anonymous free depots.")
-                .font(.callout).foregroundStyle(.secondary)
-            TextField("Steam username (or leave blank for anonymous)", text: $bridgeSteamUser)
-                .textFieldStyle(.roundedBorder)
-            HStack {
-                Spacer()
-                Button("Cancel") { showBridgeDownload = false }
-                Button("Start Native Download") {
-                    showBridgeDownload = false
-                    if let r = selectedRecipe, let appID = r.steamAppID {
-                        gp.launchInteractiveBridgeDownload(appID: appID, username: bridgeSteamUser, title: r.title)
-                    }
-                }.buttonStyle(.borderedProminent)
-            }
-        }
-        .padding(20)
-        .frame(width: 440)
     }
 
     private func performancePackCard(profile: Profile, recipe: Recipe) -> some View {

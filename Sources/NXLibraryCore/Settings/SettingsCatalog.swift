@@ -148,6 +148,10 @@ public enum SettingsCatalog {
         action("metadataCache", .storage, "Metadata cache", "Clear cached store descriptions and links."),
         action("artworkCache", .storage, "Artwork cache", "Clear downloaded images; manual picks are kept."),
         action("saveBackups", .storage, "Save backups", "Open the folder of verified per-game backups."),
+
+        // Windows (GamePort)
+        action("gamePort", .gamePort, "Windows games",
+               "Engines, CrossOver, Steam Bridge, in-app Steam downloads with QR sign-in, and Epic and GOG."),
         action("console", .console, "Console", "View, search and copy logs."),
 
         // About

@@ -41,7 +41,7 @@ final class SettingsCatalogTests: XCTestCase {
         "steamSource", "steamRefresh", "steamFolder", "steamInBackground", "storageUsage", "buildCaches", "logs",
         "metadataCache", "artworkCache", "saveBackups", "console", "engineFolder", "engineStatus",
         "toolchainOverride", "upstream", "newestEngine", "compare", "keys", "setup", "diagnostics", "appUpdates",
-        "projectDocs"
+        "projectDocs", "gamePort"
     ]
 
     func testRowIDsAreUnchanged() {
@@ -68,15 +68,16 @@ final class SettingsCatalogTests: XCTestCase {
     func testSidebarGroupsInOrder() {
         let groups = SettingsSidebarGroup.all
         XCTAssertEqual(groups.map(\.heading), [nil, "Settings group: General", "Settings group: Library",
-                                               "Settings group: Porting", "Settings group: System"])
+                                               "Windows (GamePort)", "Settings group: Porting", "Settings group: System"])
         XCTAssertEqual(groups.map(\.sections), [
             [.search, .changed],
             [.startUp, .navigation, .spotlight, .soundMusic, .look, .controllers, .apiServices],
             [.sources, .libraryGames, .storage],
+            [.gamePort],
             [.engine, .keys, .library, .games, .cloudSaves, .portingStorage],
             [.about, .console],
         ])
-        XCTAssertEqual(groups.map(\.isPlatform), [false, false, false, true, false])
+        XCTAssertEqual(groups.map(\.isPlatform), [false, false, false, true, true, false])
         XCTAssertEqual(SettingsSection.allCases, groups.flatMap(\.sections), "allCases follows the sidebar")
     }
 
@@ -127,7 +128,7 @@ final class SettingsCatalogTests: XCTestCase {
         "controllerStatus", "buttonLayout", "controllerDeadzone", "igdb", "steamGridDB", "steamSource",
         "steamRefresh", "steamFolder", "steamInBackground", "launchStyle", "launchMotion", "launchShade",
         "surprisePool", "showsSessionCard", "hiddenGames", "storageUsage", "logs", "metadataCache", "artworkCache",
-        "saveBackups", "checkEngineAtLaunch", "engineFolder", "engineStatus", "toolchainOverride", "upstream",
+        "saveBackups", "gamePort", "checkEngineAtLaunch", "engineFolder", "engineStatus", "toolchainOverride", "upstream",
         "newestEngine", "compare", "setup", "keys", "refreshLibraryAtLaunch", "boxCovers", "gameFolder",
         "libraryFolder", "libraryRefresh", "notifyPortingEnds", "gameDefaults.fullscreen",
         "gameDefaults.enable60FPS", "gameDefaults.isDockedMode", "gameDefaults.enableMetalFXUpscale",

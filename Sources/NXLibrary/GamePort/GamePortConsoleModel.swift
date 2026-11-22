@@ -53,10 +53,13 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var launchState: LaunchState = .idle
     @Published var busy: String?
     @Published var statusLog: [String] = []
+    @Published var steamDownload: SteamDownloadSession?
+    @Published var steamDownloadPresented = false
 
     private var profilesByRecipe: [String: Profile] = [:]
     private var labResultsByProfile: [String: [LabResult]] = [:]
     private var launchMonitorTask: Task<Void, Never>?
+    private var steamDownloadTask: Task<Void, Never>?
 
     init() {
         communityVerdicts = gameport.telemetry.loadCachedVerdicts()
@@ -265,13 +268,105 @@ final class GamePortConsoleModel: ObservableObject {
         }
     }
 
-    func launchInteractiveBridgeDownload(appID: Int, username: String, title: String) {
-        do {
-            try gameport.steamDepot.launchInteractiveTerminalDownload(appID: appID, username: username)
-            say("✓ Opened Terminal for native steamcmd download of \(title) (\(appID))")
-        } catch {
-            say("✗ \(error)")
+    // MARK: - Native in-app Steam download (Steam Mobile QR sign-in, no Windows Steam, no Terminal)
+
+    /// Starts (or re-shows) the native in-app Windows game download for a Steam AppID.
+    /// The first download shows a Steam Mobile App QR code; later ones reuse the remembered session.
+    func startSteamDownload(appID: Int, title: String, origin: SteamDownloadSession.Origin, vacNote: Bool = false) {
+        if let current = steamDownload, current.isActive {
+            if current.appID == appID {
+                steamDownloadPresented = true
+                return
+            }
+            say("✗ Already downloading \(current.title). Cancel it first to start \(title).")
+            steamDownloadPresented = true
+            return
         }
+        let downloader = gameport.steamQRDownloader
+        let account = ExternalDiscovery.macSteamAccountName()
+        let silent = downloader.canSignInSilently(preferredAccount: account)
+        let session = SteamDownloadSession(
+            appID: appID,
+            title: title,
+            origin: origin,
+            vacNote: vacNote,
+            phase: .preparing(silent ? "Signing in to Steam…" : "Requesting a sign-in QR code…")
+        )
+        steamDownload = session
+        steamDownloadPresented = true
+        say("▶ Downloading \(title) (Steam \(appID))")
+        let sessionID = session.id
+
+        steamDownloadTask?.cancel()
+        steamDownloadTask = Task { [weak self] in
+            let stream = downloader.download(appID: appID, title: title, preferredAccount: account)
+            do {
+                for try await event in stream {
+                    guard let self, self.steamDownload?.id == sessionID else { return }
+                    self.steamDownload?.apply(event)
+                    if case .completed(_, let exe) = event {
+                        self.say("✓ Downloaded \(title)\(exe.map { " (\($0.lastPathComponent))" } ?? "")")
+                        self.refresh()
+                        try? await Task.sleep(nanoseconds: 1_400_000_000)
+                        if self.steamDownload?.id == sessionID { self.dismissSteamDownload() }
+                    }
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                guard let self, self.steamDownload?.id == sessionID else { return }
+                self.steamDownload?.phase = .failed("\(error)")
+                self.say("✗ \(title): \(error)")
+                self.refresh()
+            }
+        }
+    }
+
+    /// Stops the running download (DepotDownloader is terminated) and closes the sheet.
+    func cancelSteamDownload() {
+        if let s = steamDownload, s.isActive { say("✗ Cancelled download of \(s.title)") }
+        steamDownloadTask?.cancel()
+        steamDownloadTask = nil
+        steamDownload = nil
+        steamDownloadPresented = false
+        refresh()
+    }
+
+    /// Closes a finished / failed session. Active downloads keep running when only hidden.
+    func dismissSteamDownload() {
+        if steamDownload?.isActive == true {
+            steamDownloadPresented = false
+            return
+        }
+        steamDownloadTask = nil
+        steamDownload = nil
+        steamDownloadPresented = false
+    }
+
+    func retrySteamDownload() {
+        guard let s = steamDownload else { return }
+        steamDownload = nil
+        startSteamDownload(appID: s.appID, title: s.title, origin: s.origin, vacNote: s.vacNote)
+    }
+
+    /// Forgets every remembered Steam QR sign-in (DepotDownloader's private token store).
+    func signOutSteamDownloads() {
+        gameport.steamQRDownloader.tool.signOutAll()
+        say("✓ Signed out of in-app Steam downloads")
+        refresh()
+    }
+
+    /// A sheet binding that only presents for one origin, so Spotlight and the Console never both show it.
+    func steamDownloadSheetBinding(for origin: SteamDownloadSession.Origin) -> Binding<SteamDownloadSession?> {
+        Binding(
+            get: { [weak self] in
+                guard let self, self.steamDownloadPresented, let s = self.steamDownload, s.origin == origin else { return nil }
+                return s
+            },
+            set: { [weak self] value in
+                if value == nil { self?.dismissSteamDownload() }
+            }
+        )
     }
 
     func job(_ title: String, _ work: @escaping @Sendable (GamePort, @escaping ProgressHandler) async throws -> String?) {

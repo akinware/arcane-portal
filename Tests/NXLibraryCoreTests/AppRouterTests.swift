@@ -113,17 +113,17 @@ final class AppRouterTests: XCTestCase {
 final class MenuSelectionModelTests: XCTestCase {
     func testMenuOrder() {
         XCTAssertEqual(MenuAction.allCases,
-                       [.addGame, .refreshLibrary, .settings, .theme, .console, .setupCheck, .manageSources, .power])
+                       [.windowsGames, .addGame, .refreshLibrary, .settings, .theme, .console, .setupCheck, .manageSources, .power])
         XCTAssertEqual(MenuAction.allCases.map(\.title),
-                       ["Add Game", "Library refresh", "Settings", "Theme", "Console", "Setup check", "Manage sources", "Power"])
+                       ["Windows Games", "Add Game", "Library refresh", "Settings", "Theme", "Console", "Setup check", "Manage sources", "Power"])
         XCTAssertEqual(PowerAction.allCases, [.quit, .hide, .relaunch])
         XCTAssertEqual(PowerAction.allCases.map(\.title), ["Quit", "Hide", "Restart app"])
     }
 
     func testMoveClampsAtBothEnds() {
-        var model = MenuSelectionModel(selected: .addGame)
+        var model = MenuSelectionModel(selected: .windowsGames)
         model.move(by: -1)
-        XCTAssertEqual(model.selected, .addGame)
+        XCTAssertEqual(model.selected, .windowsGames)
         model.move(by: 10)
         XCTAssertEqual(model.selected, .power)
         model.move(by: 1)

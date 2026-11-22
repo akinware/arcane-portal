@@ -13,9 +13,6 @@ struct UnifiedHubSpotlightInfo: View {
     let onOpenCatalog: () -> Void
 
     @State private var showOptionsSheet = false
-    @State private var showBridgeDownloadSheet = false
-    @State private var bridgeSteamUser = ""
-    @State private var editingBridgeSteamUser = false
 
     private var downloadedDepotExe: URL? {
         guard let appID = game.steamAppID else { return nil }
@@ -139,10 +136,12 @@ struct UnifiedHubSpotlightInfo: View {
                 }
                 .padding(.top, canvas.u(4))
             }
+
+            SteamDownloadMiniStatus(origin: .spotlight)
         }
         .frame(width: canvas.u(960), alignment: .leading)
         .sheet(isPresented: $showOptionsSheet) { optionsSheet }
-        .sheet(isPresented: $showBridgeDownloadSheet) { bridgeDownloadSheet }
+        .sheet(item: gp.steamDownloadSheetBinding(for: .spotlight)) { _ in SteamQRDownloadSheet() }
     }
 
     @ViewBuilder
@@ -259,21 +258,10 @@ struct UnifiedHubSpotlightInfo: View {
         }
     }
 
+    /// Native in-app download: Steam Mobile QR sign-in once, then a live progress sheet (no Terminal).
     private func openBridgeDownloadSheet() {
-        let detected = ExternalDiscovery.macSteamAccountName()
-        if let detected, !detected.isEmpty {
-            bridgeSteamUser = detected
-            editingBridgeSteamUser = false
-            // 1-click native download for non-VAC games when Mac Steam account is already known —
-            // no popup or editable username field to accidentally clear.
-            if !isVACBlockedForBridge, let appID = game.steamAppID {
-                gp.launchInteractiveBridgeDownload(appID: appID, username: detected, title: game.title)
-                return
-            }
-        } else {
-            editingBridgeSteamUser = true
-        }
-        showBridgeDownloadSheet = true
+        guard let appID = game.steamAppID else { return }
+        gp.startSteamDownload(appID: appID, title: game.title, origin: .spotlight, vacNote: isVACBlockedForBridge)
     }
 
     private func installWindowsSteam(profileID: String) {
@@ -440,44 +428,6 @@ struct UnifiedHubSpotlightInfo: View {
         }
         .padding(20)
         .frame(width: 560)
-    }
-
-    private var bridgeDownloadSheet: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Download Game — \(game.title)").font(.headline)
-            Text("Downloads the Windows game files natively via Valve steamcmd (no Windows Steam client needed).")
-                .font(.callout).foregroundStyle(.secondary)
-            if isVACBlockedForBridge {
-                Text("Note: This game uses VAC. Bridge Mode (No Win Steam) is for offline / local bot matches only — use Install Win Steam for online VAC matchmaking.")
-                    .font(.caption)
-                    .foregroundStyle(.orange)
-            }
-            if !editingBridgeSteamUser, !bridgeSteamUser.isEmpty {
-                HStack {
-                    Label("Using your logged-in Mac Steam account (\(bridgeSteamUser))", systemImage: "person.crop.circle.badge.checkmark")
-                        .font(.callout)
-                    Spacer()
-                    Button("Switch…") { editingBridgeSteamUser = true }
-                        .buttonStyle(.link)
-                        .font(.caption)
-                }
-            } else {
-                TextField("Steam login username (blank for free demos)", text: $bridgeSteamUser)
-                    .textFieldStyle(.roundedBorder)
-            }
-            HStack {
-                Spacer()
-                Button("Cancel") { showBridgeDownloadSheet = false }
-                Button("Start Native Download") {
-                    showBridgeDownloadSheet = false
-                    if let appID = game.steamAppID {
-                        gp.launchInteractiveBridgeDownload(appID: appID, username: bridgeSteamUser, title: game.title)
-                    }
-                }.buttonStyle(.borderedProminent)
-            }
-        }
-        .padding(20)
-        .frame(width: 460)
     }
 }
 

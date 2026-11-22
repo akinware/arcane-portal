@@ -220,7 +220,8 @@ final class AppSettingsStoreTests: XCTestCase {
         // Older settings show the Mods card too.
         let old = Data(#"{"spotlightCards":["activity"]}"#.utf8)
         var s = try JSONDecoder().decode(AppSettings.self, from: old)
-        XCTAssertEqual(s.visibleSpotlightCards, [.activity, .mods])
+        // The Windows Games card is on by default.
+        XCTAssertEqual(s.visibleSpotlightCards, [.windowsGames, .activity, .mods])
         s.visibleSpotlightCards = [.surprise, .mods]
         XCTAssertEqual(s.spotlightCards, [.surprise], "the released app cannot read a card it does not know")
         let json = String(decoding: try JSONEncoder().encode(s), as: UTF8.self)
@@ -231,7 +232,7 @@ final class AppSettingsStoreTests: XCTestCase {
         // A list that somehow holds the card keeps it out of the saved cards.
         let stray = try JSONDecoder().decode(AppSettings.self, from: Data(#"{"spotlightCards":["mods","addGame"]}"#.utf8))
         XCTAssertEqual(stray.spotlightCards, [.addGame])
-        XCTAssertEqual(stray.visibleSpotlightCards, [.mods, .addGame])
+        XCTAssertEqual(stray.visibleSpotlightCards, [.windowsGames, .mods, .addGame])
     }
 
     func testSettingsWithRetiredSteamGridDBKeyStillDecode() throws {
@@ -321,14 +322,14 @@ final class SettingsSectionTests: XCTestCase {
     func testAllSectionsArePresent() {
         XCTAssertEqual(SettingsSection.allCases.map(\.title), [
             "Search", "Changed", "Start-up", "Navigation", "Spotlight", "Sound & music", "Look", "Controllers",
-            "Online services", "Sources", "Games", "Storage", "Setup and engine", "Keys", "Library", "New games",
+            "Online services", "Sources", "Games", "Storage", "Windows & Engines", "Setup and engine", "Keys", "Library", "New games",
             "Cloud saves", "Storage", "About", "Console"
         ])
         XCTAssertTrue(SettingsSection.allCases.allSatisfy { !$0.icon.rawValue.isEmpty })
     }
 
     func testSidebarGroupsInScreenOrder() {
-        XCTAssertEqual(SettingsSidebarGroup.all.map(\.title), [nil, "General", "Library", "Porting", "System"])
+        XCTAssertEqual(SettingsSidebarGroup.all.map(\.title), [nil, "General", "Library", "Windows (GamePort)", "Porting", "System"])
         // The sidebar's Up/Down follows the groups as drawn, and every section is in exactly one group.
         XCTAssertEqual(SettingsSidebarGroup.all.flatMap(\.sections), SettingsSection.allCases)
         XCTAssertEqual(SettingsSection.sources.group.title, "Library")
