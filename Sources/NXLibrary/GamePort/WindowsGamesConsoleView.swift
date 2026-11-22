@@ -312,6 +312,11 @@ struct WindowsGamesConsoleView: View {
                         crossOverBottlesStrip
                     }
 
+                    // 1-Click Epic / GOG / Heroic Quick-Launch Strip
+                    if !gp.storefrontGames.isEmpty {
+                        storefrontGamesStrip
+                    }
+
                     // Compatibility + Live RAM-Tier Verdicts
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 8) {
@@ -662,6 +667,34 @@ struct WindowsGamesConsoleView: View {
                             }
                             .padding(.horizontal, 10).padding(.vertical, 6)
                             .background(Color.orange.opacity(0.18), in: Capsule())
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.white)
+                    }
+                }
+            }
+        }
+        .padding(12)
+        .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private var storefrontGamesStrip: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("1-Click Epic / GOG / Heroic Games (\(gp.storefrontGames.count))", systemImage: "gamecontroller.fill")
+                .font(.caption.bold()).foregroundStyle(.purple)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(gp.storefrontGames.prefix(12)) { game in
+                        Button {
+                            gp.launchStorefrontGame(game)
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "play.fill").font(.caption2)
+                                Text(game.title).font(.caption.weight(.semibold)).lineLimit(1)
+                                Text("· \(game.store.displayName)").font(.caption2).foregroundStyle(.white.opacity(0.65))
+                            }
+                            .padding(.horizontal, 10).padding(.vertical, 6)
+                            .background(Color.purple.opacity(0.22), in: Capsule())
                         }
                         .buttonStyle(.plain)
                         .foregroundStyle(.white)

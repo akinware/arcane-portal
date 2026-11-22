@@ -98,7 +98,7 @@ struct SpotlightCardInfoView: View {
                     divider
                     stat("ENGINES", "\(gp.installedEngines.count)")
                 }
-                if !gp.profiles.isEmpty || !gp.crossOverGames.isEmpty {
+                if !gp.profiles.isEmpty || !gp.crossOverGames.isEmpty || !gp.storefrontGames.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: canvas.u(14)) {
                             ForEach(gp.profiles.prefix(8), id: \.id) { profile in
@@ -178,6 +178,41 @@ struct SpotlightCardInfoView: View {
                                     .padding(.horizontal, canvas.u(12))
                                     .padding(.vertical, canvas.u(8))
                                     .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: canvas.u(10)))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            ForEach(gp.storefrontGames.prefix(6)) { game in
+                                Button {
+                                    gp.launchStorefrontGame(game)
+                                } label: {
+                                    HStack(spacing: canvas.u(10)) {
+                                        if let url = game.artworkURL {
+                                            AsyncImage(url: url) { phase in
+                                                if let img = phase.image { img.resizable().aspectRatio(contentMode: .fill) }
+                                                else { Color.purple.opacity(0.18) }
+                                            }
+                                            .frame(width: canvas.u(42), height: canvas.u(56))
+                                            .clipShape(RoundedRectangle(cornerRadius: canvas.u(6)))
+                                        } else {
+                                            Image(systemName: "gamecontroller.fill")
+                                                .font(.system(size: canvas.u(20)))
+                                                .foregroundColor(.purple)
+                                                .frame(width: canvas.u(42), height: canvas.u(56))
+                                                .background(Color.purple.opacity(0.18), in: RoundedRectangle(cornerRadius: canvas.u(6)))
+                                        }
+                                        VStack(alignment: .leading, spacing: canvas.u(3)) {
+                                            Text(game.title)
+                                                .seleneFont(15, .semibold)
+                                                .foregroundColor(SeleneTheme.ink)
+                                                .lineLimit(1)
+                                            Text(game.store.displayName)
+                                                .seleneFont(12)
+                                                .foregroundColor(.purple.opacity(0.95))
+                                        }
+                                    }
+                                    .padding(.horizontal, canvas.u(12))
+                                    .padding(.vertical, canvas.u(8))
+                                    .background(Color.purple.opacity(0.14), in: RoundedRectangle(cornerRadius: canvas.u(10)))
                                 }
                                 .buttonStyle(.plain)
                             }

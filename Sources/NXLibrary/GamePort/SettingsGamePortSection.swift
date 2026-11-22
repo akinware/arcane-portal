@@ -129,6 +129,42 @@ struct SettingsGamePortSection: View {
                 gp.refresh()
             }
 
+            SettingsSubheading("Epic Games, GOG & Heroic (Zero Store Launcher)")
+            SeleneValueRow(
+                "Epic Games (legendary \(EpicStorefront.version))",
+                subtitle: "Native arm64 downloader & launcher — runs straight on CrossOver.app or PowerKit with zero Epic Launcher in RAM.",
+                value: gp.epicInstalled ? (gp.epicSignedIn ? "Connected" : "Installed") : "Not Installed",
+                actionTitle: gp.epicInstalled ? (gp.epicSignedIn ? "Refresh" : "Open Login") : "Install"
+            ) {
+                if !gp.epicInstalled {
+                    gp.job("Installing Epic legendary") { k, p in
+                        _ = try await k.epic.install(progress: p)
+                        return "Epic legendary installed"
+                    }
+                } else if !gp.epicSignedIn {
+                    NSWorkspace.shared.open(EpicStorefront.loginURL)
+                } else {
+                    gp.refresh()
+                }
+            }
+            SeleneValueRow(
+                "GOG (gogdl \(GOGStorefront.version) · DRM-Free)",
+                subtitle: "Native arm64 DRM-free GOG downloader — launches directly with zero GOG Galaxy.",
+                value: gp.gogInstalled ? (gp.gogSignedIn ? "Connected" : "Installed") : "Not Installed",
+                actionTitle: gp.gogInstalled ? (gp.gogSignedIn ? "Refresh" : "Open Login") : "Install"
+            ) {
+                if !gp.gogInstalled {
+                    gp.job("Installing GOG gogdl") { k, p in
+                        _ = try await k.gog.install(progress: p)
+                        return "GOG gogdl installed"
+                    }
+                } else if !gp.gogSignedIn {
+                    NSWorkspace.shared.open(GOGStorefront.loginURL)
+                } else {
+                    gp.refresh()
+                }
+            }
+
             SettingsSubheading("GamePort Steam Bridge (Zero Windows Steam)")
             SeleneValueRow(
                 "Clean-Room Mac Steam Bridge",

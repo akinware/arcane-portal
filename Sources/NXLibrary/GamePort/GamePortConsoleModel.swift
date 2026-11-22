@@ -29,6 +29,11 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var bridgeStatus: SteamBridgeStatus = SteamBridge(paths: Paths.default()).status()
     @Published var crossOverInstallation: CrossOverInstallation?
     @Published var crossOverGames: [CrossOverBottleLaunchItem] = []
+    @Published var epicInstalled = false
+    @Published var epicSignedIn = false
+    @Published var gogInstalled = false
+    @Published var gogSignedIn = false
+    @Published var storefrontGames: [StorefrontGame] = []
     @Published var externalEnv: ExternalEnvironment = .empty
     @Published var communityVerdicts: [Int: [CommunityVerdict]] = [:]
     @Published var launchState: LaunchState = .idle
@@ -74,6 +79,11 @@ final class GamePortConsoleModel: ObservableObject {
         bridgeStatus = gameport.steamBridge.status()
         crossOverInstallation = CrossOverSupport.detect()
         crossOverGames = CrossOverSupport.discoverBottleGames()
+        epicInstalled = gameport.epic.isInstalled
+        epicSignedIn = gameport.epic.isSignedIn
+        gogInstalled = gameport.gog.isInstalled
+        gogSignedIn = gameport.gog.isSignedIn
+        storefrontGames = gameport.discoverStorefrontGames(includeUninstalledEpic: false)
         externalEnv = ExternalDiscovery.scan()
     }
 
@@ -113,6 +123,13 @@ final class GamePortConsoleModel: ObservableObject {
             say("✓ Launched \(item.title) via CrossOver bottle \"\(item.bottleName)\"")
         } catch {
             say("✗ \(error)")
+        }
+    }
+
+    func launchStorefrontGame(_ game: StorefrontGame) {
+        job("Launching \(game.title) (\(game.store.displayName))") { kit, progress in
+            _ = try kit.launchStorefrontGame(game, progress: progress)
+            return "Launched \(game.title)"
         }
     }
 
