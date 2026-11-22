@@ -41,7 +41,7 @@ extension SpotlightView {
         case .navigateDown where selectedItem == .card(.mods) && viewModel.spotlight.focus == .row:
             enterStore()
         case .navigateDown:
-            let isGame = selectedCatalogGame != nil
+            let isGame = selectedCatalogGame != nil || selectedHubGame != nil
             let isActivity = selectedItem == .card(.activity)
             mutate {
                 moved = $0.moveDown(selectedIsGame: isGame, screenshotCount: shots,
@@ -66,13 +66,18 @@ extension SpotlightView {
             mutate { if $0.focus != .row { $0.focus = .row; moved = true } }
         case .secondaryAction:
             // X scrolls to the game's page (the pills), like Down from the row.
-            if selectedGame != nil || selectedCatalogGame?.integration == .steam {
+            if selectedGame != nil || selectedCatalogGame?.integration == .steam || selectedHubGame != nil {
                 mutate { if $0.focus == .row { moved = $0.showGameDetails() } }
             }
         case .contextAction:
             if let steam = selectedCatalogGame, steam.integration == .steam {
                 SoundEffectService.shared.play(.click)
                 viewModel.openSteamOptions(steam, from: .spotlight)
+                return
+            }
+            if let hubGame = selectedHubGame {
+                SoundEffectService.shared.play(.click)
+                hub.hubOptionsGameID = hubGame.id
                 return
             }
             if let game = selectedGame {
@@ -106,6 +111,20 @@ extension SpotlightView {
         return true
     }
 
+    /// Play, Options and favorite for a Windows game, in the same places as for any other game.
+    func pressHubPill(_ index: Int, game: UnifiedHubGame) {
+        switch index {
+        case 0:
+            guard hub.busy == nil, !hub.launchState.isLaunching else { return }
+            SoundEffectService.shared.play(.click)
+            if hub.playRoute(for: game) == .storesSetup { router.openWindowsGames() }
+            else { hub.activateUnifiedGame(game) }
+        case 1: SoundEffectService.shared.play(.click); hub.hubOptionsGameID = game.id
+        case 2: SoundEffectService.shared.play(.click); hub.toggleFavorite(game)
+        default: break
+        }
+    }
+
     func pressCatalogPill(_ index: Int, game: CatalogGame) {
         switch index {
         // The positions of Play, Options and favorite, as for an nxnative game.
@@ -124,6 +143,7 @@ extension SpotlightView {
         case .pills:
             if let game = selectedGame { pressPill(state.pillIndex, game: game) }
             else if let game = selectedCatalogGame { pressCatalogPill(state.pillIndex, game: game) }
+            else if let game = selectedHubGame { pressHubPill(state.pillIndex, game: game) }
         case .strip:
             openViewer(at: state.stripIndex)
         case .about:
@@ -197,6 +217,8 @@ extension SpotlightView {
             titleID = viewModel.personalizationKey(for: game); all = store.storeMetadata[game.id]?.screenshotURLs ?? []
         } else if let game = selectedCatalogGame, game.integration == .steam {
             titleID = game.personalizationReference.key; all = steamFacts.metadata(for: game)?.screenshots ?? []
+        } else if let game = selectedHubGame {
+            titleID = "hub:\(game.id.uuidString)"; all = steamFacts.metadata(appID: game.steamAppID)?.screenshots ?? []
         } else { return }
         let urls = Array(all.prefix(SpotlightScreenshotStrip.maxCount))
         guard !urls.isEmpty else { return }
@@ -305,7 +327,8 @@ extension SpotlightView {
             }
             if let hubGame = hub.unifiedGamesByID[id] {
                 SoundEffectService.shared.play(.click)
-                hub.activateUnifiedGame(hubGame)
+                if hub.playRoute(for: hubGame) == .storesSetup { router.openWindowsGames() }
+                else { hub.activateUnifiedGame(hubGame) }
                 return
             }
             guard let game = viewModel.libraryGames.first(where: { $0.id == id }) else { return }
@@ -527,7 +550,7 @@ extension SpotlightView {
     /// fingers (with the trackpad's momentum) down to the bottom. When it stops,
     /// the focus moves to the nearest section without moving the page.
     func scrollPage(with event: NSEvent) -> NSEvent? {
-        guard selectedGame != nil, viewer == nil, cardMenu == nil,
+        guard selectedGame != nil || selectedHubGame != nil, viewer == nil, cardMenu == nil,
               !viewModel.spotlight.isLifted else { return event }
         let dy = event.scrollingDeltaY
         guard abs(dy) >= abs(event.scrollingDeltaX) else { return event }

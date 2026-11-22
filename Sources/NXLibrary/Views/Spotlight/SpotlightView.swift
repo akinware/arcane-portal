@@ -158,7 +158,7 @@ struct SpotlightView: View {
         case .notPlayed:
             return base.filter { $0.playtimeMinutes == 0 }
         case .favorites:
-            return []
+            return base.filter { hub.isFavorite($0) }
         }
     }
 
@@ -229,6 +229,9 @@ struct SpotlightView: View {
     var screenshotCount: Int {
         if let game = selectedCatalogGame, game.integration == .steam {
             return min(steamFacts.metadata(for: game)?.screenshots.count ?? 0, SpotlightScreenshotStrip.maxCount)
+        }
+        if let hubGame = selectedHubGame {
+            return min(steamFacts.metadata(appID: hubGame.steamAppID)?.screenshots.count ?? 0, SpotlightScreenshotStrip.maxCount)
         }
         guard let game = selectedGame else { return 0 }
         let urls = store.storeMetadata[game.id]?.screenshotURLs ?? []

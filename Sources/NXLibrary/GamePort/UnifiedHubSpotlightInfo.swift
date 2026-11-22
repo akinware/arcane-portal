@@ -3,514 +3,199 @@ import GamePortKit
 import NXLibraryCore
 import SwiftUI
 
-/// Native Arcane Selene info view rendered directly below the main Spotlight carousel
-/// whenever a unified Steam / CrossOver / PowerKit / Epic / GOG / Battle.net tile is focused.
+/// A Windows/PC game's head on Spotlight, in the same Selene layout as Arcane's own games: the logo,
+/// one Play pill (GamePort picks the way, `HubPlayRoute`), Options and favorite, the stats line, and
+/// one quiet line saying how the game will run. Everything else lives in Options.
 struct UnifiedHubSpotlightInfo: View {
     @Environment(\.seleneCanvas) private var canvas
+    @Environment(\.seleneReduceMotion) private var reduceMotion
     @ObservedObject var gp = GamePortConsoleModel.shared
 
     let game: UnifiedHubGame
+    var releaseYear: String? = nil
+    var focused: Int? = nil
+    var onPill: (Int) -> Void = { _ in }
+    var onHoverPill: (Int) -> Void = { _ in }
     let onOpenCatalog: () -> Void
 
-    @State private var showOptionsSheet = false
+    @State private var logo: NSImage?
+    @State private var shown = true
+    @State private var restShown = true
+    @State private var slid = true
 
-    private var downloadedDepotExe: URL? {
-        guard let appID = game.steamAppID else { return nil }
-        if let depot = gp.gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title) {
-            return depot
-        }
-        // Also discover games already installed inside an existing GamePort profile's Steam folder
-        if case .profile(let profile, _) = game.kind {
-            let steamapps = gp.gameport.paths.profile(profile.id)
-                .appendingPathComponent("prefix/drive_c/Program Files (x86)/Steam/steamapps", isDirectory: true)
-            let manifest = steamapps.appendingPathComponent("appmanifest_\(appID).acf")
-            if let text = try? String(contentsOf: manifest, encoding: .utf8),
-               let range = text.range(of: #""installdir"\s+"([^"]+)""#, options: .regularExpression) {
-                let line = String(text[range])
-                if let lastQuote = line.lastIndex(of: "\""),
-                   let prevQuote = line[..<lastQuote].lastIndex(of: "\"") {
-                    let installDirName = String(line[line.index(after: prevQuote)..<lastQuote])
-                    let gameDir = steamapps.appendingPathComponent("common/\(installDirName)", isDirectory: true)
-                    if let found = SteamDepotManager.discoverMainExecutable(in: gameDir, preferredName: game.title) {
-                        return found
-                    }
-                }
-            }
-        }
+    private var route: HubPlayRoute { gp.playRoute(for: game) }
+
+    private var profile: Profile? {
+        if case .profile(let profile, _) = game.kind { return profile }
         return nil
     }
 
-    private var isVACBlockedForBridge: Bool {
-        if case .blocked = SteamBridge.vacDecision(for: game.antiCheat) { return true }
-        return false
-    }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: canvas.u(14)) {
-            // Game logo (from local Steam librarycache logo.png) or bold Selene headline
-            if let logoURL = game.preferredLogoURL, logoURL.isFileURL, let nsImg = NSImage(contentsOf: logoURL) {
-                Image(nsImage: nsImg)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: canvas.u(480), maxHeight: canvas.u(120), alignment: .leading)
-                    .shadow(color: .black.opacity(0.55), radius: canvas.u(10))
-            } else {
-                Text(game.title)
-                    .seleneFont(40, .bold)
-                    .foregroundColor(SeleneTheme.ink)
-                    .lineLimit(2)
-                    .shadow(color: .black.opacity(0.55), radius: canvas.u(8))
+        let route = route
+        VStack(alignment: .leading, spacing: 0) {
+            GameLogoArea(title: game.title, logo: logo)
+                .offset(x: slid ? 0 : canvas.u(SpotlightGameInfoView.logoSlideDistance))
+                .opacity(shown ? 1 : 0)
+            VStack(alignment: .leading, spacing: 0) {
+                GamePrimaryActions(primaryTitle: primaryTitle(route),
+                                   isFavorite: gp.isFavorite(game),
+                                   focused: focused,
+                                   primaryEnabled: primaryEnabled,
+                                   primaryWaveDots: isStarting,
+                                   onAction: onPill, onHover: onHoverPill)
+                    .padding(.leading, canvas.u(2)).padding(.top, canvas.u(18))
+                SeleneStatsRow(items: stats)
+                    .padding(.leading, canvas.u(4)).padding(.top, canvas.u(26))
+                howLine(route)
+                    .padding(.leading, canvas.u(4)).padding(.top, canvas.u(18))
+                activity
+                    .padding(.leading, canvas.u(4)).padding(.top, canvas.u(10))
+                SteamDownloadMiniStatus(origin: .spotlight)
             }
-
-            // Clean metadata row (zero jargon!)
-            HStack(spacing: canvas.u(14)) {
-                pillBadge(game.storeBadge, tint: .white.opacity(0.16))
-                pillBadge(game.runnerBadge, tint: game.supportsMacOS ? Color.green.opacity(0.28) : Color.cyan.opacity(0.25))
-                if let pt = game.playtimeSummary {
-                    Text(pt)
-                        .seleneFont(16, .medium)
-                        .foregroundColor(SeleneTheme.ink82)
-                }
-                if let ac = game.antiCheat {
-                    pillBadge(
-                        ac.risk == .blocked ? "Anti-Cheat Blocked" : ac.antiCheats.joined(separator: ", "),
-                        tint: ac.risk == .blocked ? Color.red.opacity(0.35) : Color.orange.opacity(0.28)
-                    )
-                }
-            }
-
-            // Primary + Secondary Arcane Glass Action Pills
-            HStack(spacing: canvas.u(14)) {
-                primaryActionButton
-
-                if case .ownedSteam(let owned, _) = game.kind, owned.supportsMacOS,
-                   let url = URL(string: "steam://install/\(owned.appID)") {
-                    glassPill("Install Mac Native", icon: "desktopcomputer", prominent: false) {
-                        NSWorkspace.shared.open(url)
-                    }
-                }
-
-                if let appID = game.steamAppID, !isVACBlockedForBridge, gp.bridgeStatus.overlayInstalled {
-                    if let exe = downloadedDepotExe {
-                        // The primary pill is often this same Bridge launch already; don't show it twice.
-                        if !primaryLaunchesViaBridge {
-                            glassPill("Play (No Win Steam)", icon: "bolt.horizontal.fill", prominent: false) {
-                                launchBridgeForGame(appID: appID, exe: exe)
-                            }
-                        }
-                    } else if !game.isReady {
-                        glassPill("Download Depot", icon: "arrow.down.circle", prominent: false) {
-                            openBridgeDownloadSheet()
-                        }
-                    }
-                }
-
-                glassPill("Options", icon: "slider.horizontal.3", prominent: false) {
-                    showOptionsSheet = true
-                }
-            }
-            .padding(.top, canvas.u(4))
-            .disabled(gp.busy != nil)
-
-            if case .profile(let profile, let recipe) = game.kind, gp.launchState.profileID == profile.id {
-                GameLaunchStatusPanel(profile: profile, recipe: recipe, scale: canvas.u(1))
-                    .padding(.top, canvas.u(4))
-            } else if let busy = gp.busy {
-                HStack(spacing: canvas.u(10)) {
-                    ProgressView().controlSize(.small)
-                    Text(busy)
-                        .seleneFont(15, .medium)
-                        .foregroundColor(SeleneTheme.ink90)
-                    if let last = gp.statusLog.last {
-                        Text("· \(last)")
-                            .seleneFont(14)
-                            .foregroundColor(SeleneTheme.ink60)
-                            .lineLimit(1)
-                    }
-                }
-                .padding(.top, canvas.u(4))
-            } else if let last = gp.statusLog.last, !last.isEmpty {
-                let isErr = last.hasPrefix("✗")
-                HStack(spacing: canvas.u(8)) {
-                    Image(systemName: isErr ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
-                        .font(.system(size: canvas.u(14)))
-                        .foregroundColor(isErr ? .orange : .green)
-                    Text(last)
-                        .seleneFont(14, .medium)
-                        .foregroundColor(isErr ? Color.orange.opacity(0.95) : SeleneTheme.ink82)
-                        .lineLimit(2)
-                }
-                .padding(.top, canvas.u(4))
-            }
-
-            SteamDownloadMiniStatus(origin: .spotlight)
+            .opacity(restShown ? 1 : 0)
         }
-        .frame(width: canvas.u(960), alignment: .leading)
-        .sheet(isPresented: $showOptionsSheet) { optionsSheet }
+        .frame(width: canvas.u(900), alignment: .leading)
+        .onAppear { reveal() }
+        .task(id: game.id) { await loadLogo() }
+        .sheet(isPresented: optionsPresented) {
+            HubGameOptionsSheet(game: game, onOpenCatalog: onOpenCatalog)
+        }
         .sheet(item: gp.steamDownloadSheetBinding(for: .spotlight)) { _ in SteamQRDownloadSheet() }
     }
 
-    /// The recipe the Windows games screen should open on for this game.
-    private var focusRecipeID: String? {
-        switch game.kind {
-        case .profile(let profile, let recipe): return recipe?.id ?? profile.recipeID
-        case .ownedSteam(_, let recipe): return recipe?.id
-        case .crossOverBottle, .storefront: return nil
+    // MARK: - Play pill
+
+    private var isStarting: Bool {
+        guard let id = profile?.id, gp.launchState.profileID == id else { return false }
+        return gp.launchState.isLaunching
+    }
+
+    private var isRunning: Bool {
+        guard let id = profile?.id, case .running(let running, _, _) = gp.launchState else { return false }
+        return running == id
+    }
+
+    private var isClosing: Bool {
+        guard let id = profile?.id, case .closing(let closing) = gp.launchState else { return false }
+        return closing == id
+    }
+
+    private func primaryTitle(_ route: HubPlayRoute) -> String {
+        if isStarting { return "Starting" }
+        if isRunning { return "Running" }
+        if isClosing { return "Closing" }
+        return route.title
+    }
+
+    private var primaryEnabled: Bool {
+        gp.busy == nil && !isStarting && !isRunning && !isClosing
+    }
+
+    // MARK: - Stats and the route line
+
+    private var stats: [SeleneStat] {
+        var items = [
+            SeleneStat.text("PLAYTIME", LibraryPresentation.duration(TimeInterval(game.playtimeMinutes * 60))),
+            SeleneStat.text("LAST PLAYED", LibraryPresentation.relative(game.lastPlayed, now: Date())),
+        ]
+        if game.kind.isSteam {
+            items.append(.platform(SteamPlatformLogo.platformName))
+        } else {
+            items.append(SeleneStat(label: "PLATFORM", value: .text(game.storeBadge)))
+        }
+        if let releaseYear { items.append(.text("RELEASED", releaseYear)) }
+        return items
+    }
+
+    /// "Windows version · runs with CrossOver · signed in through your Mac Steam", plus an anti-cheat warning.
+    private func howLine(_ route: HubPlayRoute) -> some View {
+        VStack(alignment: .leading, spacing: canvas.u(6)) {
+            Label {
+                Text(route.how(engine: engineName))
+            } icon: {
+                Image(systemName: route.isPlayable ? "checkmark.seal.fill" : "info.circle")
+            }
+            .seleneFont(15, .medium)
+            .foregroundColor(SeleneTheme.ink75)
+            if let ac = game.antiCheat, ac.risk != .caution {
+                Label { Text(ac.summary) } icon: { Image(systemName: "exclamationmark.shield.fill") }
+                    .seleneFont(15, .medium)
+                    .foregroundColor(Color.orange.opacity(0.95))
+                    .lineLimit(2)
+            }
+        }
+        .shadow(color: .black.opacity(0.5), radius: canvas.u(4))
+    }
+
+    private var engineName: String { gp.engineName(for: game) }
+
+    /// Launch progress, a running job, or the last message.
+    @ViewBuilder
+    private var activity: some View {
+        if let profile, gp.launchState.profileID == profile.id {
+            GameLaunchStatusPanel(profile: profile, recipe: recipeOfProfile, scale: canvas.u(1))
+        } else if let busy = gp.busy {
+            HStack(spacing: canvas.u(10)) {
+                ProgressView().controlSize(.small)
+                Text(busy).seleneFont(15, .medium).foregroundColor(SeleneTheme.ink90)
+                if let last = gp.statusLog.last {
+                    Text("· \(last)").seleneFont(14).foregroundColor(SeleneTheme.ink60).lineLimit(1)
+                }
+            }
+        } else if let last = gp.statusLog.last, last.hasPrefix("✗") {
+            Label { Text(last.dropFirst(2)) } icon: { Image(systemName: "exclamationmark.triangle.fill") }
+                .seleneFont(14, .medium)
+                .foregroundColor(Color.orange.opacity(0.95))
+                .lineLimit(2)
         }
     }
 
-    /// Opens the Windows games screen on this game rather than on whatever it showed last.
-    private func openCatalogForThisGame() {
-        gp.focusRecipeID = focusRecipeID
-        onOpenCatalog()
+    private var recipeOfProfile: Recipe? {
+        if case .profile(_, let recipe) = game.kind { return recipe }
+        return nil
     }
 
-    /// True when `primaryActionButton` already starts the downloaded depot through the Steam Bridge.
-    private var primaryLaunchesViaBridge: Bool {
-        guard downloadedDepotExe != nil, let appID = game.steamAppID, gp.bridgeStatus.isReadyToLaunch else { return false }
-        switch game.kind {
-        case .profile(let profile, let recipe):
-            guard recipe?.launch != .battlenet else { return false }
-            return (try? gp.gameport.steam(for: profile.id))?.isGameInstalled(appID: appID) != true
-        case .ownedSteam(let owned, _):
-            return gp.externalEnv.macSteamGame(appID: owned.appID) == nil && !isVACBlockedForBridge
-        case .crossOverBottle, .storefront:
+    private var optionsPresented: Binding<Bool> {
+        Binding(get: { gp.hubOptionsGameID == game.id },
+                set: { if !$0, gp.hubOptionsGameID == game.id { gp.hubOptionsGameID = nil } })
+    }
+
+    // MARK: - Art and motion
+
+    private func loadLogo() async {
+        logo = nil
+        var url = game.preferredLogoURL.flatMap { $0.isFileURL ? $0 : nil }
+        if url == nil, let appID = game.steamAppID.flatMap({ UInt32(exactly: $0) }) {
+            url = await SteamMetadataService.shared.image(appID: appID, slot: .logo, remote: game.remoteLogoURL)
+        }
+        guard !Task.isCancelled, let url else { return }
+        let image = await GameArtLoader.decodeLogo(at: url)
+        guard !Task.isCancelled, let image else { return }
+        withAnimation(.easeOut(duration: 0.3)) { logo = image }
+    }
+
+    /// The same arrival as Arcane's own games: the logo fades and slides in, the rest follows it.
+    private func reveal() {
+        var reset = Transaction()
+        reset.disablesAnimations = true
+        withTransaction(reset) { shown = false; restShown = false; slid = reduceMotion }
+        DispatchQueue.main.async {
+            withAnimation(SpotlightGameInfoView.logoFade) { shown = true }
+            withAnimation(SpotlightGameInfoView.restMotion) { restShown = true }
+            if !reduceMotion { withAnimation(SpotlightGameInfoView.logoSlide) { slid = true } }
+        }
+    }
+}
+
+extension HubPlayRoute {
+    /// The route starts the game (rather than installing or setting it up).
+    var isPlayable: Bool {
+        switch self {
+        case .macSteam, .bridge, .windowsSteam, .profile, .battleNet, .crossOverBottle, .storefront, .obelisk, .siliconium:
+            return true
+        default:
             return false
         }
-    }
-
-    @ViewBuilder
-    private var primaryActionButton: some View {
-        switch game.kind {
-        case .profile(let profile, let recipe):
-            if recipe?.launch == .battlenet {
-                glassPill("Open Battle.net", icon: "play.fill", prominent: true) {
-                    gp.job("Opening \(game.title)") { k, p in
-                        _ = try k.openBattleNet(profile.id, progress: p)
-                        return "Battle.net opened"
-                    }
-                }
-            } else {
-                let steamClient = try? gp.gameport.steam(for: profile.id)
-                let hasWinSteam = steamClient?.isInstalled == true
-                let isWinSteamGameInstalled = game.steamAppID.map { steamClient?.isGameInstalled(appID: $0) == true } ?? false
-
-                if !isWinSteamGameInstalled, let exe = downloadedDepotExe, let appID = game.steamAppID, gp.bridgeStatus.isReadyToLaunch {
-                    glassPill("Play (No Win Steam)", icon: "bolt.horizontal.fill", prominent: true) {
-                        launchBridgeForGame(appID: appID, exe: exe)
-                    }
-                    // The download can be played through Windows Steam too.
-                    if hasWinSteam {
-                        glassPill("Add to Windows Steam", icon: "plus.square.on.square", prominent: false) {
-                            addDepotToWindowsSteam(profileID: profile.id)
-                        }
-                    } else {
-                        glassPill("Install Win Steam", icon: "square.and.arrow.down", prominent: false) {
-                            installWindowsSteam(profileID: profile.id)
-                        }
-                    }
-                } else if !hasWinSteam && game.steamAppID != nil {
-                    if isVACBlockedForBridge {
-                        glassPill("Install Win Steam", icon: "square.and.arrow.down.fill", prominent: true) {
-                            installWindowsSteam(profileID: profile.id)
-                        }
-                        glassPill("Download Offline (No Win Steam)", icon: "arrow.down.circle", prominent: false) {
-                            openBridgeDownloadSheet()
-                        }
-                    } else {
-                        glassPill("Download Game (No Win Steam)", icon: "arrow.down.circle.fill", prominent: true) {
-                            openBridgeDownloadSheet()
-                        }
-                        glassPill("Install Win Steam", icon: "square.and.arrow.down", prominent: false) {
-                            installWindowsSteam(profileID: profile.id)
-                        }
-                    }
-                } else if hasWinSteam && !isWinSteamGameInstalled && game.steamAppID != nil {
-                    if isVACBlockedForBridge {
-                        glassPill("Open Steam to Install", icon: "arrow.down.circle.fill", prominent: true) {
-                            gp.job("Opening Steam for \(game.title)") { k, p in
-                                _ = try k.play(profile.id, progress: p)
-                                return "Opened Steam window — sign in & install \(game.title)"
-                            }
-                        }
-                        glassPill("Download Offline (No Win Steam)", icon: "bolt.horizontal", prominent: false) {
-                            openBridgeDownloadSheet()
-                        }
-                    } else {
-                        glassPill("Download Game (No Win Steam)", icon: "arrow.down.circle.fill", prominent: true) {
-                            openBridgeDownloadSheet()
-                        }
-                        glassPill("Open Steam to Install", icon: "square.and.arrow.down", prominent: false) {
-                            gp.job("Opening Steam for \(game.title)") { k, p in
-                                _ = try k.play(profile.id, progress: p)
-                                return "Opened Steam window — sign in & install \(game.title)"
-                            }
-                        }
-                    }
-                } else if gp.launchState.profileID == profile.id, gp.launchState.isLaunching {
-                    glassPill("Launching…", icon: "hourglass", prominent: true) {}
-                        .allowsHitTesting(false)
-                } else if case .running(let id, _, _) = gp.launchState, id == profile.id {
-                    glassPill("Running", icon: "play.circle.fill", prominent: true) {}
-                        .allowsHitTesting(false)
-                } else if case .closing(let id) = gp.launchState, id == profile.id {
-                    glassPill("Closing…", icon: "hourglass", prominent: true) {}
-                        .allowsHitTesting(false)
-                } else {
-                    glassPill("Play", icon: "play.fill", prominent: true) {
-                        if let recipe {
-                            gp.launchGame(profile: profile, recipe: recipe)
-                        } else {
-                            gp.job("Starting \(game.title)") { k, p in
-                                _ = try k.play(profile.id, progress: p)
-                                return "Launched \(game.title)"
-                            }
-                        }
-                    }
-                }
-            }
-
-        case .crossOverBottle(let item):
-            glassPill("Play", icon: "play.fill", prominent: true) {
-                gp.launchCrossOverGame(item)
-            }
-
-        case .storefront(let sfGame):
-            if sfGame.isInstalled {
-                glassPill("Play", icon: "play.fill", prominent: true) {
-                    gp.launchStorefrontGame(sfGame)
-                }
-            } else if sfGame.store == .epic {
-                glassPill("Download", icon: "arrow.down.circle.fill", prominent: true) {
-                    gp.downloadEpicGame(sfGame)
-                }
-            } else {
-                glassPill("Stores & Setup", icon: "arrow.down.circle", prominent: true) {
-                    onOpenCatalog()
-                }
-            }
-
-        case .ownedSteam(let owned, let recipe):
-            if gp.externalEnv.macSteamGame(appID: owned.appID) != nil,
-               let url = URL(string: "steam://rungameid/\(owned.appID)") {
-                glassPill("Play", icon: "play.fill", prominent: true) {
-                    NSWorkspace.shared.open(url)
-                }
-            } else if let exe = downloadedDepotExe, gp.bridgeStatus.isReadyToLaunch, !isVACBlockedForBridge {
-                glassPill("Play", icon: "play.fill", prominent: true) {
-                    launchBridgeForGame(appID: owned.appID, exe: exe)
-                }
-            } else if owned.supportsMacOS, let url = URL(string: "steam://install/\(owned.appID)") {
-                glassPill("Install & Play", icon: "arrow.down.circle.fill", prominent: true) {
-                    NSWorkspace.shared.open(url)
-                }
-            } else {
-                glassPill("Set Up (\(game.runnerBadge))", icon: "plus.circle.fill", prominent: true) {
-                    setupOwnedSteamGame(owned: owned, recipe: recipe)
-                }
-            }
-        }
-    }
-
-    /// Native in-app download: Steam Mobile QR sign-in once, then a live progress sheet (no Terminal).
-    private func openBridgeDownloadSheet() {
-        guard let appID = game.steamAppID else { return }
-        gp.startSteamDownload(appID: appID, title: game.title, origin: .spotlight, vacNote: isVACBlockedForBridge)
-    }
-
-    /// Clones the downloaded game into this profile's Windows Steam library (no extra disk space),
-    /// so the main button becomes Play through Windows Steam.
-    private func addDepotToWindowsSteam(profileID: String) {
-        gp.job("Adding \(game.title) to Windows Steam") { k, p in
-            _ = try k.addDepotToWindowsSteam(profileID, progress: p)
-            return "\(game.title) is in Windows Steam's library"
-        }
-    }
-
-    private func installWindowsSteam(profileID: String) {
-        gp.job("Installing Windows Steam in \(game.title)") { k, p in
-            let steam = try k.steam(for: profileID)
-            try await steam.install(progress: p)
-            _ = try k.openSteam(profileID, progress: p)
-            return "Steam installed & opened"
-        }
-    }
-
-    private func setupOwnedSteamGame(owned: OwnedSteamGame, recipe: Recipe?) {
-        let preferredEngine = gp.preferredWindowsEngineID()
-        let defaultRenderer: Renderer = (preferredEngine == CrossOverInstallation.engineID) ? .d3dmetal : .dxmt
-        gp.job("Setting up \(game.title)") { k, p in
-            let recipeID: String
-            if let recipe {
-                recipeID = recipe.id
-            } else {
-                let added = try k.addCustomSteamGame(appID: owned.appID, title: game.title, renderer: defaultRenderer)
-                recipeID = added.id
-            }
-            let created = try k.createProfile(recipeID: recipeID, engineID: preferredEngine, progress: p)
-            return "Ready: \(created.id)"
-        }
-    }
-
-    private func launchBridgeForGame(appID: Int, exe: URL) {
-        let preferredEngine = gp.preferredWindowsEngineID()
-        let defaultRenderer: Renderer = (preferredEngine == CrossOverInstallation.engineID) ? .d3dmetal : .dxmt
-        let kind = game.kind
-        let title = game.title
-        gp.launchViaBridge(title: title, executable: exe) { k, p in
-            if case .profile(let existing, _) = kind { return existing.id }
-            let recipeID: String
-            if case .ownedSteam(_, let existingRecipe) = kind, let existingRecipe {
-                recipeID = existingRecipe.id
-            } else {
-                recipeID = try k.addCustomSteamGame(appID: appID, title: title, renderer: defaultRenderer).id
-            }
-            return try k.createProfile(recipeID: recipeID, engineID: preferredEngine, progress: p).id
-        }
-    }
-
-    private func pillBadge(_ text: String, tint: Color) -> some View {
-        Text(text)
-            .seleneFont(14, .semibold)
-            .foregroundColor(SeleneTheme.ink)
-            .padding(.horizontal, canvas.u(12))
-            .padding(.vertical, canvas.u(5))
-            .background(tint, in: Capsule())
-    }
-
-    private func glassPill(_ title: String, icon: String, prominent: Bool, action: @escaping () -> Void) -> some View {
-        Button {
-            SoundEffectService.shared.play(.click)
-            action()
-        } label: {
-            HStack(spacing: canvas.u(8)) {
-                Image(systemName: icon)
-                    .font(.system(size: canvas.u(16), weight: .semibold))
-                Text(title)
-                    .seleneFont(17, .semibold)
-            }
-            .foregroundColor(prominent ? .black : SeleneTheme.ink)
-            .padding(.horizontal, canvas.u(22))
-            .padding(.vertical, canvas.u(12))
-            .background(
-                Capsule()
-                    .fill(prominent ? Color.white : SeleneTheme.glass)
-                    .overlay(Capsule().strokeBorder(SeleneTheme.ink15, lineWidth: max(1, canvas.u(1))))
-            )
-            .shadow(color: .black.opacity(0.45), radius: canvas.u(8))
-        }
-        .buttonStyle(.plain)
-    }
-
-    // MARK: - Options Sheet (Advanced tuning tucked cleanly away from home screen)
-
-    private var optionsSheet: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Text("\(game.title) — Options").font(.title3.bold())
-                Spacer()
-                Button("Done") { showOptionsSheet = false }
-            }
-            Text("Runner: \(game.runnerBadge) · Store: \(game.storeBadge)")
-                .font(.callout).foregroundStyle(.secondary)
-
-            if case .profile(let profile, let recipe) = game.kind {
-                Divider()
-                if gp.installedEngines.count > 1 {
-                    Picker("Engine", selection: Binding<String>(
-                        get: { profile.engineID },
-                        set: { id in
-                            gp.job("Switching \(game.title) to another engine") { k, p in
-                                let moved = try k.switchEngine(profile.id, to: id, progress: p)
-                                return "\(game.title) now uses \(moved.engineID)"
-                            }
-                        }
-                    )) {
-                        ForEach(gp.installedEngines, id: \.id) { Text($0.manifest.displayName).tag($0.id) }
-                    }
-                    .help("Which Wine runs this game. A snapshot is taken first, so you can go back.")
-                }
-                HStack(spacing: 14) {
-                    Picker("Renderer", selection: Binding<Renderer>(
-                        get: { profile.renderer ?? recipe?.renderer ?? .dxmt },
-                        set: { r in gp.updateProfile(profile.id) { $0.renderer = r } }
-                    )) {
-                        ForEach(Renderer.allCases, id: \.self) { Text($0.rawValue.uppercased()).tag($0) }
-                    }
-                    Toggle("MetalFX", isOn: Binding(
-                        get: { profile.metalFX ?? false },
-                        set: { on in gp.updateProfile(profile.id) { $0.metalFX = on } }
-                    ))
-                    Toggle("P-Cores", isOn: Binding(
-                        get: { profile.performanceCores ?? true },
-                        set: { on in gp.updateProfile(profile.id) { $0.performanceCores = on } }
-                    ))
-                    Toggle("x87 JIT", isOn: Binding(
-                        get: { profile.x87Acceleration ?? false },
-                        set: { on in gp.updateProfile(profile.id) { $0.x87Acceleration = on } }
-                    ))
-                }
-                HStack {
-                    Button("Take APFS Snapshot") {
-                        gp.job("Snapshot \(game.title)") { k, _ in
-                            try k.profiles.createSnapshot(profile.id, name: nil).name
-                        }
-                    }
-                    if recipe?.steamAppID != nil {
-                        Button("Benchmark FPS (Lab)") {
-                            gp.job("Lab Benchmark") { k, p in
-                                let res = try await k.lab(profile.id, seconds: 45, progress: p)
-                                return "Lab finished: \(res.verdict.rawValue)"
-                            }
-                        }
-                    }
-                    if let exe = downloadedDepotExe, gp.bridgeStatus.isReadyToLaunch {
-                        Button(isVACBlockedForBridge ? "Play Offline via Bridge (No Win Steam)" : "Play via Bridge (No Win Steam)") {
-                            showOptionsSheet = false
-                            let overrideVAC = isVACBlockedForBridge
-                            let profileID = profile.id
-                            gp.launchViaBridge(title: game.title, executable: exe, allowVACOverride: overrideVAC) { _, _ in profileID }
-                        }
-                    }
-                    if downloadedDepotExe != nil, let appID = game.steamAppID {
-                        Button("Update Game") {
-                            showOptionsSheet = false
-                            gp.startSteamDownload(appID: appID, title: game.title, origin: .spotlight,
-                                                  vacNote: isVACBlockedForBridge, update: true)
-                        }
-                        .help("Brings the No-Win-Steam copy up to date. Only changed files are downloaded.")
-                    }
-                    Button("Open Steam") {
-                        gp.job("Opening Steam") { k, p in _ = try k.openSteam(profile.id, progress: p); return "Steam opened" }
-                    }
-                    Button("Stop") {
-                        gp.job("Stopping") { k, _ in try k.stop(profile.id); return "Stopped" }
-                    }
-                }
-            }
-
-            Divider()
-            HStack {
-                if ExternalEnvironment.suggestsObelisk(for: game.antiCheat), let app = gp.externalEnv.obeliskApp {
-                    Button("Run with Obelisk") { NSWorkspace.shared.open(app) }
-                }
-                if ExternalEnvironment.suggestsSiliconium(steamAppID: game.steamAppID), let app = gp.externalEnv.siliconiumApp {
-                    Button("Run with Siliconium") { NSWorkspace.shared.open(app) }
-                }
-                Spacer()
-                Button("Stop All Windows Apps") {
-                    showOptionsSheet = false
-                    gp.stopAllWindowsApps()
-                }
-                .help("Quits Windows Steam, games and any Wine processes left running, in every profile.")
-                Button(focusRecipeID == nil ? "Open Full Store Catalog & Setup…" : "More Settings for This Game…") {
-                    showOptionsSheet = false
-                    openCatalogForThisGame()
-                }
-            }
-        }
-        .padding(20)
-        .frame(width: 560)
     }
 }
 

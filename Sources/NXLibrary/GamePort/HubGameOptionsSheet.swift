@@ -1,0 +1,305 @@
+import AppKit
+import GamePortKit
+import NXLibraryCore
+import SwiftUI
+
+/// Options for a Windows/PC game on Spotlight: how Play will run it, the other ways to play it, what
+/// GamePort and the game's recipe set up (in plain words, with who chose each value), and the settings
+/// a player may want to change.
+struct HubGameOptionsSheet: View {
+    @ObservedObject var gp = GamePortConsoleModel.shared
+    let game: UnifiedHubGame
+    let onOpenCatalog: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    private var profile: Profile? {
+        if case .profile(let profile, _) = game.kind { return profile }
+        return nil
+    }
+
+    private var recipe: Recipe? {
+        switch game.kind {
+        case .profile(_, let recipe), .ownedSteam(_, let recipe): return recipe
+        case .crossOverBottle, .storefront: return nil
+        }
+    }
+
+    /// What the game uses now, or what it will use once set up.
+    private var setup: GameSetup? {
+        if let profile { return try? gp.gameport.setup(for: profile.id) }
+        guard let recipe, let engineID = gp.preferredWindowsEngineID(),
+              let engine = try? gp.gameport.engines.engine(engineID) else { return nil }
+        let preview = Profile(id: "preview", title: game.title, recipeID: recipe.id, engineID: engineID)
+        return GameSetup.describe(WineRunner(paths: gp.gameport.paths, engine: engine, profile: preview, recipe: recipe))
+    }
+
+    var body: some View {
+        let route = gp.playRoute(for: game)
+        let others = gp.otherRoutes(for: game)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(game.title).font(.title2.bold())
+                    Text(game.storeBadge).font(.callout).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Button("Done") { dismiss() }.keyboardShortcut(.defaultAction)
+            }
+            .padding(20)
+            Divider()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    playSection(route, others: others)
+                    usesSection(route)
+                    if let profile { settingsSection(profile) }
+                    footer
+                }
+                .padding(20)
+            }
+        }
+        .frame(width: 640, height: 660)
+        .disabled(gp.busy != nil)
+    }
+
+    // MARK: - Play
+
+    private func playSection(_ route: HubPlayRoute, others: [HubPlayRoute]) -> some View {
+        section("Play") {
+            row(icon: "play.circle.fill", title: route.title == "Play" ? "Play runs it like this" : "Play does this",
+                detail: route.how(engine: engineName))
+            if !others.isEmpty {
+                Text("Other ways to play").font(.subheadline.weight(.semibold)).padding(.top, 6)
+                ForEach(Array(others.enumerated()), id: \.offset) { _, other in
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(other.otherWayTitle)
+                            Text(other.how(engine: engineName)).font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Button(other.isPlayable ? "Play" : "Go") {
+                            dismiss()
+                            if other == .storesSetup { onOpenCatalog() } else { gp.perform(other, for: game) }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - What this game uses
+
+    private func usesSection(_ route: HubPlayRoute) -> some View {
+        section("What this game uses") {
+            if let steam = route.steamRoute {
+                setupRow(SetupLine("Steam", steam, why: steamWhy(route), origin: .gameport))
+            }
+            if let setup {
+                if profile == nil {
+                    Text("Not set up yet. These are the settings it will start with.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                ForEach(setup.basics) { setupRow($0) }
+                if !setup.tweaks.isEmpty {
+                    Text("Changed for this game").font(.subheadline.weight(.semibold)).padding(.top, 6)
+                    ForEach(setup.tweaks) { setupRow($0) }
+                } else {
+                    Text("Nothing else is changed for this game.").font(.caption).foregroundStyle(.secondary)
+                }
+                if let source = setup.source {
+                    row(icon: statusIcon(setup.status), title: "Where these settings come from", detail: source)
+                }
+                if !setup.notes.isEmpty {
+                    Text("Notes").font(.subheadline.weight(.semibold)).padding(.top, 6)
+                    ForEach(setup.notes, id: \.self) { note in
+                        Label(note, systemImage: "text.bubble").font(.callout)
+                    }
+                }
+                if !setup.knownIssues.isEmpty {
+                    Text("Known problems").font(.subheadline.weight(.semibold)).padding(.top, 6)
+                    ForEach(Array(setup.knownIssues.enumerated()), id: \.offset) { _, issue in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Label(issue.symptom, systemImage: "exclamationmark.triangle").font(.callout)
+                            if let fix = issue.fix { Text("Fix: \(fix)").font(.caption).foregroundStyle(.secondary) }
+                            else if let cause = issue.cause { Text("Why: \(cause)").font(.caption).foregroundStyle(.secondary) }
+                        }
+                    }
+                }
+            } else if case .macSteam = route {
+                Text("The Mac version runs natively. GamePort does not change anything.").font(.callout)
+            } else if case .crossOverBottle(let item) = route {
+                Text("CrossOver runs this game from your bottle \u{201C}\(item.bottleName)\u{201D} with the settings you chose in CrossOver.")
+                    .font(.callout)
+            } else {
+                Text("GamePort has no recipe for this game yet. It starts with safe defaults: \(GameSetup.rendererName(.dxmt)) graphics and MSync.")
+                    .font(.callout)
+            }
+        }
+    }
+
+    private func steamWhy(_ route: HubPlayRoute) -> String {
+        switch route {
+        case .bridge: return "The game talks to your Mac Steam app through GamePort's Steam Bridge: no Windows Steam, achievements and Workshop work, and it starts fast."
+        case .windowsSteam, .openWindowsSteam, .installWindowsSteam: return "A Windows Steam runs inside this game's own Windows copy, as on a PC. Needed for VAC multiplayer."
+        default: return "Steam for Mac starts the Mac version."
+        }
+    }
+
+    private func setupRow(_ line: SetupLine) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text(line.label).foregroundStyle(.secondary)
+                    Text(line.value).fontWeight(.semibold).textSelection(.enabled)
+                }
+                Text(line.why).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            Text(originLabel(line.origin))
+                .font(.caption2.weight(.semibold))
+                .padding(.horizontal, 7).padding(.vertical, 2)
+                .background(originColor(line.origin).opacity(0.22), in: Capsule())
+                .help(originHelp(line.origin))
+        }
+    }
+
+    private func originLabel(_ origin: SetupLine.Origin) -> String {
+        switch origin {
+        case .gameport: return "GamePort"
+        case .recipe: return "Recipe"
+        case .player: return "You"
+        }
+    }
+
+    private func originColor(_ origin: SetupLine.Origin) -> Color {
+        switch origin {
+        case .gameport: return .gray
+        case .recipe: return .blue
+        case .player: return .green
+        }
+    }
+
+    private func originHelp(_ origin: SetupLine.Origin) -> String {
+        switch origin {
+        case .gameport: return "GamePort's default for every game."
+        case .recipe: return "Set by this game's recipe."
+        case .player: return "You changed this below."
+        }
+    }
+
+    private func statusIcon(_ status: Recipe.Status?) -> String {
+        switch status {
+        case .verified: return "checkmark.seal.fill"
+        case .community: return "person.2.fill"
+        case .blocked: return "xmark.octagon.fill"
+        case .untested, nil: return "questionmark.circle"
+        }
+    }
+
+    // MARK: - Settings
+
+    private func settingsSection(_ profile: Profile) -> some View {
+        section("Change") {
+            if gp.installedEngines.count > 1 {
+                Picker("Engine", selection: Binding<String>(
+                    get: { profile.engineID },
+                    set: { id in
+                        gp.job("Switching \(game.title) to another engine") { k, p in
+                            let moved = try k.switchEngine(profile.id, to: id, progress: p)
+                            return "\(game.title) now uses \(moved.engineID)"
+                        }
+                    }
+                )) {
+                    ForEach(gp.installedEngines, id: \.id) { Text($0.manifest.displayName).tag($0.id) }
+                }
+                .help("Which Wine runs this game. A snapshot is taken first, so you can go back.")
+            }
+            Picker("Graphics", selection: Binding<Renderer>(
+                get: { profile.renderer ?? recipe?.renderer ?? .dxmt },
+                set: { r in gp.updateProfile(profile.id) { $0.renderer = r == recipe?.renderer ? nil : r } }
+            )) {
+                ForEach(Renderer.allCases, id: \.self) { Text(GameSetup.rendererName($0)).tag($0) }
+            }
+            HStack(spacing: 18) {
+                Toggle("MetalFX upscaling", isOn: Binding(
+                    get: { profile.metalFX ?? false },
+                    set: { on in gp.updateProfile(profile.id) { $0.metalFX = on ? true : nil } }))
+                Toggle("Performance cores", isOn: Binding(
+                    get: { profile.performanceCores ?? true },
+                    set: { on in gp.updateProfile(profile.id) { $0.performanceCores = on ? nil : false } }))
+                Toggle("x87 acceleration", isOn: Binding(
+                    get: { profile.x87Acceleration ?? false },
+                    set: { on in gp.updateProfile(profile.id) { $0.x87Acceleration = on ? true : nil } }))
+            }
+            HStack {
+                Button("Take Snapshot") {
+                    gp.job("Snapshot \(game.title)") { k, _ in try k.profiles.createSnapshot(profile.id, name: nil).name }
+                }
+                .help("Saves this game's Windows copy so you can roll back after a change.")
+                if recipe?.steamAppID != nil {
+                    Button("Measure FPS (Lab)") {
+                        dismiss()
+                        gp.job("Lab Benchmark") { k, p in
+                            let res = try await k.lab(profile.id, seconds: 45, progress: p)
+                            return "Lab finished: \(res.verdict.rawValue)"
+                        }
+                    }
+                }
+                if let appID = game.steamAppID, gp.gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title) != nil {
+                    Button("Update Game") {
+                        dismiss()
+                        gp.startSteamDownload(appID: appID, title: game.title, origin: .spotlight,
+                                              vacNote: gp.isVACBlockedForBridge(game), update: true)
+                    }
+                    .help("Brings GamePort's copy up to date. Only changed files are downloaded.")
+                }
+                Button("Stop") { gp.job("Stopping") { k, _ in try k.stop(profile.id); return "Stopped" } }
+            }
+        }
+    }
+
+    private var footer: some View {
+        HStack {
+            Button("Stop All Windows Apps") {
+                dismiss()
+                gp.stopAllWindowsApps()
+            }
+            .help("Quits Windows Steam, games and any Wine processes left running, in every profile.")
+            Spacer()
+            Button(focusRecipeID == nil ? "Stores & Setup…" : "Advanced Settings…") {
+                dismiss()
+                gp.focusRecipeID = focusRecipeID
+                onOpenCatalog()
+            }
+        }
+    }
+
+    private var focusRecipeID: String? {
+        switch game.kind {
+        case .profile(let profile, let recipe): return recipe?.id ?? profile.recipeID
+        case .ownedSteam(_, let recipe): return recipe?.id
+        case .crossOverBottle, .storefront: return nil
+        }
+    }
+
+    private var engineName: String { gp.engineName(for: game) }
+
+    // MARK: - Layout
+
+    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title).font(.headline)
+            content()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func row(icon: String, title: String, detail: String) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: icon).foregroundStyle(.secondary).frame(width: 18)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).fontWeight(.medium)
+                Text(detail).font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}

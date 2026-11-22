@@ -26,6 +26,19 @@ final class SteamGameFacts: ObservableObject {
 
     func load(_ game: CatalogGame, language app: AppLanguage) async {
         guard let appID = game.steamGame?.appID else { return }
+        await load(appID: appID, language: app)
+    }
+
+    /// Facts for a Steam AppID that is not a catalog game (GamePort's Windows games).
+    func metadata(appID: Int?) -> SteamMetadata? {
+        appID.flatMap { UInt32(exactly: $0) }.flatMap { facts[$0] }
+    }
+
+    func isKnown(appID: Int?) -> Bool {
+        appID.flatMap { UInt32(exactly: $0) }.map { known.contains($0) } ?? true
+    }
+
+    func load(appID: UInt32, language app: AppLanguage) async {
         let language = SteamMetadata.language(app)
         if language != self.language { self.language = language; facts = [:]; known = []; missedAt = [:] }
         // An answer without facts in this language (offline, store busy) is retried later; facts once found are kept.

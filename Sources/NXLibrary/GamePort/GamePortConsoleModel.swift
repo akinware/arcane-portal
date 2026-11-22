@@ -18,6 +18,8 @@ final class GamePortConsoleModel: ObservableObject {
     /// The game the Windows games screen should show next time it opens (set by Spotlight's
     /// Options, cleared once the screen has selected it).
     @Published var focusRecipeID: String?
+    /// The Windows game whose Options sheet is open on Spotlight (the pill, Y on a controller).
+    @Published var hubOptionsGameID: UUID?
     @Published var steamBase: SteamBase.Stamp?
     @Published var storageInfo: StorageInfo = StorageInfo.inspect(
         Paths.default().root,
@@ -165,38 +167,9 @@ final class GamePortConsoleModel: ObservableObject {
         return gameport.engines.defaultEngineID() ?? installedEngines.first?.id
     }
 
-    /// Primary 1-click action when pressing Enter / A / double-clicking a UnifiedHubGame tile on Spotlight.
+    /// A on a Windows game's tile: the same as its Play pill (`playRoute`).
     func activateUnifiedGame(_ game: UnifiedHubGame) {
-        switch game.kind {
-        case .profile(let profile, let recipe):
-            if recipe?.launch == .battlenet {
-                job("Opening \(game.title)") { k, p in _ = try k.openBattleNet(profile.id, progress: p); return "Battle.net opened" }
-            } else if let recipe {
-                launchGame(profile: profile, recipe: recipe)
-            } else {
-                job("Starting \(game.title)") { k, p in _ = try k.play(profile.id, progress: p); return "Launched" }
-            }
-        case .crossOverBottle(let item):
-            launchCrossOverGame(item)
-        case .storefront(let sfGame):
-            if sfGame.isInstalled { launchStorefrontGame(sfGame) }
-            else if sfGame.store == .epic { downloadEpicGame(sfGame) }
-        case .ownedSteam(let owned, let recipe):
-            if externalEnv.macSteamGame(appID: owned.appID) != nil,
-               let url = URL(string: "steam://rungameid/\(owned.appID)") {
-                NSWorkspace.shared.open(url)
-            } else if owned.supportsMacOS, let url = URL(string: "steam://install/\(owned.appID)") {
-                NSWorkspace.shared.open(url)
-            } else {
-                let engineID = preferredWindowsEngineID()
-                job("Setting up \(game.title)") { k, p in
-                    let rid: String
-                    if let recipe { rid = recipe.id }
-                    else { rid = try k.addCustomSteamGame(appID: owned.appID, title: game.title, renderer: .dxmt).id }
-                    return try k.createProfile(recipeID: rid, engineID: engineID, progress: p).id
-                }
-            }
-        }
+        perform(playRoute(for: game), for: game)
     }
 
     func refreshEpicLibrary() {

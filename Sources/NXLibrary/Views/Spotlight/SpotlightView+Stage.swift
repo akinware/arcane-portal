@@ -244,9 +244,45 @@ extension SpotlightView {
                 }
             }
         } else if let hubGame = model.selectedHubGame {
-            UnifiedHubSpotlightInfo(game: hubGame, onOpenCatalog: { router.openWindowsGames() })
-                .id(hubGame.id)
-                .spotlightBlock(.head)
+            let metadata = steamFacts.metadata(appID: hubGame.steamAppID)
+            let genres = Array(GameGenre.list(metadata?.genres ?? []).prefix(3))
+            VStack(alignment: .leading, spacing: 0) {
+                UnifiedHubSpotlightInfo(
+                    game: hubGame,
+                    releaseYear: metadata?.releaseDate.flatMap(Self.year(in:)),
+                    focused: state.focus == .pills ? state.pillIndex : nil,
+                    onPill: { index in
+                        guard !state.isLifted else { return }
+                        mutate { $0.focus = .pills; $0.pillIndex = index }
+                        pressHubPill(index, game: hubGame)
+                    },
+                    onHoverPill: { index in
+                        guard !state.isLifted, state.focus == .pills, !isGliding else { return }
+                        mutate { $0.pillIndex = index }
+                    },
+                    onOpenCatalog: { router.openWindowsGames() })
+                    .id(hubGame.id)
+                    .spotlightBlock(.head)
+
+                if !genres.isEmpty {
+                    SpotlightGenreChips(genres: genres)
+                        .modifier(SpotlightInfoFollow())
+                        .id(hubGame.id)
+                        .padding(.top, canvas.u(20))
+                        .spotlightBlock(.genres)
+                }
+
+                if hubGame.steamAppID != nil {
+                    screenshotStrip(id: hubGame.id, titleID: "hub:\(hubGame.id.uuidString)",
+                                    urls: metadata?.screenshots ?? [],
+                                    known: steamFacts.isKnown(appID: hubGame.steamAppID), state: state)
+                }
+            }
+            .task(id: "\(hubGame.steamAppID ?? 0)|\(localization.language.rawValue)") {
+                if let appID = hubGame.steamAppID.flatMap({ UInt32(exactly: $0) }) {
+                    await steamFacts.load(appID: appID, language: localization.language)
+                }
+            }
         } else if model.selectedItem == .card(.mods) {
             VStack(alignment: .leading, spacing: 0) {
                 SpotlightCardInfoView(
@@ -281,6 +317,11 @@ extension SpotlightView {
             )
             .padding(.top, canvas.u(10))
         }
+    }
+
+    /// "2026" from a store release date such as "12 Mar, 2026".
+    static func year(in release: String) -> String? {
+        release.range(of: #"\b(?:19|20)\d{2}\b"#, options: .regularExpression).map { String(release[$0]) }
     }
 
     static func poolLabel(_ pool: SurprisePool) -> String {

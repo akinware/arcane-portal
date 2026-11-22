@@ -1,0 +1,326 @@
+import AppKit
+import GamePortKit
+import NXLibraryCore
+
+/// The one way the Play button starts a Windows/PC game, chosen by GamePort, plus the other ways the
+/// game can be played (listed under Options). Spotlight's pill, A on the tile and Options all use this,
+/// so they can never disagree.
+enum HubPlayRoute: Equatable {
+    /// The Mac version, through Mac Steam.
+    case macSteam(appID: Int)
+    /// A Mac version exists but is not installed: Mac Steam installs it.
+    case installMac(appID: Int)
+    /// The Windows version GamePort downloaded, through the Steam Bridge (Mac Steam, no Windows Steam).
+    case bridge(appID: Int, exe: URL, offline: Bool)
+    /// Windows Steam inside the game's own Windows copy starts the game.
+    case windowsSteam(profileID: String)
+    /// A profile without a Steam game (custom program).
+    case profile(profileID: String)
+    case battleNet(profileID: String)
+    /// Download the Windows version without Windows Steam (Steam Mobile QR sign-in once).
+    case download(appID: Int)
+    /// VAC games need Windows Steam: install it into the game's Windows copy.
+    case installWindowsSteam(profileID: String)
+    /// Windows Steam is there but the game is not: open Steam to install it.
+    case openWindowsSteam(profileID: String)
+    /// Put GamePort's download into Windows Steam's library (APFS clone, no extra space).
+    case addToWindowsSteam(profileID: String)
+    /// No profile yet: create the game's Windows copy.
+    case setUp(appID: Int)
+    case crossOverBottle(CrossOverBottleLaunchItem)
+    case storefront(StorefrontGame)
+    case epicDownload(StorefrontGame)
+    case storesSetup
+    case obelisk(URL)
+    case siliconium(URL)
+
+    /// The pill's title.
+    var title: String {
+        switch self {
+        case .macSteam, .bridge, .windowsSteam, .profile, .crossOverBottle, .storefront: return "Play"
+        case .installMac: return "Install"
+        case .battleNet: return "Open Battle.net"
+        case .download, .epicDownload: return "Download"
+        case .installWindowsSteam: return "Install Steam"
+        case .openWindowsSteam: return "Install in Steam"
+        case .addToWindowsSteam: return "Add to Windows Steam"
+        case .setUp: return "Set Up"
+        case .storesSetup: return "Stores & Setup"
+        case .obelisk: return "Play with Obelisk"
+        case .siliconium: return "Play with Siliconium"
+        }
+    }
+
+    /// The name used in "Other ways to play".
+    var otherWayTitle: String {
+        switch self {
+        case .macSteam: return "Play the Mac version"
+        case .installMac: return "Install the Mac version"
+        case .bridge(_, _, let offline): return offline ? "Play offline through Mac Steam" : "Play through Mac Steam (no Windows Steam)"
+        case .windowsSteam: return "Play through Windows Steam"
+        case .download: return "Download without Windows Steam"
+        case .installWindowsSteam: return "Install Windows Steam for this game"
+        case .openWindowsSteam: return "Open Windows Steam"
+        case .addToWindowsSteam: return "Add this download to Windows Steam"
+        case .crossOverBottle(let item): return "Play in CrossOver (\(item.bottleName))"
+        case .obelisk: return "Open Obelisk"
+        case .siliconium: return "Open Siliconium"
+        default: return title
+        }
+    }
+
+    /// One line under the pills: how the game will run, in plain words.
+    func how(engine: String = "Wine") -> String {
+        switch self {
+        case .macSteam: return "Mac version · starts through Steam"
+        case .installMac: return "A Mac version exists · Steam installs it"
+        case .bridge(_, _, let offline):
+            return offline ? "Windows version · offline only, this game's anti-cheat needs Windows Steam online"
+                           : "Windows version · runs with \(engine) · signed in through your Mac Steam"
+        case .windowsSteam: return "Windows version · runs with \(engine) · started by Windows Steam"
+        case .profile: return "Windows program · runs with \(engine)"
+        case .battleNet: return "Windows version · runs with \(engine) · started by Battle.net"
+        case .download: return "Not downloaded yet · GamePort downloads it with your Steam account, no Windows Steam needed"
+        case .installWindowsSteam: return "This game uses VAC, so it needs Windows Steam. GamePort installs it for this game only."
+        case .openWindowsSteam: return "This game uses VAC · install it from Windows Steam"
+        case .addToWindowsSteam: return "Windows Steam can use GamePort's download without copying it"
+        case .setUp: return "Not set up yet · GamePort prepares a Windows copy for it"
+        case .crossOverBottle(let item): return "Installed in your CrossOver bottle \u{201C}\(item.bottleName)\u{201D}"
+        case .storefront(let game): return "Windows version · runs with \(engine) · \(game.store.displayName)"
+        case .epicDownload: return "Not downloaded yet · Epic Games"
+        case .storesSetup: return "Sign in to the store to download it"
+        case .obelisk: return "This game's anti-cheat needs Obelisk"
+        case .siliconium: return "Classic Call of Duty runs best with Siliconium"
+        }
+    }
+
+    /// Plain words for the Steam row of "What this game uses".
+    var steamRoute: String? {
+        switch self {
+        case .macSteam, .installMac: return "Mac Steam (Mac version)"
+        case .bridge(_, _, let offline): return offline ? "Mac Steam through the Steam Bridge, offline" : "Mac Steam through the Steam Bridge"
+        case .windowsSteam, .openWindowsSteam, .installWindowsSteam: return "Windows Steam inside this game's Windows copy"
+        default: return nil
+        }
+    }
+}
+
+extension GamePortConsoleModel {
+    /// The Windows program GamePort downloaded for this game (without Windows Steam), or the game's
+    /// program inside the profile's Windows Steam library.
+    func downloadedExecutable(for game: UnifiedHubGame) -> URL? {
+        guard let appID = game.steamAppID else { return nil }
+        if let depot = gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title) { return depot }
+        guard case .profile(let profile, _) = game.kind,
+              let steam = try? gameport.steam(for: profile.id), steam.isGameInstalled(appID: appID) else { return nil }
+        let manifest = steam.steamapps.appendingPathComponent("appmanifest_\(appID).acf")
+        guard let text = try? String(contentsOf: manifest, encoding: .utf8),
+              let range = text.range(of: #""installdir"\s+"([^"]+)""#, options: .regularExpression) else { return nil }
+        let line = String(text[range])
+        guard let last = line.lastIndex(of: "\""), let previous = line[..<last].lastIndex(of: "\"") else { return nil }
+        let folder = steam.steamapps.appendingPathComponent("common/\(line[line.index(after: previous)..<last])", isDirectory: true)
+        return SteamDepotManager.discoverMainExecutable(in: folder, preferredName: game.title)
+    }
+
+    /// True for VAC games: the Bridge can only play them offline.
+    func isVACBlockedForBridge(_ game: UnifiedHubGame) -> Bool {
+        if case .blocked = SteamBridge.vacDecision(for: game.antiCheat) { return true }
+        return false
+    }
+
+    /// The game is in the profile's Windows Steam library.
+    private func windowsSteamHas(_ game: UnifiedHubGame, profileID: String) -> (hasSteam: Bool, hasGame: Bool) {
+        guard let steam = try? gameport.steam(for: profileID) else { return (false, false) }
+        return (steam.isInstalled, game.steamAppID.map { steam.isGameInstalled(appID: $0) } ?? false)
+    }
+
+    private func crossOverItem(for game: UnifiedHubGame) -> CrossOverBottleLaunchItem? {
+        guard let appID = game.steamAppID else { return nil }
+        return crossOverGames.first { $0.kind == .steam(appID: appID) }
+    }
+
+    /// What Play does for this game. Order of preference: the Mac version; anti-cheat helpers when the game
+    /// cannot run otherwise; the Bridge (fastest start, no Windows Steam); Windows Steam; then whatever gets
+    /// the game installed.
+    func playRoute(for game: UnifiedHubGame) -> HubPlayRoute {
+        let appID = game.steamAppID
+        if let appID, externalEnv.macSteamGame(appID: appID) != nil { return .macSteam(appID: appID) }
+        // Obelisk leads only when Wine alone cannot run the game.
+        if game.antiCheat?.risk == .blocked,
+           ExternalEnvironment.suggestsObelisk(for: game.antiCheat), let app = externalEnv.obeliskApp {
+            return .obelisk(app)
+        }
+        if ExternalEnvironment.suggestsSiliconium(steamAppID: appID), let app = externalEnv.siliconiumApp {
+            return .siliconium(app)
+        }
+        let vac = isVACBlockedForBridge(game)
+        let exe = downloadedExecutable(for: game)
+        let bridgeReady = bridgeStatus.isReadyToLaunch
+
+        switch game.kind {
+        case .crossOverBottle(let item):
+            return .crossOverBottle(item)
+        case .storefront(let store):
+            if store.isInstalled { return .storefront(store) }
+            return store.store == .epic ? .epicDownload(store) : .storesSetup
+        case .ownedSteam(let owned, _):
+            if owned.supportsMacOS { return .installMac(appID: owned.appID) }
+            if let exe, bridgeReady, !vac { return .bridge(appID: owned.appID, exe: exe, offline: false) }
+            if let item = crossOverItem(for: game) { return .crossOverBottle(item) }
+            return vac ? .setUp(appID: owned.appID) : .download(appID: owned.appID)
+        case .profile(let profile, let recipe):
+            if recipe?.launch == .battlenet { return .battleNet(profileID: profile.id) }
+            guard let appID else { return .profile(profileID: profile.id) }
+            let win = windowsSteamHas(game, profileID: profile.id)
+            if win.hasGame && (vac || !bridgeReady) { return .windowsSteam(profileID: profile.id) }
+            if let exe, bridgeReady, !vac {
+                // A copy only in Windows Steam's library is still played through the Bridge: no Windows Steam start.
+                return .bridge(appID: appID, exe: exe, offline: false)
+            }
+            if win.hasGame { return .windowsSteam(profileID: profile.id) }
+            if let item = crossOverItem(for: game) { return .crossOverBottle(item) }
+            if !vac { return .download(appID: appID) }
+            return win.hasSteam ? .openWindowsSteam(profileID: profile.id) : .installWindowsSteam(profileID: profile.id)
+        }
+    }
+
+    /// Every other way this game can be played or installed, for Options.
+    func otherRoutes(for game: UnifiedHubGame) -> [HubPlayRoute] {
+        let primary = playRoute(for: game)
+        var routes: [HubPlayRoute] = []
+        let appID = game.steamAppID
+        let vac = isVACBlockedForBridge(game)
+        let exe = downloadedExecutable(for: game)
+        if let appID {
+            if externalEnv.macSteamGame(appID: appID) != nil { routes.append(.macSteam(appID: appID)) }
+            else if game.supportsMacOS { routes.append(.installMac(appID: appID)) }
+            if let exe, bridgeStatus.isReadyToLaunch { routes.append(.bridge(appID: appID, exe: exe, offline: vac)) }
+        }
+        if case .profile(let profile, let recipe) = game.kind, recipe?.launch != .battlenet, appID != nil {
+            let win = windowsSteamHas(game, profileID: profile.id)
+            if win.hasGame { routes.append(.windowsSteam(profileID: profile.id)) }
+            else if win.hasSteam, gameport.steamDepot.downloadedExecutable(appID: appID!, preferredName: game.title) != nil {
+                routes.append(.addToWindowsSteam(profileID: profile.id))
+            }
+            if win.hasSteam { routes.append(.openWindowsSteam(profileID: profile.id)) }
+            else { routes.append(.installWindowsSteam(profileID: profile.id)) }
+        }
+        if let appID, exe == nil, game.kind.isSteam { routes.append(.download(appID: appID)) }
+        if let item = crossOverItem(for: game) { routes.append(.crossOverBottle(item)) }
+        if ExternalEnvironment.suggestsObelisk(for: game.antiCheat), let app = externalEnv.obeliskApp { routes.append(.obelisk(app)) }
+        if ExternalEnvironment.suggestsSiliconium(steamAppID: appID), let app = externalEnv.siliconiumApp { routes.append(.siliconium(app)) }
+        var seen: [HubPlayRoute] = [primary]
+        return routes.filter { route in
+            guard !seen.contains(route) else { return false }
+            seen.append(route)
+            return true
+        }
+    }
+
+    /// Does what the route says.
+    func perform(_ route: HubPlayRoute, for game: UnifiedHubGame) {
+        let title = game.title
+        switch route {
+        case .macSteam(let appID):
+            if let url = URL(string: "steam://rungameid/\(appID)") { NSWorkspace.shared.open(url) }
+        case .installMac(let appID):
+            if let url = URL(string: "steam://install/\(appID)") { NSWorkspace.shared.open(url) }
+        case .bridge(let appID, let exe, let offline):
+            launchBridge(game, appID: appID, exe: exe, allowVACOverride: offline)
+        case .windowsSteam(let profileID), .profile(let profileID):
+            if case .profile(let profile, let recipe?) = game.kind, profile.id == profileID {
+                launchGame(profile: profile, recipe: recipe)
+            } else {
+                job("Starting \(title)") { k, p in _ = try k.play(profileID, progress: p); return "Launched \(title)" }
+            }
+        case .battleNet(let profileID):
+            job("Opening \(title)") { k, p in _ = try k.openBattleNet(profileID, progress: p); return "Battle.net opened" }
+        case .download(let appID):
+            startSteamDownload(appID: appID, title: title, origin: .spotlight, vacNote: isVACBlockedForBridge(game))
+        case .installWindowsSteam(let profileID):
+            job("Installing Windows Steam for \(title)") { k, p in
+                try await k.steam(for: profileID).install(progress: p)
+                _ = try k.openSteam(profileID, progress: p)
+                return "Windows Steam is installed and open"
+            }
+        case .openWindowsSteam(let profileID):
+            job("Opening Windows Steam") { k, p in _ = try k.openSteam(profileID, progress: p); return "Windows Steam opened" }
+        case .addToWindowsSteam(let profileID):
+            job("Adding \(title) to Windows Steam") { k, p in
+                _ = try k.addDepotToWindowsSteam(profileID, progress: p)
+                return "\(title) is in Windows Steam's library"
+            }
+        case .setUp(let appID):
+            let recipe: Recipe? = { if case .ownedSteam(_, let r) = game.kind { return r }; return nil }()
+            let engineID = preferredWindowsEngineID()
+            let renderer: Renderer = engineID == CrossOverInstallation.engineID ? .d3dmetal : .dxmt
+            job("Setting up \(title)") { k, p in
+                let recipeID = try recipe?.id ?? k.addCustomSteamGame(appID: appID, title: title, renderer: renderer).id
+                return "Ready: \(try k.createProfile(recipeID: recipeID, engineID: engineID, progress: p).id)"
+            }
+        case .crossOverBottle(let item):
+            launchCrossOverGame(item)
+        case .storefront(let store):
+            launchStorefrontGame(store)
+        case .epicDownload(let store):
+            downloadEpicGame(store)
+        case .storesSetup:
+            break // Spotlight opens the Windows games screen for this one.
+        case .obelisk(let app), .siliconium(let app):
+            NSWorkspace.shared.open(app)
+            say("Opened \(app.deletingPathExtension().lastPathComponent). Start \(title) from there.")
+        }
+    }
+
+    /// Starts the game through the Steam Bridge, creating its profile first when it has none.
+    private func launchBridge(_ game: UnifiedHubGame, appID: Int, exe: URL, allowVACOverride: Bool) {
+        let engineID = preferredWindowsEngineID()
+        let renderer: Renderer = engineID == CrossOverInstallation.engineID ? .d3dmetal : .dxmt
+        let kind = game.kind
+        let title = game.title
+        launchViaBridge(title: title, executable: exe, allowVACOverride: allowVACOverride) { k, p in
+            if case .profile(let existing, _) = kind { return existing.id }
+            let recipeID: String
+            if case .ownedSteam(_, let recipe?) = kind { recipeID = recipe.id }
+            else { recipeID = try k.addCustomSteamGame(appID: appID, title: title, renderer: renderer).id }
+            return try k.createProfile(recipeID: recipeID, engineID: engineID, progress: p).id
+        }
+    }
+
+    /// The Wine that runs the game, in a couple of words.
+    func engineName(for game: UnifiedHubGame) -> String {
+        guard case .profile(let profile, _) = game.kind else {
+            return preferredWindowsEngineID() == CrossOverInstallation.engineID ? "CrossOver" : "Wine"
+        }
+        if profile.engineID == CrossOverInstallation.engineID { return "your CrossOver" }
+        return installedEngines.first { $0.id == profile.engineID }.map { GameSetup.shortName($0.manifest.displayName) } ?? "Wine"
+    }
+
+    // MARK: - Favorites
+
+    private static let hubFavoritesKey = "GamePort.hubFavorites"
+
+    var hubFavorites: Set<UUID> {
+        let stored = UserDefaults.standard.stringArray(forKey: Self.hubFavoritesKey) ?? []
+        return Set(stored.compactMap(UUID.init(uuidString:)))
+    }
+
+    func isFavorite(_ game: UnifiedHubGame) -> Bool { hubFavorites.contains(game.id) }
+
+    func toggleFavorite(_ game: UnifiedHubGame) {
+        objectWillChange.send()
+        var set = hubFavorites
+        if !set.insert(game.id).inserted { set.remove(game.id) }
+        UserDefaults.standard.set(set.map(\.uuidString).sorted(), forKey: Self.hubFavoritesKey)
+    }
+}
+
+extension UnifiedHubGame.Kind {
+    var isSteam: Bool {
+        switch self {
+        case .profile(_, let recipe): return recipe?.launch != .battlenet
+        case .ownedSteam: return true
+        case .crossOverBottle, .storefront: return false
+        }
+    }
+}
