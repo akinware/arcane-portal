@@ -99,7 +99,7 @@ struct UnifiedHubSpotlightInfo: View {
                         }
                     } else if !game.isReady {
                         glassPill("Download Depot", icon: "arrow.down.circle", prominent: false) {
-                            showBridgeDownloadSheet = true
+                            openBridgeDownloadSheet()
                         }
                     }
                 }
@@ -156,21 +156,50 @@ struct UnifiedHubSpotlightInfo: View {
                     }
                 }
             } else {
-                let hasWinSteam = (try? gp.gameport.steam(for: profile.id).isInstalled) == true
-                if !hasWinSteam, let exe = downloadedDepotExe, let appID = game.steamAppID, gp.bridgeStatus.isReadyToLaunch {
+                let steamClient = try? gp.gameport.steam(for: profile.id)
+                let hasWinSteam = steamClient?.isInstalled == true
+                let isWinSteamGameInstalled = game.steamAppID.map { steamClient?.isGameInstalled(appID: $0) == true } ?? false
+
+                if !isWinSteamGameInstalled, let exe = downloadedDepotExe, let appID = game.steamAppID, gp.bridgeStatus.isReadyToLaunch {
                     glassPill("Play (No Win Steam)", icon: "bolt.horizontal.fill", prominent: true) {
                         launchBridgeForGame(appID: appID, exe: exe)
                     }
                 } else if !hasWinSteam && game.steamAppID != nil {
-                    glassPill("Download Game (No Win Steam)", icon: "arrow.down.circle.fill", prominent: true) {
-                        showBridgeDownloadSheet = true
+                    if isVACBlockedForBridge {
+                        glassPill("Install Win Steam", icon: "square.and.arrow.down.fill", prominent: true) {
+                            installWindowsSteam(profileID: profile.id)
+                        }
+                        glassPill("Download Offline (No Win Steam)", icon: "arrow.down.circle", prominent: false) {
+                            openBridgeDownloadSheet()
+                        }
+                    } else {
+                        glassPill("Download Game (No Win Steam)", icon: "arrow.down.circle.fill", prominent: true) {
+                            openBridgeDownloadSheet()
+                        }
+                        glassPill("Install Win Steam", icon: "square.and.arrow.down", prominent: false) {
+                            installWindowsSteam(profileID: profile.id)
+                        }
                     }
-                    glassPill("Install Win Steam", icon: "square.and.arrow.down", prominent: false) {
-                        gp.job("Installing Windows Steam in \(game.title)") { k, p in
-                            let steam = try k.steam(for: profile.id)
-                            try await steam.install(progress: p)
-                            _ = try k.openSteam(profile.id, progress: p)
-                            return "Steam installed & opened"
+                } else if hasWinSteam && !isWinSteamGameInstalled && game.steamAppID != nil {
+                    if isVACBlockedForBridge {
+                        glassPill("Open Steam to Install", icon: "arrow.down.circle.fill", prominent: true) {
+                            gp.job("Opening Steam for \(game.title)") { k, p in
+                                _ = try k.play(profile.id, progress: p)
+                                return "Opened Steam window — sign in & install \(game.title)"
+                            }
+                        }
+                        glassPill("Download Offline (No Win Steam)", icon: "bolt.horizontal", prominent: false) {
+                            openBridgeDownloadSheet()
+                        }
+                    } else {
+                        glassPill("Download Game (No Win Steam)", icon: "arrow.down.circle.fill", prominent: true) {
+                            openBridgeDownloadSheet()
+                        }
+                        glassPill("Open Steam to Install", icon: "square.and.arrow.down", prominent: false) {
+                            gp.job("Opening Steam for \(game.title)") { k, p in
+                                _ = try k.play(profile.id, progress: p)
+                                return "Opened Steam window — sign in & install \(game.title)"
+                            }
                         }
                     }
                 } else {
@@ -226,6 +255,23 @@ struct UnifiedHubSpotlightInfo: View {
                     setupOwnedSteamGame(owned: owned, recipe: recipe)
                 }
             }
+        }
+    }
+
+    private func openBridgeDownloadSheet() {
+        if bridgeSteamUser.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           let detected = ExternalDiscovery.macSteamAccountName() {
+            bridgeSteamUser = detected
+        }
+        showBridgeDownloadSheet = true
+    }
+
+    private func installWindowsSteam(profileID: String) {
+        gp.job("Installing Windows Steam in \(game.title)") { k, p in
+            let steam = try k.steam(for: profileID)
+            try await steam.install(progress: p)
+            _ = try k.openSteam(profileID, progress: p)
+            return "Steam installed & opened"
         }
     }
 
@@ -391,6 +437,11 @@ struct UnifiedHubSpotlightInfo: View {
             Text("Download Windows Depot — \(game.title)").font(.headline)
             Text("Downloads Windows game files natively via Valve steamcmd (no Windows Steam client needed). Leave username blank for anonymous free depots.")
                 .font(.callout).foregroundStyle(.secondary)
+            if isVACBlockedForBridge {
+                Text("Note: This game uses VAC. Bridge Mode (No Win Steam) is for offline / local bot matches only — use Install Win Steam for online VAC matchmaking.")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
             TextField("Steam username (or leave blank for anonymous)", text: $bridgeSteamUser)
                 .textFieldStyle(.roundedBorder)
             HStack {
