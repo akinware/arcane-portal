@@ -8,7 +8,7 @@ releases, kept as they were. Engine changes also have their own [upgrade notes](
 
 ### Added
 
-- **Arcane Portal.** The fork has its own name, icon (Arcane's crystal with a portal opening behind it), project
+- **Arcane Portal.** The fork has its own name, icon (a glowing ring of runes, a portal), project
   page and data: `~/Library/Application Support/ArcanePortal`, bundle ID `io.github.akinware.arcaneportal`. It sits
   beside Arcane without either changing the other, and updates only from `akinware/arcane-portal` releases.
 - **Windows games** through GamePortKit: games downloaded with a Steam QR sign-in, GamePort profiles, CrossOver

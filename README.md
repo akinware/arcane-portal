@@ -404,7 +404,7 @@ you installed.
 
 The interface draws from the MIT [Selene](https://github.com/mattxslv/Selene) theme. Bundled fonts, sounds, palettes and runtime components retain their own licences; see [NOTICE](NOTICE), [media notices](Resources/Selene/NOTICE.txt) and [palette notices](Resources/Selene/NOTICE-palettes.txt).
 
-The app icon is derived from Arcane's artwork; the [master and generation notes](Resources/IconArtwork.md) are included.
+The app icon is a rune portal ring; the [master and generation notes](Resources/IconArtwork.md) are included.
 
 ## Legal and third-party notices
 

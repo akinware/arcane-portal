@@ -1,6 +1,6 @@
 # Arcane Portal — catalogo dei file
 
-Aggiornato il 23 novembre 2026. Copertura di **817 file** del progetto, compresi i controlli di pubblicazione, la CI con regressioni app senza UI, il master dell’icona, le guide per sviluppo e media, gli screenshot del README, l'integrazione di nxnative e di GamePortKit, il canale di aggiornamento e il primo avvio che parte da ciò che è già sul Mac, il setup del porting con cartella unica per scoperta e installazione dei giochi. Le cartelle personali, gli output generati e gli appunti non versionati sono esclusi.
+Aggiornato il 23 novembre 2026. Copertura di **816 file** del progetto, compresi i controlli di pubblicazione, la CI con regressioni app senza UI, il master dell’icona, le guide per sviluppo e media, gli screenshot del README, l'integrazione di nxnative e di GamePortKit, il canale di aggiornamento e il primo avvio che parte da ciò che è già sul Mac, il setup del porting con cartella unica per scoperta e installazione dei giochi. Le cartelle personali, gli output generati e gli appunti non versionati sono esclusi.
 
 La [guida tecnica](../how-it-works/architecture.md) spiega come collaborano i componenti. Qui ogni riga identifica un file e la sua responsabilità. Le sezioni Core seguono le cartelle del Core, una per area; le sezioni Porting seguono le cartelle del target `ArcanePorting`, con lo Switch; quelle UI seguono schermate e componenti. Le viste usano i modelli e i servizi del Core attraverso il coordinamento applicativo.
 
@@ -1044,7 +1044,6 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | [scripts/release.sh](../../scripts/release.sh) | Controlla prerequisiti, suite Swift e tutti gli script headless delle regressioni app; produce ZIP e DMG di release, con pubblicazione esplicita opzionale. |
 | [scripts/validate_update.py](../../scripts/validate_update.py) | Verifica struttura, percorsi e limiti degli archivi prima dell'estrazione, sia nel bundle sia durante il packaging delle release. |
 | [scripts/relink_macho.py](../../scripts/relink_macho.py) | Riscrive riferimenti Mach-O dei binari e delle librerie affinché il runtime incluso sia rilocabile. |
-| [scripts/make_portal_artwork.py](../../scripts/make_portal_artwork.py) | Deriva il master `Resources/IconArtwork.png` di Arcane Portal dall'artwork di Arcane (`Bium23/NxLibrary`, MIT), virando le pennellate in ottanio e viola e aprendo un portale luminoso dietro il cristallo. |
 | [scripts/make_icons.swift](../../scripts/make_icons.swift) | Genera le risorse dell’icona dell’app nelle varianti usate dal bundle. |
 | [scripts/import_selene_palettes.py](../../scripts/import_selene_palettes.py) | Converte le palette Selene nel catalogo JSON usato dall’app. |
 | [scripts/check_localizations.py](../../scripts/check_localizations.py) | Verifica copertura, placeholder, plurali e risorse nel bundle installato. |
@@ -1055,8 +1054,8 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 
 | File | Responsabilità aggiuntiva |
 |---|---|
-| [Resources/IconArtwork.png](../../Resources/IconArtwork.png) | Master quadrato dell’icona di Arcane Portal (cristallo con portale nella sfera di vetro), derivato dall'artwork di Arcane tramite `scripts/make_portal_artwork.py`. |
-| [Resources/IconArtwork.md](../../Resources/IconArtwork.md) | Provenienza dichiarata dall'artwork di Arcane (`Bium23/NxLibrary`, MIT) e riproduzione del master e delle varianti tramite gli script. |
+| [Resources/IconArtwork.png](../../Resources/IconArtwork.png) | Master quadrato dell’icona di Arcane Portal: un anello di rune luminoso, un portale, su fondo ottanio scuro. |
+| [Resources/IconArtwork.md](../../Resources/IconArtwork.md) | Provenienza dell'immagine fornita dal maintainer, ritaglio del master e riproduzione delle varianti con `scripts/make_icons.swift`. |
 | [crystal-arcane.png](../../Sources/NXLibraryCore/Resources/crystal-arcane.png) | Immagine ferma del trofeo Arcane, anche come ripiego del video. |
 | [crystal-arcane.mov](../../Sources/NXLibraryCore/Resources/crystal-arcane.mov) | Animazione con alpha del trofeo Arcane. |
 | [crystal-gold.png](../../Sources/NXLibraryCore/Resources/crystal-gold.png) | Immagine del trofeo Oro. |

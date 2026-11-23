@@ -1,13 +1,12 @@
 # App icon artwork
 
-Arcane Portal's icon is derived from Arcane's (`Bium23/NxLibrary`, MIT; see `NOTICE`). Arcane's owner
-created that artwork with AI: a violet, rose and blue crystal inside a clear glass sphere, framed by a navy
-and a plum ink brush stroke on light paper, with a plum ink wave inside the sphere.
+Arcane Portal's icon is a glowing ring of runes, a portal, on a dark teal background. The project's
+maintainer supplied the image for this fork. Arcane's earlier crystal artwork (`Bium23/NxLibrary`, MIT)
+is no longer used.
 
-`scripts/make_portal_artwork.py` turns it into `IconArtwork.png`, the full-bleed 1254 × 1254 square master:
-the navy stroke becomes teal, the plum ink violet, and a glowing portal with a swirl opens behind the crystal.
-The script's header has the exact commands. The source is opaque and has no pre-rendered icon frame,
-transparent padding, rounded corners, rim or external shadow.
+`IconArtwork.png` is the full-bleed 1254 × 1254 square master: the supplied image cropped to a square
+around the ring, so the ring fills about 82% of the width, and upscaled. The source is opaque and has no
+pre-rendered icon frame, transparent padding, rounded corners, rim or external shadow.
 
 Regenerate the Finder icon and Dock appearance resources on macOS:
 
