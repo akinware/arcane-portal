@@ -67,14 +67,14 @@ struct HubGameOptionsSheet: View {
     private func playSection(_ route: HubPlayRoute, others: [HubPlayRoute]) -> some View {
         section("Play") {
             row(icon: "play.circle.fill", title: route.title == "Play" ? "Play runs it like this" : "Play does this",
-                detail: route.how(engine: engineName))
+                detail: route.how(engine: engineName, vac: vac))
             if !others.isEmpty {
                 Text("Other ways to play").font(.subheadline.weight(.semibold)).padding(.top, 6)
                 ForEach(Array(others.enumerated()), id: \.offset) { _, other in
                     HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(other.otherWayTitle)
-                            Text(other.how(engine: engineName)).font(.caption).foregroundStyle(.secondary)
+                            Text(other.how(engine: engineName, vac: vac)).font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
                         Button(other.isPlayable ? "Play" : "Go") {
@@ -90,6 +90,11 @@ struct HubGameOptionsSheet: View {
     // MARK: - How it ran
 
     private var sessions: [PlayRecord] { profile.map { gp.playSessions($0.id) } ?? [] }
+
+    private var playsWindowsSteam: Bool {
+        if case .windowsSteam = gp.playRoute(for: game) { return true }
+        return false
+    }
 
     private var fixes: [AutoFix] { profile.map { gp.gameport.autoFixes.fixes($0.id) } ?? [] }
 
@@ -108,9 +113,10 @@ struct HubGameOptionsSheet: View {
         let verdicts = verdicts
         section("How it ran") {
             if sessions.prefersWindowsSteamOverBridge {
-                row(icon: "arrow.triangle.branch", title: "Play uses Windows Steam for now",
+                row(icon: "arrow.triangle.branch", title: playsWindowsSteam ? "Play uses Windows Steam for now" : "Windows Steam worked better",
                     detail: "The Steam Bridge did not work the last time it was tried, and Windows Steam did. "
-                        + "The Bridge is still under Other ways to play.")
+                        + (playsWindowsSteam ? "The Bridge is still under Other ways to play."
+                                             : "To play that way, pick Windows Steam under Other ways to play."))
             }
             if sessions.isEmpty {
                 Text("Not played with GamePort on this Mac yet.").font(.callout).foregroundStyle(.secondary)
@@ -127,7 +133,8 @@ struct HubGameOptionsSheet: View {
             }
             if let advice = communityAdvice, advice.prefersWindowsSteam {
                 row(icon: "person.2.fill", title: "Other players: Windows Steam works better",
-                    detail: "The Steam Bridge fails for most players with this game, while Windows Steam works, so Play uses Windows Steam.")
+                    detail: "The Steam Bridge fails for most players with this game, while Windows Steam works"
+                        + (playsWindowsSteam ? ", so Play uses Windows Steam." : ". To play that way, pick Windows Steam under Other ways to play."))
             }
             if !verdicts.isEmpty {
                 Text("Other players").font(.subheadline.weight(.semibold)).padding(.top, 6)
@@ -301,7 +308,7 @@ struct HubGameOptionsSheet: View {
                         }
                     }
                 )) {
-                    ForEach(gp.installedEngines, id: \.id) { Text($0.manifest.displayName).tag($0.id) }
+                    ForEach(gp.installedEngines, id: \.id) { Text(GameSetup.shortName($0.manifest.displayName)).tag($0.id) }
                 }
                 .help("Which Wine runs this game. A snapshot is taken first, so you can go back.")
             }
@@ -378,6 +385,8 @@ struct HubGameOptionsSheet: View {
     }
 
     private var engineName: String { gp.engineName(for: game) }
+
+    private var vac: Bool { gp.isVACBlockedForBridge(game) }
 
     // MARK: - Layout
 

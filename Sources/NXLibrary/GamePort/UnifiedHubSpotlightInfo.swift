@@ -111,7 +111,7 @@ struct UnifiedHubSpotlightInfo: View {
     private func howLine(_ route: HubPlayRoute) -> some View {
         VStack(alignment: .leading, spacing: canvas.u(6)) {
             Label {
-                Text(route.how(engine: engineName))
+                Text(route.how(engine: engineName, vac: gp.isVACBlockedForBridge(game)))
             } icon: {
                 Image(systemName: route.isPlayable ? "checkmark.seal.fill" : "info.circle")
             }

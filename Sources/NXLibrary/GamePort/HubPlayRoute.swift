@@ -74,7 +74,8 @@ enum HubPlayRoute: Equatable {
     }
 
     /// One line under the pills: how the game will run, in plain words.
-    func how(engine: String = "Wine") -> String {
+    /// `vac`: the game uses Valve Anti-Cheat, which is why it needs Windows Steam at all.
+    func how(engine: String = "Wine", vac: Bool = false) -> String {
         switch self {
         case .macSteam: return "Mac version · starts through Steam"
         case .installMac: return "A Mac version exists · Steam installs it"
@@ -85,8 +86,11 @@ enum HubPlayRoute: Equatable {
         case .profile: return "Windows program · runs with \(engine)"
         case .battleNet: return "Windows version · runs with \(engine) · started by Battle.net"
         case .download: return "Not downloaded yet · GamePort downloads it with your Steam account, no Windows Steam needed"
-        case .installWindowsSteam: return "This game uses VAC, so it needs Windows Steam. GamePort installs it for this game only."
-        case .openWindowsSteam: return "This game uses VAC · install it from Windows Steam"
+        case .installWindowsSteam:
+            return vac ? "This game uses VAC, so it needs Windows Steam. GamePort installs it for this game only."
+                : "GamePort installs Windows Steam inside this game's own Windows copy, for this game only."
+        case .openWindowsSteam:
+            return vac ? "This game uses VAC · install it from Windows Steam" : "Opens Windows Steam in this game's Windows copy"
         case .addToWindowsSteam: return "Windows Steam can use GamePort's download without copying it"
         case .setUp: return "Not set up yet · GamePort prepares a Windows copy for it"
         case .crossOverBottle(let item): return "Installed in your CrossOver bottle \u{201C}\(item.bottleName)\u{201D} · runs with CrossOver"
