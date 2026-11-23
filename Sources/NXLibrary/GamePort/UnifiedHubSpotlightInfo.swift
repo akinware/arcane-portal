@@ -65,12 +65,20 @@ struct UnifiedHubSpotlightInfo: View {
 
     // MARK: - Play pill
 
+    /// Mac Steam was asked to start this game and GamePort is watching for it.
+    private var macSteamStart: MacSteamStart? {
+        guard let start = gp.macSteamStart, start.appID == game.steamAppID else { return nil }
+        return start
+    }
+
     private var isStarting: Bool {
+        if let start = macSteamStart { return !start.running }
         guard let id = profile?.id, gp.launchState.profileID == id else { return false }
         return gp.launchState.isLaunching
     }
 
     private var isRunning: Bool {
+        if macSteamStart?.running == true { return true }
         guard let id = profile?.id, case .running(let running, _, _) = gp.launchState else { return false }
         return running == id
     }
@@ -134,6 +142,12 @@ struct UnifiedHubSpotlightInfo: View {
     private var activity: some View {
         if let profile, gp.launchState.profileID == profile.id {
             GameLaunchStatusPanel(profile: profile, recipe: recipeOfProfile, scale: canvas.u(1))
+        } else if let start = macSteamStart {
+            HStack(spacing: canvas.u(10)) {
+                if !start.running { ProgressView().controlSize(.small) }
+                Text(start.running ? "Running · started by Mac Steam" : "Waiting for Mac Steam to start it")
+                    .seleneFont(15, .medium).foregroundColor(SeleneTheme.ink90)
+            }
         } else if let busy = gp.busy {
             HStack(spacing: canvas.u(10)) {
                 ProgressView().controlSize(.small)
@@ -191,7 +205,7 @@ extension HubPlayRoute {
     /// The route starts the game (rather than installing or setting it up).
     var isPlayable: Bool {
         switch self {
-        case .macSteam, .bridge, .windowsSteam, .profile, .battleNet, .crossOverBottle, .gamePortWine, .storefront, .obelisk, .siliconium:
+        case .macSteam, .macSteamWindows, .bridge, .windowsSteam, .profile, .battleNet, .crossOverBottle, .gamePortWine, .storefront, .obelisk, .siliconium:
             return true
         default:
             return false

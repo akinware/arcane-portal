@@ -219,6 +219,9 @@ struct HubGameOptionsSheet: View {
                 }
             } else if case .macSteam = route {
                 Text("The Mac version runs natively. GamePort does not change anything.").font(.callout)
+            } else if case .macSteamWindows(_, let tool) = route {
+                Text("Mac Steam installed the Windows version and starts it with \(tool ?? "the Steam Play tool you set up") (for example NotProton). GamePort does not change anything; if the game does not start, Play switches to the Steam Bridge on the same files.")
+                    .font(.callout)
             } else if case .crossOverBottle(let item) = route {
                 Text("CrossOver runs this game from your bottle \u{201C}\(item.bottleName)\u{201D} with the settings you chose in CrossOver.")
                     .font(.callout)

@@ -60,11 +60,16 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var statusLog: [String] = []
     @Published var steamDownload: SteamDownloadSession?
     @Published var steamDownloadPresented = false
+    /// A Windows game Play handed to Mac Steam, while GamePort watches for it (`startInMacSteam`).
+    @Published var macSteamStart: MacSteamStart?
+    /// Games Mac Steam did not start this time: Play uses another way for them until Mac Steam is tried again.
+    @Published var macSteamStartFailed: Set<Int> = []
 
     private var profilesByRecipe: [String: Profile] = [:]
     private var labResultsByProfile: [String: [LabResult]] = [:]
     private var playSessionCache: [String: (modified: Date, sessions: [PlayRecord])] = [:]
     private var launchMonitorTask: Task<Void, Never>?
+    var macSteamStartTask: Task<Void, Never>?
     private var steamDownloadTask: Task<Void, Never>?
     /// Watchdog that stops the launched game's Wine session if Arcane is force quit.
     private var launchGuard: Process?

@@ -10,6 +10,9 @@ enum HubPlayRoute: Equatable {
     case macSteam(appID: Int)
     /// A Mac version exists but is not installed: Mac Steam installs it.
     case installMac(appID: Int)
+    /// The Windows version Mac Steam installed itself (only possible with Steam Play turned on, by NotProton
+    /// or a similar tool): Mac Steam starts it with that tool. `tool` names it when GamePort recognizes it.
+    case macSteamWindows(appID: Int, tool: String?)
     /// The Windows version GamePort downloaded, through the Steam Bridge (Mac Steam, no Windows Steam).
     case bridge(appID: Int, exe: URL, offline: Bool)
     /// Windows Steam inside the game's own Windows copy starts the game.
@@ -40,7 +43,7 @@ enum HubPlayRoute: Equatable {
     /// The pill's title.
     var title: String {
         switch self {
-        case .macSteam, .bridge, .windowsSteam, .profile, .crossOverBottle, .storefront, .gamePortWine: return "Play"
+        case .macSteam, .macSteamWindows, .bridge, .windowsSteam, .profile, .crossOverBottle, .storefront, .gamePortWine: return "Play"
         case .installMac: return "Install"
         case .battleNet: return "Open Battle.net"
         case .download, .epicDownload: return "Download"
@@ -59,6 +62,7 @@ enum HubPlayRoute: Equatable {
         switch self {
         case .macSteam: return "Play the Mac version"
         case .installMac: return "Install the Mac version"
+        case .macSteamWindows(_, let tool): return tool.map { "Play from Mac Steam (\($0))" } ?? "Play from Mac Steam"
         case .bridge(_, _, let offline): return offline ? "Play offline through Mac Steam" : "Play through Mac Steam (no Windows Steam)"
         case .windowsSteam: return "Play through Windows Steam"
         case .download: return "Download without Windows Steam"
@@ -79,6 +83,9 @@ enum HubPlayRoute: Equatable {
         switch self {
         case .macSteam: return "Mac version · starts through Steam"
         case .installMac: return "A Mac version exists · Steam installs it"
+        case .macSteamWindows(_, let tool):
+            return tool.map { "Windows version in your Mac Steam · Mac Steam starts it with \($0)" }
+                ?? "Windows version in your Mac Steam · Mac Steam starts it the way it was set up"
         case .bridge(_, _, let offline):
             return offline ? "Windows version · offline only, this game's anti-cheat needs Windows Steam online"
                            : "Windows version · runs with \(engine) · signed in through your Mac Steam"
@@ -108,6 +115,7 @@ enum HubPlayRoute: Equatable {
     var steamRoute: String? {
         switch self {
         case .macSteam, .installMac: return "Mac Steam (Mac version)"
+        case .macSteamWindows(_, let tool): return "Mac Steam, with \(tool ?? "its Steam Play tool")"
         case .bridge(_, _, let offline): return offline ? "Mac Steam through the Steam Bridge, offline" : "Mac Steam through the Steam Bridge"
         case .windowsSteam, .openWindowsSteam, .installWindowsSteam: return "Windows Steam inside this game's Windows copy"
         default: return nil
@@ -122,7 +130,9 @@ extension GamePortConsoleModel {
         guard let appID = game.steamAppID else { return nil }
         if let depot = gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title) { return depot }
         guard case .profile(let profile, _) = game.kind,
-              let steam = try? gameport.steam(for: profile.id), steam.isGameInstalled(appID: appID) else { return nil }
+              let steam = try? gameport.steam(for: profile.id), steam.isGameInstalled(appID: appID) else {
+            return macSteamWindowsExecutable(appID: appID, title: game.title)
+        }
         let manifest = steam.steamapps.appendingPathComponent("appmanifest_\(appID).acf")
         guard let text = try? String(contentsOf: manifest, encoding: .utf8),
               let range = text.range(of: #""installdir"\s+"([^"]+)""#, options: .regularExpression) else { return nil }
@@ -130,6 +140,19 @@ extension GamePortConsoleModel {
         guard let last = line.lastIndex(of: "\""), let previous = line[..<last].lastIndex(of: "\"") else { return nil }
         let folder = steam.steamapps.appendingPathComponent("common/\(line[line.index(after: previous)..<last])", isDirectory: true)
         return SteamDepotManager.discoverMainExecutable(in: folder, preferredName: game.title)
+    }
+
+    /// The program of the Windows version Mac Steam installed, so the Bridge can run the same files
+    /// instead of downloading the game again.
+    func macSteamWindowsExecutable(appID: Int, title: String) -> URL? {
+        guard let folder = externalEnv.macSteamWindowsGame(appID: appID)?.folder else { return nil }
+        return SteamDepotManager.discoverMainExecutable(in: folder, preferredName: title)
+    }
+
+    /// Mac Steam starts this game itself: the Windows version is in its library, and it did not fail to start it this time.
+    private func macSteamWindowsRoute(_ appID: Int?) -> HubPlayRoute? {
+        guard let appID, externalEnv.macSteamWindowsGame(appID: appID) != nil else { return nil }
+        return .macSteamWindows(appID: appID, tool: externalEnv.notProtonInstalled ? "NotProton" : nil)
     }
 
     /// True for VAC games: the Bridge can only play them offline.
@@ -159,7 +182,13 @@ extension GamePortConsoleModel {
     /// the game installed.
     func playRoute(for game: UnifiedHubGame) -> HubPlayRoute {
         let appID = game.steamAppID
-        if let appID, externalEnv.macSteamGame(appID: appID) != nil { return .macSteam(appID: appID) }
+        if let appID, externalEnv.macSteamNativeGame(appID: appID) != nil { return .macSteam(appID: appID) }
+        // A Windows version Mac Steam installed itself runs the way the player set Mac Steam up (NotProton or
+        // similar), unless that did not work this time. A GamePort profile for the game keeps its own way.
+        if case .ownedSteam = game.kind, let route = macSteamWindowsRoute(appID),
+           let appID, !macSteamStartFailed.contains(appID) {
+            return route
+        }
         // Obelisk leads only when Wine alone cannot run the game.
         if game.antiCheat?.risk == .blocked,
            ExternalEnvironment.suggestsObelisk(for: game.antiCheat), let app = externalEnv.obeliskApp {
@@ -225,8 +254,9 @@ extension GamePortConsoleModel {
         let vac = isVACBlockedForBridge(game)
         let exe = downloadedExecutable(for: game)
         if let appID {
-            if externalEnv.macSteamGame(appID: appID) != nil { routes.append(.macSteam(appID: appID)) }
+            if externalEnv.macSteamNativeGame(appID: appID) != nil { routes.append(.macSteam(appID: appID)) }
             else if game.supportsMacOS { routes.append(.installMac(appID: appID)) }
+            if let route = macSteamWindowsRoute(appID) { routes.append(route) }
             if let exe, bridgeStatus.isReadyToLaunch { routes.append(.bridge(appID: appID, exe: exe, offline: vac)) }
         }
         if case .profile(let profile, let recipe) = game.kind, recipe?.launch != .battlenet, appID != nil {
@@ -261,6 +291,8 @@ extension GamePortConsoleModel {
             if let url = URL(string: "steam://rungameid/\(appID)") { NSWorkspace.shared.open(url) }
         case .installMac(let appID):
             if let url = URL(string: "steam://install/\(appID)") { NSWorkspace.shared.open(url) }
+        case .macSteamWindows(let appID, _):
+            startInMacSteam(appID: appID, game: game)
         case .bridge(let appID, let exe, let offline):
             launchBridge(game, appID: appID, exe: exe, allowVACOverride: offline)
         case .windowsSteam(let profileID), .profile(let profileID):

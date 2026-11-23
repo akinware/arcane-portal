@@ -187,10 +187,14 @@ struct UnifiedHubGame: Identifiable, Equatable {
             let remote = steamRemoteURLs(owned.appID)
             let ac = recipe.flatMap { AntiCheatDB.bundled.entry(for: $0) } ?? AntiCheatDB.bundled.entry(steamAppID: owned.appID)
             let depotReady = steamDepot.downloadedExecutable(appID: owned.appID, preferredName: title) != nil
+            // Any install in Mac Steam plays: the Mac version natively, a Windows version the way Mac Steam was set up.
             let macInstalled = externalEnv.macSteamGame(appID: owned.appID) != nil
+            let windowsInMacSteam = externalEnv.macSteamWindowsGame(appID: owned.appID) != nil
             let runner: String
-            if owned.supportsMacOS && macInstalled {
+            if owned.supportsMacOS && externalEnv.macSteamNativeGame(appID: owned.appID) != nil {
                 runner = "Mac Native"
+            } else if windowsInMacSteam {
+                runner = externalEnv.notProtonInstalled ? "Mac Steam · NotProton" : "Mac Steam"
             } else if owned.supportsMacOS {
                 runner = "Mac Native · \(cxLabel)"
             } else {
