@@ -185,7 +185,10 @@ extension GamePortConsoleModel {
             if recipe?.launch == .battlenet { return .battleNet(profileID: profile.id) }
             guard let appID else { return .profile(profileID: profile.id) }
             let win = windowsSteamHas(game, profileID: profile.id)
-            if win.hasGame && (vac || !bridgeReady) { return .windowsSteam(profileID: profile.id) }
+            // Windows Steam also wins when the Bridge failed the last time and Windows Steam worked.
+            if win.hasGame && (vac || !bridgeReady || playSessions(profile.id).prefersWindowsSteamOverBridge) {
+                return .windowsSteam(profileID: profile.id)
+            }
             if let exe, bridgeReady, !vac {
                 // A copy only in Windows Steam's library is still played through the Bridge: no Windows Steam start.
                 return .bridge(appID: appID, exe: exe, offline: false)

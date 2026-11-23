@@ -50,6 +50,7 @@ struct HubGameOptionsSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     playSection(route, others: others)
+                    historySection
                     usesSection(route)
                     if let profile { settingsSection(profile) }
                     footer
@@ -83,6 +84,76 @@ struct HubGameOptionsSheet: View {
                     }
                 }
             }
+        }
+    }
+
+    // MARK: - How it ran
+
+    private var sessions: [PlayRecord] { profile.map { gp.playSessions($0.id) } ?? [] }
+
+    private var verdicts: [CommunityVerdict] {
+        game.steamAppID.flatMap { gp.communityVerdicts[$0] } ?? []
+    }
+
+    /// This Mac's last sessions and what other players reported, so a game that failed once is not a mystery.
+    @ViewBuilder
+    private var historySection: some View {
+        let sessions = sessions
+        let verdicts = verdicts
+        section("How it ran") {
+            if sessions.prefersWindowsSteamOverBridge {
+                row(icon: "arrow.triangle.branch", title: "Play uses Windows Steam for now",
+                    detail: "The Steam Bridge did not work the last time it was tried, and Windows Steam did. "
+                        + "The Bridge is still under Other ways to play.")
+            }
+            if sessions.isEmpty {
+                Text("Not played with GamePort on this Mac yet.").font(.callout).foregroundStyle(.secondary)
+            } else {
+                Text("On this Mac").font(.subheadline.weight(.semibold))
+                ForEach(Array(sessions.prefix(4).enumerated()), id: \.offset) { _, session in
+                    row(icon: icon(session.outcome), title: session.summary(), detail: setupText(session))
+                }
+            }
+            if !verdicts.isEmpty {
+                Text("Other players").font(.subheadline.weight(.semibold)).padding(.top, 6)
+                ForEach(verdicts.prefix(3)) { verdict in
+                    Label(verdict.summary, systemImage: verdict.works > 0 ? "person.2.fill" : "person.2")
+                        .font(.callout)
+                }
+            }
+            Text(gp.telemetryEnabled
+                 ? "Each session is also shared anonymously (the game, its setup, the Mac model and FPS; never your name, account or files), so every player gets better defaults. You can turn this off in Setup."
+                 : "Sharing is off: sessions stay on this Mac.")
+                .font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func icon(_ outcome: PlayRecord.Outcome) -> String {
+        switch outcome {
+        case .worked: return "checkmark.circle.fill"
+        case .crashed: return "xmark.octagon.fill"
+        case .didNotStart: return "exclamationmark.triangle.fill"
+        case .closedEarly: return "stop.circle"
+        }
+    }
+
+    private func setupText(_ session: PlayRecord) -> String {
+        let engine = gp.installedEngines.first { $0.id == session.engineID }.map { GameSetup.shortName($0.manifest.displayName) }
+            ?? session.engineID
+        var parts = [GameSetup.rendererName(session.renderer), engine]
+        if session.vulkanDriver != .moltenvk { parts.append(session.vulkanDriver.displayName) }
+        if !session.problems.isEmpty { parts.append(session.problems.map(problemText).joined(separator: ", ")) }
+        return parts.joined(separator: " · ")
+    }
+
+    private func problemText(_ code: String) -> String {
+        switch code {
+        case "wine_exception": return "Windows error in the game"
+        case "vulkan_error", "vulkan_query_unsupported": return "graphics error"
+        case "game_exited": return "the game quit on its own"
+        case "steam_not_started", "steam_gpu_crash": return "Steam did not start"
+        default: return "error in the log"
         }
     }
 

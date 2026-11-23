@@ -63,6 +63,7 @@ final class GamePortConsoleModel: ObservableObject {
 
     private var profilesByRecipe: [String: Profile] = [:]
     private var labResultsByProfile: [String: [LabResult]] = [:]
+    private var playSessionCache: [String: (modified: Date, sessions: [PlayRecord])] = [:]
     private var launchMonitorTask: Task<Void, Never>?
     private var steamDownloadTask: Task<Void, Never>?
     /// Watchdog that stops the launched game's Wine session if Arcane is force quit.
@@ -188,12 +189,25 @@ final class GamePortConsoleModel: ObservableObject {
     func refreshCommunityVerdicts() {
         let telemetry = gameport.telemetry
         Task.detached(priority: .utility) {
+            // Reports that could not be sent before (offline) go out first.
+            await telemetry.flushOutbox()
             let fresh = await telemetry.refreshCommunityVerdicts()
             await MainActor.run { self.communityVerdicts = fresh }
         }
     }
 
     func profile(for recipe: Recipe) -> Profile? { profilesByRecipe[recipe.id] }
+
+    /// The profile's recent sessions, newest first (kept on this Mac). Re-read only when the file changes,
+    /// since Spotlight asks on every redraw.
+    func playSessions(_ profileID: String) -> [PlayRecord] {
+        let file = gameport.playHistory.file(profileID)
+        let modified = (try? FileManager.default.attributesOfItem(atPath: file.path)[.modificationDate] as? Date) ?? .distantPast
+        if let cached = playSessionCache[profileID], cached.modified == modified { return cached.sessions }
+        let sessions = gameport.playHistory.sessions(profileID)
+        playSessionCache[profileID] = (modified, sessions)
+        return sessions
+    }
 
     func labResults(for profile: Profile) -> [LabResult] { labResultsByProfile[profile.id] ?? [] }
 
