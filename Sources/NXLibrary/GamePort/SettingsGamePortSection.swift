@@ -33,14 +33,19 @@ struct SettingsGamePortSection: View {
             SettingsSubheading("Storage & External APFS SSD")
             SeleneValueRow(
                 "GamePort data folder",
-                subtitle: "\(gp.storageInfo.volumeName) · \(gp.storageInfo.filesystem) · \(gp.storageInfo.freeSpaceLabel)",
+                subtitle: storageSubtitle,
                 value: gp.storageInfo.root.path,
                 actionTitle: "Choose SSD"
             ) {
                 chooseStorageFolder()
             }
-            if gp.storageInfo.isCustom {
-                SeleneButtonRow("Reset storage to internal SSD", subtitle: "Returns GamePort data to ~/Library/Application Support/GamePort.", buttonTitle: "Reset") {
+            if let offline = gp.storageOffline {
+                SeleneButtonRow("Drive not connected", subtitle: "Your chosen folder \(offline.path) is on a drive that is not connected. GamePort uses the internal folder until you connect it, then switches back by itself.", buttonTitle: "Check Again") {
+                    gp.storageMayHaveChanged()
+                }
+            }
+            if gp.storageInfo.isCustom || gp.storageOffline != nil {
+                SeleneButtonRow("Use the internal SSD again", subtitle: "GamePort goes back to ~/Library/Application Support/GamePort. Nothing is moved or deleted: games on the drive stay there and come back if you choose the drive again.", buttonTitle: "Use Internal") {
                     _ = try? StorageInfo.resetToDefault()
                     gp.reloadStorage()
                 }
@@ -264,6 +269,13 @@ struct SettingsGamePortSection: View {
         }
     }
 
+    /// "Samsung T7 · APFS · 812 GB free", and why a drive that is not APFS works less well.
+    private var storageSubtitle: String {
+        let info = gp.storageInfo
+        let line = "\(info.volumeName) · \(info.filesystem) · \(info.freeSpaceLabel)"
+        return info.warning.map { line + "\n" + $0 } ?? line
+    }
+
     private func chooseStorageFolder() {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
@@ -271,8 +283,13 @@ struct SettingsGamePortSection: View {
         panel.canCreateDirectories = true
         panel.message = "Choose a folder on an APFS drive (e.g. External SSD) for GamePort games and engines."
         guard panel.runModal() == .OK, let chosen = panel.url else { return }
-        _ = try? StorageInfo.setCustomRoot(chosen)
-        gp.reloadStorage()
+        do {
+            let info = try StorageInfo.setCustomRoot(chosen)
+            gp.reloadStorage()
+            gp.say(info.warning.map { "✗ \($0)" } ?? "✓ GamePort now keeps games in \(info.root.path)")
+        } catch {
+            gp.say("✗ Could not use that folder: \(error)")
+        }
     }
 
     private func importEngineManifest() {

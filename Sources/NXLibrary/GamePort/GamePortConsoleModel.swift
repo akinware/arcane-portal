@@ -21,6 +21,8 @@ final class GamePortConsoleModel: ObservableObject {
     /// The Windows game whose Options sheet is open on Spotlight (the pill, Y on a controller).
     @Published var hubOptionsGameID: UUID?
     @Published var steamBase: SteamBase.Stamp?
+    /// The chosen GamePort folder when its drive is not connected (the internal folder is used meanwhile).
+    @Published var storageOffline: URL?
     @Published var storageInfo: StorageInfo = StorageInfo.inspect(
         Paths.default().root,
         isCustom: StoragePreference.load().customRoot != nil
@@ -96,6 +98,12 @@ final class GamePortConsoleModel: ObservableObject {
                 model.gameport.steamQRDownloader.tool.stopRunning(directory: dir, timeout: 2)
             }
         }
+        // A drive with GamePort's folder (or a Steam library) plugged in or ejected: look again.
+        for name in [NSWorkspace.didMountNotification, NSWorkspace.didUnmountNotification] {
+            NSWorkspace.shared.notificationCenter.addObserver(forName: name, object: nil, queue: .main) { _ in
+                MainActor.assumeIsolated { GamePortConsoleModel.shared.storageMayHaveChanged() }
+            }
+        }
         // Defer full disk/engine/Steam discovery off the static `shared` dispatch_once initializer
         // so SwiftUI never re-enters `shared` during startup layout.
         Task { @MainActor in
@@ -111,8 +119,27 @@ final class GamePortConsoleModel: ObservableObject {
         refreshCommunityVerdicts()
     }
 
+    /// Switches to the chosen folder when its drive came back, or to the internal one when it went away,
+    /// and says so. Not while a game or a job runs: their files must not change place under them.
+    func storageMayHaveChanged() {
+        guard busy == nil, !launchState.isLaunching, steamDownload?.isActive != true else { return }
+        if case .running = launchState { return }
+        let wanted = Paths.default().root.standardizedFileURL.path
+        guard wanted != gameport.paths.root.standardizedFileURL.path else {
+            refresh()
+            return
+        }
+        reloadStorage()
+        if let offline = storageOffline {
+            say("✗ The drive with your GamePort games is not connected (\(offline.path)). Connect it to play them.")
+        } else {
+            say("✓ Using your GamePort folder at \(gameport.paths.root.path)")
+        }
+    }
+
     func refresh() {
-        storageInfo = StorageInfo.inspect(gameport.paths.root, isCustom: StoragePreference.load().customRoot != nil)
+        storageOffline = StoragePreference.offlineRoot()
+        storageInfo = StorageInfo.inspect(gameport.paths.root, isCustom: StoragePreference.load().customRoot != nil && storageOffline == nil)
         checks = gameport.doctor()
         installedEngines = gameport.engines.installed()
         engineCatalog = gameport.engineCatalog()
