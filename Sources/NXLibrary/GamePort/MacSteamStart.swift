@@ -16,6 +16,7 @@ extension GamePortConsoleModel {
     /// way for this game (the Steam Bridge on the same files when it can) and says so. A game that turns
     /// up later, before `watchLimit`, still counts as started.
     func startInMacSteam(appID: Int, game: UnifiedHubGame) {
+        guard busy == nil else { return }
         guard let install = externalEnv.macSteamWindowsGame(appID: appID),
               let url = MacSteamWindowsLaunch.launchURL(appID: appID) else { return }
         if let current = macSteamStart, current.appID == appID { return }

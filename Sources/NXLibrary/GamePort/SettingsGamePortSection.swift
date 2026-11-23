@@ -35,20 +35,46 @@ struct SettingsGamePortSection: View {
                 "GamePort data folder",
                 subtitle: storageSubtitle,
                 value: gp.storageInfo.root.path,
-                actionTitle: "Choose SSD"
+                actionTitle: "Move to Another Drive…"
             ) {
-                chooseStorageFolder()
+                gp.chooseStorageMoveDestination()
+            }.disabled(gp.busy != nil)
+            if gp.isMovingStorage {
+                SeleneButtonRow(
+                    gp.storageMoveProgressTitle,
+                    id: "gp-storage-move-progress",
+                    subtitle: gp.storageMoveProgressSubtitle,
+                    verbatimTitle: true,
+                    buttonTitle: gp.storageMoveCancelRequested ? "Cancelling…" : "Cancel"
+                ) {
+                    gp.cancelStorageMove()
+                }.disabled(gp.storageMoveCancelRequested)
             }
+            if gp.storageInfo.isCustom && gp.storageOffline == nil {
+                SeleneButtonRow(
+                    "Move Back to Internal SSD",
+                    subtitle: "Moves your games, engines and Windows copies back to ~/Library/Application Support/GamePort.",
+                    buttonTitle: "Move Back to Internal SSD"
+                ) {
+                    gp.planMoveToInternalStorage()
+                }.disabled(gp.busy != nil)
+            }
+            SeleneButtonRow(
+                "Use Another Folder…",
+                subtitle: "Switches to another GamePort folder without moving anything.",
+                buttonTitle: "Use Another Folder…"
+            ) {
+                gp.chooseUseAnotherStorageFolder()
+            }.disabled(gp.busy != nil)
             if let offline = gp.storageOffline {
                 SeleneButtonRow("Drive not connected", subtitle: "Your chosen folder \(offline.path) is on a drive that is not connected. GamePort uses the internal folder until you connect it, then switches back by itself.", buttonTitle: "Check Again") {
                     gp.storageMayHaveChanged()
-                }
+                }.disabled(gp.busy != nil)
             }
             if gp.storageInfo.isCustom || gp.storageOffline != nil {
                 SeleneButtonRow("Use the internal SSD again", subtitle: "GamePort goes back to ~/Library/Application Support/GamePort. Nothing is moved or deleted: games on the drive stay there and come back if you choose the drive again.", buttonTitle: "Use Internal") {
-                    _ = try? StorageInfo.resetToDefault()
-                    gp.reloadStorage()
-                }
+                    gp.useInternalStorageWithoutMoving()
+                }.disabled(gp.busy != nil)
             }
 
             SettingsSubheading("Windows Engines (SHA-256 Verified)")
@@ -238,12 +264,45 @@ struct SettingsGamePortSection: View {
         }
         .onAppear {
             gp.refresh()
-            onActions([
-                .init(id: "gp-setup", title: "1-Click Guided Setup") {
-                    gp.job("Guided Setup") { k, p in try await k.guidedSetup(progress: p) }
-                },
-                .init(id: "gp-storage", title: "Choose External SSD", activate: chooseStorageFolder),
-            ])
+            publishActions()
+        }
+        .onChange(of: gp.storageInfo) { _, _ in publishActions() }
+        .onChange(of: gp.storageOffline) { _, _ in publishActions() }
+        .onChange(of: gp.busy) { _, _ in publishActions() }
+        .sheet(item: $gp.pendingStorageMove) { pending in
+            VStack(alignment: .leading, spacing: 12) {
+                Text(pending.plan.destination.standardizedFileURL == StoragePreference.anchorDirectory.standardizedFileURL
+                     ? "Move Games Back to Internal SSD?"
+                     : "Move Games to Another Drive?")
+                    .font(.headline)
+                Text(pending.plan.summary)
+                    .font(.callout)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(pending.plan.destination.path)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                if let warning = pending.nonAPFSWarning {
+                    Label(warning, systemImage: "exclamationmark.triangle.fill")
+                        .font(.callout)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                HStack {
+                    Spacer()
+                    Button("Cancel") {
+                        gp.cancelPendingStorageMove()
+                    }
+                    .keyboardShortcut(.cancelAction)
+                    Button("Move") {
+                        gp.confirmStorageMove()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
+                }
+            }
+            .padding(20)
+            .frame(width: 460)
         }
         .sheet(item: $authPrompt) { kind in
             VStack(alignment: .leading, spacing: 12) {
@@ -276,20 +335,24 @@ struct SettingsGamePortSection: View {
         return info.warning.map { line + "\n" + $0 } ?? line
     }
 
-    private func chooseStorageFolder() {
-        let panel = NSOpenPanel()
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.canCreateDirectories = true
-        panel.message = "Choose a folder on an APFS drive (e.g. External SSD) for GamePort games and engines."
-        guard panel.runModal() == .OK, let chosen = panel.url else { return }
-        do {
-            let info = try StorageInfo.setCustomRoot(chosen)
-            gp.reloadStorage()
-            gp.say(info.warning.map { "✗ \($0)" } ?? "✓ GamePort now keeps games in \(info.root.path)")
-        } catch {
-            gp.say("✗ Could not use that folder: \(error)")
+    private func publishActions() {
+        var actions: [SettingsRowAction] = [
+            .init(id: "gp-setup", title: "1-Click Guided Setup", isEnabled: gp.busy == nil) {
+                gp.job("Guided Setup") { k, p in try await k.guidedSetup(progress: p) }
+            },
+            .init(id: "gp-storage-move", title: "Move to Another Drive…", rowID: "GamePort data folder", isEnabled: gp.busy == nil) {
+                gp.chooseStorageMoveDestination()
+            },
+            .init(id: "gp-storage", title: "Use Another Folder…", isEnabled: gp.busy == nil) {
+                gp.chooseUseAnotherStorageFolder()
+            },
+        ]
+        if gp.storageInfo.isCustom && gp.storageOffline == nil {
+            actions.append(.init(id: "gp-storage-move-internal", title: "Move Back to Internal SSD", isEnabled: gp.busy == nil) {
+                gp.planMoveToInternalStorage()
+            })
         }
+        onActions(actions)
     }
 
     private func importEngineManifest() {

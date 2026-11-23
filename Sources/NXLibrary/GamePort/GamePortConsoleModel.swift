@@ -59,6 +59,11 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var communityVerdicts: [Int: [CommunityVerdict]] = [:]
     @Published var launchState: LaunchState = .idle
     @Published var busy: String?
+    @Published var pendingStorageMove: PendingStorageMove?
+    @Published var isMovingStorage = false
+    @Published var storageMoveProgress: StorageMoveProgress?
+    @Published var storageMoveCancelRequested = false
+    var storageMoveCancellation: StorageMoveCancellationBox?
     @Published var statusLog: [String] = []
     @Published var steamDownload: SteamDownloadSession?
     @Published var steamDownloadPresented = false
@@ -262,6 +267,7 @@ final class GamePortConsoleModel: ObservableObject {
     }
 
     func launchCrossOverGame(_ item: CrossOverBottleLaunchItem) {
+        guard busy == nil else { return }
         do {
             _ = try CrossOverSupport.launch(item: item, installation: crossOverInstallation)
             say("✓ Launched \(item.title) via CrossOver bottle \"\(item.bottleName)\"")
@@ -395,6 +401,10 @@ final class GamePortConsoleModel: ObservableObject {
     /// Downloads a game without Windows Steam, or with `update`, brings an already downloaded one
     /// up to date (only changed files are fetched; the game stays playable when nothing changed).
     func startSteamDownload(appID: Int, title: String, origin: SteamDownloadSession.Origin, vacNote: Bool = false, update: Bool = false) {
+        if let busy {
+            say("✗ Wait for \(busy) to finish before downloading \(title).")
+            return
+        }
         if let current = steamDownload, current.isActive {
             if current.appID == appID {
                 steamDownloadPresented = true
@@ -536,6 +546,7 @@ final class GamePortConsoleModel: ObservableObject {
     }
 
     func launchGame(profile: Profile, recipe: Recipe) {
+        guard busy == nil else { return }
         // A second press while Windows Steam is starting (or closing) would only queue another launch.
         if launchState.profileID == profile.id {
             switch launchState {

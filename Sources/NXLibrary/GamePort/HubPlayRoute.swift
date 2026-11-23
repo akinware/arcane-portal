@@ -285,6 +285,7 @@ extension GamePortConsoleModel {
 
     /// Does what the route says.
     func perform(_ route: HubPlayRoute, for game: UnifiedHubGame) {
+        guard busy == nil else { return }
         let title = game.title
         switch route {
         case .macSteam(let appID):
