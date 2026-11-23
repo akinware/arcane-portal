@@ -112,7 +112,7 @@ For example, to prepare a later release locally:
 bash scripts/release.sh 0.1.2
 ~~~
 
-The script builds a release-marked app, verifies its version and signature, and produces a ZIP and DMG in `work/release/`. Without `--publish`, it does not push a tag or create a GitHub release. Version `0.1.0` is the first public alpha; use an unused version for later releases.
+The script builds a release-marked app, verifies its version and signature, and produces a ZIP and DMG in `work/release/`. Without `--publish`, it does not push a tag or create a GitHub release. Arcane's own releases end at `0.2.1`; `0.3.0` is Arcane Portal's first public alpha. Use an unused version for later releases. The ZIP keeps the `NXLibrary-<version>.zip` name and the `NXLibrary.app` bundle inside it, because the updater looks for both; the DMG is `ArcanePortal-<version>.dmg` and installs `Arcane Portal.app`.
 
 Valve's attribution for the Steam logo carries the year Valve's page gives ("©2026 Valve Corporation…", https://partner.steamgames.com/doc/marketing/branding/attribution). In a new year, copy Valve's current wording for each language into `NOTICE` and the `Localizable.xcstrings` entry used by Settings › About before releasing.
 

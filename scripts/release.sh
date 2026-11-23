@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # scripts/release.sh <version> [--publish --notes <file>]
 #
-# Builds a release copy of NX Library (version in its plist, NXLibraryRelease marker, bundled
+# Builds a release copy of Arcane Portal (version in its plist, NXLibraryRelease marker, bundled
 # runtime), verifies its signature and zips it as work/release/NXLibrary-<version>.zip, the asset
-# the app's updater looks for, plus work/release/NXLibrary-<version>.dmg for a first install (the
+# the app's updater looks for, plus work/release/ArcanePortal-<version>.dmg for a first install (the
 # DMG must hold the release copy, or that install would never update itself). Nothing leaves
 # this Mac unless --publish is given: then the tag v<version> is pushed and a GitHub release is
 # created with both files (GitHub computes the zip's digest, which the app checks).
@@ -95,7 +95,7 @@ python3 "$ROOT/scripts/check_localizations.py" --app "$OUT/.update-check/NXLibra
 rm -rf "$OUT/.update-check"
 echo "Zip: $ZIP"
 echo "SHA-256: $(shasum -a 256 "$ZIP" | cut -d' ' -f1)"
-DMG="$OUT/NXLibrary-$VERSION.dmg"
+DMG="$OUT/ArcanePortal-$VERSION.dmg"
 bash "$ROOT/scripts/build_dmg.sh" "$APP"
 mv "$ROOT/dist/NXLibrary.dmg" "$DMG"
 echo "DMG: $DMG"

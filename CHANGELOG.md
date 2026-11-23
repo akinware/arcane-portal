@@ -4,7 +4,9 @@ User-visible changes to Arcane Portal are recorded here, newest first. Arcane Po
 [Arcane](https://github.com/Bium23/NxLibrary) (formerly NX Library); the entries from 0.2.1 down are Arcane's own
 releases, kept as they were. Engine changes also have their own [upgrade notes](docs/history/engine-upgrades/README.md).
 
-## Unreleased
+## 0.3.0 — 2026-11-23
+
+Arcane Portal's first release, based on Arcane 0.2.1. Alpha: ad-hoc signed and not notarised (see the README).
 
 ### Added
 

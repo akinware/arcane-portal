@@ -123,9 +123,13 @@ Build options, runtime dependencies, debug builds and release packaging are docu
 
 ### Installing a packaged release
 
-There is no packaged Arcane Portal release yet: [build it from source](#building-from-source). Once releases are
-published under [Releases](https://github.com/akinware/arcane-portal/releases), a packaged copy checks this
-repository, and only this one, for updates; no GitHub account is needed. Choose **Update** to download, verify,
+1. Download `ArcanePortal-<version>.dmg` from [Releases](https://github.com/akinware/arcane-portal/releases).
+2. Open it and drag **Arcane Portal** to **Applications**.
+3. Open Arcane Portal from Applications. The alpha is ad-hoc signed and not notarised, so macOS blocks the first
+   opening: choose **Done**, then **System Settings → Privacy & Security → Open Anyway** and confirm. Do this only
+   for a copy you downloaded from this repository's Releases or built yourself.
+
+A packaged copy checks this repository, and only this one, for updates; no GitHub account is needed. Choose **Update** to download, verify,
 install and reopen Arcane Portal while keeping your library and preferences. Development builds never replace
 themselves.
 
