@@ -84,7 +84,7 @@ struct SettingsView: View {
         .onAppear(perform: installKeyMonitor)
         .onAppear {
             if AppData.profile.isDevelopment {
-                Logger(subsystem: "local.nxlibrary.development", category: "backdrop-transition")
+                Logger(subsystem: "io.github.akinware.arcaneportal.development", category: "backdrop-transition")
                     .notice("Settings appeared, window settling: \(viewModel.isWindowSettling, privacy: .public)")
             }
         }

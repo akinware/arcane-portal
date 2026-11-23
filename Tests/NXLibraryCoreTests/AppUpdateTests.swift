@@ -16,7 +16,7 @@ final class AppUpdateTests: XCTestCase {
 
     /// A minimal app bundle: Info.plist and an executable script.
     @discardableResult
-    private func makeApp(_ name: String = "NXLibrary.app", in folder: URL? = nil, id: String = "local.nxlibrary",
+    private func makeApp(_ name: String = "NXLibrary.app", in folder: URL? = nil, id: String = "io.github.akinware.arcaneportal",
                          version: String = "0.2.0", release: Bool = true, minimumOS: String? = nil,
                          executable: Bool = true, marker: String = "new") throws -> URL {
         let app = (folder ?? dir).appendingPathComponent(name)
@@ -64,7 +64,7 @@ final class AppUpdateTests: XCTestCase {
     private let releaseJSON = """
     {"tag_name": "v0.3.0", "body": "Fixes.", "assets": [
       {"name": "notes.txt", "browser_download_url": "https://example.com/notes.txt", "digest": null},
-      {"name": "NXLibrary-0.3.0.zip", "browser_download_url": "https://github.com/Bium23/NxLibrary/releases/download/v0.3.0/NXLibrary-0.3.0.zip", "size": 1024,
+      {"name": "NXLibrary-0.3.0.zip", "browser_download_url": "https://github.com/akinware/arcane-portal/releases/download/v0.3.0/NXLibrary-0.3.0.zip", "size": 1024,
        "digest": "sha256:\(String(repeating: "a", count: 64))"}
     ]}
     """
@@ -87,7 +87,7 @@ final class AppUpdateTests: XCTestCase {
     }
 
     func testDownloadSourceIsPublicProjectRepository() {
-        XCTAssertEqual(AppUpdate.defaultRepository, "Bium23/NxLibrary")
+        XCTAssertEqual(AppUpdate.defaultRepository, "akinware/arcane-portal")
     }
 
     func testRejectsReleaseWithoutDigest() throws {
@@ -106,23 +106,23 @@ final class AppUpdateTests: XCTestCase {
 
     func testRejectsDownloadFromAnotherRepositoryOrHost() throws {
         for url in [
-            "http://github.com/Bium23/NxLibrary/releases/download/v0.3.0/NXLibrary-0.3.0.zip",
+            "http://github.com/akinware/arcane-portal/releases/download/v0.3.0/NXLibrary-0.3.0.zip",
             "https://github.com/other/project/releases/download/v0.3.0/NXLibrary-0.3.0.zip",
-            "https://github.com.evil.example/Bium23/NxLibrary/releases/download/v0.3.0/NXLibrary-0.3.0.zip",
-            "https://user:password@github.com/Bium23/NxLibrary/releases/download/v0.3.0/NXLibrary-0.3.0.zip",
-            "https://github.com/Bium23/NxLibrary/releases/download/v0.2.0/NXLibrary-0.3.0.zip"
+            "https://github.com.evil.example/akinware/arcane-portal/releases/download/v0.3.0/NXLibrary-0.3.0.zip",
+            "https://user:password@github.com/akinware/arcane-portal/releases/download/v0.3.0/NXLibrary-0.3.0.zip",
+            "https://github.com/akinware/arcane-portal/releases/download/v0.2.0/NXLibrary-0.3.0.zip"
         ] {
             XCTAssertNil(AppUpdate.parseRelease(try changingAsset { $0["browser_download_url"] = url }), url)
         }
     }
 
-    private let successorURL = "https://github.com/Bium23/Arcane/releases/download/v0.3.0/NXLibrary-0.3.0.zip"
+    private let successorURL = "https://github.com/akinware/ArcanePortal/releases/download/v0.3.0/NXLibrary-0.3.0.zip"
 
     func testSuccessorRepositoryAssetIsAccepted() throws {
         let json = try changingAsset { $0["browser_download_url"] = successorURL }
-        let release = try XCTUnwrap(AppUpdate.parseRelease(json, successor: "Bium23/Arcane"))
+        let release = try XCTUnwrap(AppUpdate.parseRelease(json, successor: "akinware/ArcanePortal"))
         XCTAssertEqual(release.zipURL.absoluteString, successorURL)
-        XCTAssertNotNil(AppUpdate.parseRelease(Data(releaseJSON.utf8), successor: "Bium23/Arcane"))
+        XCTAssertNotNil(AppUpdate.parseRelease(Data(releaseJSON.utf8), successor: "akinware/ArcanePortal"))
     }
 
     func testWithoutSuccessorOnlyTheConfiguredPathIsAccepted() throws {
@@ -130,16 +130,20 @@ final class AppUpdateTests: XCTestCase {
         XCTAssertNil(AppUpdate.parseRelease(json, successor: nil))
     }
 
-    /// The bridge: once the repository is renamed, GitHub answers the old release API with links under the new
-    /// name (checked on a moved repository). This copy keeps updating from both, and from nothing else.
-    func testTheBridgeAcceptsTheRenamedRepositoryByDefault() throws {
-        XCTAssertEqual(AppUpdate.defaultRepository, "Bium23/NxLibrary")
-        XCTAssertEqual(AppUpdate.successorRepository, "Bium23/Arcane")
-        let renamed = try changingAsset { $0["browser_download_url"] = successorURL }
-        XCTAssertNotNil(AppUpdate.parseRelease(renamed))
+    /// Arcane Portal updates only from its own repository: no successor is configured, so a release
+    /// that points anywhere else (the upstream Arcane repository included) is refused.
+    func testUpdatesComeOnlyFromThisRepositoryByDefault() throws {
+        XCTAssertEqual(AppUpdate.defaultRepository, "akinware/arcane-portal")
+        XCTAssertNil(AppUpdate.successorRepository)
         XCTAssertNotNil(AppUpdate.parseRelease(Data(releaseJSON.utf8)))
+        let renamed = try changingAsset { $0["browser_download_url"] = successorURL }
+        XCTAssertNil(AppUpdate.parseRelease(renamed))
+        let upstream = try changingAsset {
+            $0["browser_download_url"] = "https://github.com/Bium23/NxLibrary/releases/download/v0.3.0/NXLibrary-0.3.0.zip"
+        }
+        XCTAssertNil(AppUpdate.parseRelease(upstream), "the original Arcane's releases never replace Arcane Portal")
         let wrongCase = try changingAsset {
-            $0["browser_download_url"] = "https://github.com/Bium23/arcane/releases/download/v0.3.0/NXLibrary-0.3.0.zip"
+            $0["browser_download_url"] = "https://github.com/akinware/Arcane-Portal/releases/download/v0.3.0/NXLibrary-0.3.0.zip"
         }
         XCTAssertNil(AppUpdate.parseRelease(wrongCase), "the path must match GitHub's spelling exactly")
     }
@@ -252,19 +256,19 @@ final class AppUpdateTests: XCTestCase {
 
     func testBundleChecks() throws {
         let good = try makeApp("Good.app")
-        XCTAssertNil(AppUpdate.bundleProblem(good, expectedID: "local.nxlibrary", version: "0.2.0", runningOS: os))
+        XCTAssertNil(AppUpdate.bundleProblem(good, expectedID: "io.github.akinware.arcaneportal", version: "0.2.0", runningOS: os))
         let other = try makeApp("Other.app", id: "com.example")
-        XCTAssertEqual(AppUpdate.bundleProblem(other, expectedID: "local.nxlibrary", version: "0.2.0", runningOS: os),
+        XCTAssertEqual(AppUpdate.bundleProblem(other, expectedID: "io.github.akinware.arcaneportal", version: "0.2.0", runningOS: os),
                        .wrongIdentifier)
         let noExe = try makeApp("NoExe.app", executable: false)
-        XCTAssertEqual(AppUpdate.bundleProblem(noExe, expectedID: "local.nxlibrary", version: "0.2.0", runningOS: os),
+        XCTAssertEqual(AppUpdate.bundleProblem(noExe, expectedID: "io.github.akinware.arcaneportal", version: "0.2.0", runningOS: os),
                        .noExecutable)
-        XCTAssertEqual(AppUpdate.bundleProblem(good, expectedID: "local.nxlibrary", version: "0.3.0", runningOS: os),
+        XCTAssertEqual(AppUpdate.bundleProblem(good, expectedID: "io.github.akinware.arcaneportal", version: "0.3.0", runningOS: os),
                        .wrongVersion)
         let future = try makeApp("Future.app", minimumOS: "28.0")
-        XCTAssertEqual(AppUpdate.bundleProblem(future, expectedID: "local.nxlibrary", version: "0.2.0", runningOS: os),
+        XCTAssertEqual(AppUpdate.bundleProblem(future, expectedID: "io.github.akinware.arcaneportal", version: "0.2.0", runningOS: os),
                        .needsNewerMacOS("28.0"))
-        XCTAssertEqual(AppUpdate.bundleProblem(dir.appendingPathComponent("Missing.app"), expectedID: "local.nxlibrary",
+        XCTAssertEqual(AppUpdate.bundleProblem(dir.appendingPathComponent("Missing.app"), expectedID: "io.github.akinware.arcaneportal",
                                                version: "0.2.0", runningOS: os), .noInfo)
     }
 
@@ -274,13 +278,13 @@ final class AppUpdateTests: XCTestCase {
         var info = try XCTUnwrap(PropertyListSerialization.propertyList(from: Data(contentsOf: file), format: nil) as? [String: Any])
         info["NXLibraryDevelopmentProfile"] = true
         try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0).write(to: file)
-        XCTAssertEqual(AppUpdate.bundleProblem(app, expectedID: "local.nxlibrary", version: "0.2.0", runningOS: os), .notRelease)
+        XCTAssertEqual(AppUpdate.bundleProblem(app, expectedID: "io.github.akinware.arcaneportal", version: "0.2.0", runningOS: os), .notRelease)
         XCTAssertEqual(AppUpdate.installability(app), .developer)
     }
 
     func testBundleWithoutMarkerIsRefused() throws {
         let dev = try makeApp("Dev.app", release: false)
-        XCTAssertEqual(AppUpdate.bundleProblem(dev, expectedID: "local.nxlibrary", version: "0.2.0", runningOS: os),
+        XCTAssertEqual(AppUpdate.bundleProblem(dev, expectedID: "io.github.akinware.arcaneportal", version: "0.2.0", runningOS: os),
                        .notRelease)
     }
 
@@ -350,9 +354,9 @@ final class AppUpdateTests: XCTestCase {
     }
 
     func testMissingCandidatePreservesUserCopies() throws {
-        let current = try makeApp("Arcane.app", marker: "current")
-        let keptNew = try makeApp("Arcane (new).app", marker: "user-new")
-        let keptOld = try makeApp("Arcane (old).app", marker: "user-old")
+        let current = try makeApp("Arcane Portal.app", marker: "current")
+        let keptNew = try makeApp("Arcane Portal (new).app", marker: "user-new")
+        let keptOld = try makeApp("Arcane Portal (old).app", marker: "user-old")
         XCTAssertThrowsError(try AppUpdate.install(dir.appendingPathComponent("missing.app"), over: current, trashOld: false))
         for kept in [keptNew, keptOld, current] {
             XCTAssertTrue(FileManager.default.fileExists(atPath: kept.appendingPathComponent("Contents/Info.plist").path))
@@ -382,7 +386,7 @@ final class AppUpdateTests: XCTestCase {
     }
 
     func testErrorAfterAtomicSwapFinishesTheInstalledUpdate() throws {
-        let current = try makeApp("Arcane.app", marker: "current")
+        let current = try makeApp("Arcane Portal.app", marker: "current")
         let staged = try makeApp(in: dir.appendingPathComponent("download"), marker: "candidate")
         var io = BuildInstallIO()
         io.afterPublish = { throw CocoaError(.fileWriteUnknown) }
@@ -392,7 +396,7 @@ final class AppUpdateTests: XCTestCase {
 
     func testTrashFailureRetainsPreviousAppWithoutFailingSuccessfulInstall() throws {
         let installed = dir.appendingPathComponent("Applications")
-        let current = try makeApp("Arcane.app", in: installed, marker: "current")
+        let current = try makeApp("Arcane Portal.app", in: installed, marker: "current")
         let staged = try makeApp(in: dir.appendingPathComponent("download"), marker: "candidate")
         let fm = UpdateTrashFailure()
         XCTAssertEqual(try AppUpdate.install(staged, over: current, trashOld: true, fileManager: fm, io: BuildInstallIO()), current)
@@ -411,7 +415,7 @@ final class AppUpdateTests: XCTestCase {
     }
 
     func testAppChangedDuringCopyIsNotReplaced() throws {
-        let current = try makeApp("Arcane.app", marker: "current")
+        let current = try makeApp("Arcane Portal.app", marker: "current")
         let staged = try makeApp(in: dir.appendingPathComponent("download"), marker: "candidate")
         let moved = dir.appendingPathComponent("moved.app")
         let fm = UpdateCopyHook {

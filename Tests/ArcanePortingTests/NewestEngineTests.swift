@@ -43,7 +43,7 @@ final class NewestEngineTests: XCTestCase {
         XCTAssertEqual(NewestEngine.readiness(newestLock: lock("32024.100"), testedMetal: "32023.922"),
                        .needsNewerApp(metal: "32024.100"))
         XCTAssertEqual(NewestEngineCopy.needsNewerApp(metal: "32024.100"),
-                       "The newest nxnative needs Metal 32024.100, so it needs a newer Arcane.")
+                       "The newest nxnative needs Metal 32024.100, so it needs a newer Arcane Portal.")
     }
 
     func testAnUnreadableLockIsUnknown() {
@@ -292,10 +292,10 @@ final class NewestEngineTests: XCTestCase {
 
     func testTheSentenceIsTheOneAgreed() {
         XCTAssertEqual(NewestEngineCopy.note,
-                       "Newest nxnative, not yet tested by Arcane. It usually works, but something may not. "
-                       + "Its new features reach Arcane in a future version.")
+                       "Newest nxnative, not yet tested by Arcane Portal. It usually works, but something may not. "
+                       + "Its new features reach Arcane Portal in a future version.")
         XCTAssertEqual(NewestEngineCopy.ahead(1), "1 commit ahead")
         XCTAssertEqual(NewestEngineCopy.offer(commit: main, aheadBy: 138),
-                       "Build with nxnative main (9c1d2e7, 138 commits ahead) before Arcane has tested it.")
+                       "Build with nxnative main (9c1d2e7, 138 commits ahead) before Arcane Portal has tested it.")
     }
 }

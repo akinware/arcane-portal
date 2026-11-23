@@ -1,62 +1,75 @@
 <p align="center">
-  <img src="Resources/AppIcon-Light.png" alt="Arcane's crystal-in-glass app icon" width="96" height="96">
+  <img src="Resources/AppIcon-Light.png" alt="Arcane Portal's app icon: a glowing portal behind a crystal in a glass sphere" width="96" height="96">
 </p>
 
-<h1 align="center">Arcane</h1>
+<h1 align="center">Arcane Portal</h1>
 
-<p align="center"><strong>A home for your games on Mac.</strong></p>
+<p align="center"><strong>Windows and Mac games in one library on Apple silicon.</strong></p>
 
 <p align="center">
-  Browse and launch games from one Mac library, with controller navigation,<br>
-  game artwork and activity. Bring together installed Steam games for Mac and games you’ve ported.
+  A console-style game library for Mac: Steam games for Mac, Windows games through Wine,<br>
+  CrossOver and NotProton, and Switch titles ported with nxnative, with controller navigation and artwork.
 </p>
 
 <p align="center">
   <a href="#project-status"><img src="https://img.shields.io/badge/status-alpha-DB806B?style=flat" alt="Status: alpha"></a>
   <a href="#requirements"><img src="https://img.shields.io/badge/macOS-26%2B-3D4754?style=flat" alt="macOS 26 or later"></a>
   <a href="#requirements"><img src="https://img.shields.io/badge/Apple-silicon-3D4754?style=flat" alt="Apple silicon"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-64816C?style=flat" alt="MIT license"></a>
+  <a href="#credits-and-licences"><img src="https://img.shields.io/badge/license-MIT%20%2B%20PolyForm%20NC-64816C?style=flat" alt="MIT app, PolyForm Noncommercial GamePortKit"></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributions-welcome-4C8C8A?style=flat" alt="Contributions welcome"></a>
 </p>
 
 <p align="center">
-  <a href="https://buymeacoffee.com/bium"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" height="40"></a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/Bium23/NxLibrary/releases/latest">Download</a> ·
+  <a href="#building-from-source">Build</a> ·
   <a href="#getting-started">Get started</a> ·
-  <a href="#using-arcane">User guide</a> ·
+  <a href="#windows-games">Windows games</a> ·
+  <a href="#using-arcane-portal">User guide</a> ·
   <a href="#troubleshooting">Troubleshooting</a> ·
-  <a href="CHANGELOG.md">Changelog</a> ·
-  <a href="docs/working-on-it/development.md">Development</a>
+  <a href="CONTRIBUTING.md">Contribute</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
 </p>
+
+> Arcane Portal is a community fork of [Arcane](https://github.com/Bium23/NxLibrary) by bium (MIT). It keeps
+> everything Arcane does and adds Windows games through [GamePort](https://github.com/akinware/gameport).
+> It is not affiliated with or endorsed by Arcane's author, Valve, CodeWeavers or Apple.
 
 <!-- NX-DEMO:START -->
 <!-- NX-DEMO:END -->
 
 <!-- NX-SCREENSHOTS:START -->
-![Arcane Spotlight with a selected game, artwork, play history and library navigation](docs/media/spotlight.webp)
+![Arcane Portal Spotlight with a selected game, artwork, play history and library navigation](docs/media/spotlight.webp)
 
 <p align="center"><strong>Your library, together.</strong><br>Games, artwork and activity in Spotlight.</p>
 <!-- NX-SCREENSHOTS:END -->
 
-### <img src="https://img.shields.io/badge/new-E8833A?style=flat" alt="New" height="20" align="absmiddle"> Latest highlights
+### <img src="https://img.shields.io/badge/new-E8833A?style=flat" alt="New" height="20" align="absmiddle"> What Arcane Portal adds
 
-- **One library for your Mac games.** Add installed Steam games for Mac alongside games ported with nxnative. Browse in Spotlight or Collection and launch from either view.
-- **Steam achievements.** See playtime, achievement rarity and crystal tiers when available. Complete every achievement in a game to reveal the animated Arcane.
-- **An interface built for browsing.** Navigate with a controller, keyboard or mouse, and personalise your library with artwork, themes and live backgrounds.
-- **NX Library is now Arcane.** Your library, preferences and save backups carry over. Settings are grouped into General, Library, Porting and System.
+- **Windows games, no Wine tinkering.** Each game gets its own Windows environment (Wine prefix, Windows Steam and
+  home folder), so a fix for one game never breaks another. A new game's Windows Steam is an APFS copy made in seconds.
+- **Every way you already play.** Windows games installed in CrossOver bottles and Windows games that Mac Steam
+  installed through NotProton show up in the same library; Play starts them the way they were installed.
+- **Download without Windows Steam.** Sign in once with the Steam Mobile App's QR code and download a Windows game
+  straight into the library.
+- **Measured, not guessed.** The Lab runs a game, reads the Metal HUD's frame rate and detects crashes and black
+  screens; GamePort's `gameport lab <game> auto` also tries DXMT, D3DMetal and DXVK and keeps the fastest that works.
+- **Safe to experiment.** Automatic daily snapshots before Steam starts and one-click rollback; fixes that the app
+  applies by itself are undone if the next session fails.
+- **Recipes for 800+ games**, with anti-cheat warnings for 1,166 titles before you download.
+- **External drives.** Move all games to another drive and back, with progress and cancel; an ejected drive is
+  noticed and nothing is lost.
 
-Every release is in the [changelog](CHANGELOG.md).
+Arcane's own features stay: Steam games for Mac, achievements, Switch porting with nxnative, saves, mods, themes and
+controller navigation. Every release is in the [changelog](CHANGELOG.md).
 
 ## Overview
 
-Arcane is an independent game library and launcher for Apple silicon Macs. It brings installed Steam games for Mac and games ported with nxnative into the same interface, inspired by [Selene](https://github.com/mattxslv/Selene). The integrated porting workflow uses [nxnative](https://github.com/seedds/nxnative) to build compatible Mac apps from your own Switch game files.
+Arcane Portal is an independent game library and launcher for Apple silicon Macs. It brings installed Steam games for Mac, Windows games and games ported with nxnative into the same interface, inspired by [Selene](https://github.com/mattxslv/Selene). The integrated porting workflow uses [nxnative](https://github.com/seedds/nxnative) to build compatible Mac apps from your own Switch game files.
 
 | Area | What you can do |
 |---|---|
 | **Library** | Browse Spotlight and Collection, search, favourite, hide and reorder games. |
 | **Steam** | Launch installed games for Mac and browse playtime, achievements and related games. |
+| **Windows games** | Play Windows games through GamePort's Wine engines, CrossOver bottles or Mac Steam with NotProton; download them with a Steam QR sign-in; find the fastest renderer in the Lab. |
 | **Game options** | Keep each title's launch settings, artwork and metadata together. |
 | **Personalisation** | Choose palettes, wallpapers, live backgrounds, interface sounds and controller prompts. |
 | **Porting** | Build compatible Switch titles with nxnative, review updates and DLC, and follow build progress. |
@@ -66,9 +79,9 @@ Game files, keys and firmware are not provided. See [Legal and third-party notic
 
 ### Project status
 
-Arcane is in alpha. Get the latest published build from [Releases](https://github.com/Bium23/NxLibrary/releases/latest), or [build this version from source](#building-from-source).
+Arcane Portal is in alpha. Get the latest published build from [Releases](https://github.com/akinware/arcane-portal/releases/latest), or [build this version from source](#building-from-source).
 
-Automated checks cover the application code, publication inputs, compilation and development-app packaging. They do not certify game compatibility. Changes are recorded in the [changelog](CHANGELOG.md), and the current checks are available under [Actions](https://github.com/Bium23/NxLibrary/actions/workflows/ci.yml).
+Automated checks cover the application code, publication inputs, compilation and development-app packaging. They do not certify game compatibility. Changes are recorded in the [changelog](CHANGELOG.md), and the current checks are available under [Actions](https://github.com/akinware/arcane-portal/actions/workflows/ci.yml).
 
 Porting uses nxnative commit `99224562` with Xcode 27.2 and Metal 32023.922. Porting Setup retrieves that commit. Installed game apps use the engine they were built with. See the [engine upgrade notes](docs/history/engine-upgrades/README.md).
 
@@ -78,8 +91,9 @@ Porting uses nxnative commit `99224562` with Xcode 27.2 and Metal 32023.922. Por
 
 | Requirement | Details |
 |---|---|
-| **Arcane library** | Apple silicon, macOS 26 or later. Steam and each game can require a newer macOS version. |
-| **Porting and nxnative game apps** | macOS 26.6 or later for the Mac hosts built by the pinned engine. This is separate from Arcane's own minimum. |
+| **Arcane Portal library** | Apple silicon, macOS 26 or later. Steam and each game can require a newer macOS version. |
+| **Windows games** | Rosetta 2. GamePort downloads its Wine engine on first use (HTTPS, SHA-256 verified). CrossOver and NotProton are optional; Apple's D3DMetal is used only after you accept Apple's licence in the app. |
+| **Porting and nxnative game apps** | macOS 26.6 or later for the Mac hosts built by the pinned engine. This is separate from Arcane Portal's own minimum. |
 | **Xcode for porting** | 27.2 or later, with the Metal compiler certified for the pinned engine. Browsing the library and using Steam do not require Xcode. |
 | **Porting engine** | nxnative at the pinned commit. Setup can prepare the checkout. To select an existing folder, use **Settings → Porting → Setup and engine**. |
 | **Porting inputs** | Your own supported game sources and keys, with the rights and permissions needed to use them. |
@@ -91,13 +105,17 @@ A packaged app includes Python and its required packages, `zstd` and `glslangVal
 With the [development prerequisites](docs/working-on-it/development.md#development-prerequisites) installed:
 
 ~~~bash
-git clone https://github.com/Bium23/NxLibrary.git
-cd NxLibrary
+git clone https://github.com/akinware/arcane-portal.git
+git clone https://github.com/akinware/gameport.git   # optional: SwiftPM fetches it when it is not beside arcane-portal
+cd arcane-portal
 
 bash scripts/bundle_runtime.sh
 bash scripts/build_app.sh
-open "$HOME/Applications/Arcane Dev.app"
+open "$HOME/Applications/Arcane Portal Dev.app"
 ~~~
+
+GamePortKit, the Windows engine, lives in its own repository. `Package.swift` uses a `gameport` checkout next to
+this one when there is one, so both can be changed together, and otherwise fetches it from GitHub.
 
 Run `bundle_runtime.sh` once, and again when `runtime.lock` changes. `build_app.sh` prepares, signs and verifies the app before installing it atomically in `~/Applications`.
 
@@ -105,17 +123,18 @@ Build options, runtime dependencies, debug builds and release packaging are docu
 
 ### Installing a packaged release
 
-1. Download the DMG from [Releases](https://github.com/Bium23/NxLibrary/releases/latest).
-2. Open it and drag **Arcane** to Applications.
-3. Open Arcane, choose which detected sources to use, and select **Open library**.
+There is no packaged Arcane Portal release yet: [build it from source](#building-from-source). Once releases are
+published under [Releases](https://github.com/akinware/arcane-portal/releases), a packaged copy checks this
+repository, and only this one, for updates; no GitHub account is needed. Choose **Update** to download, verify,
+install and reopen Arcane Portal while keeping your library and preferences. Development builds never replace
+themselves.
 
-The current alpha is ad-hoc signed and not notarised. If macOS blocks first opening, use **System Settings → Privacy & Security → Open Anyway** only for a copy you built or obtained from a source you trust.
-
-Packaged releases check this repository for app updates; no GitHub account is needed. Choose **Update** to download, verify, install and reopen Arcane while keeping your library and preferences. Automatic checks run at most once every 24 hours; **Arcane → Check for Updates…** in the macOS menu bar and **Settings → About → Check now** check immediately. Both open the same app-style dialog, with scrollable release notes and a visible result even when no update is available. Updates wait while a build, a running game or a save operation requires the app. Development builds can check public releases manually but never replace themselves.
+Arcane Portal keeps its own library, preferences and data (`~/Library/Application Support/ArcanePortal`), so it
+can sit beside Arcane without either changing the other.
 
 ### First-run setup
 
-On first launch, Arcane looks for installed Steam games for Mac and previously ported apps. Choose whether to include Steam and select **Open library**. Use **Settings → Library → Sources** to change your Steam source or refresh it later. Choose **Porting** on the first screen to set up local game builds with nxnative.
+On first launch, Arcane Portal looks for installed Steam games for Mac and previously ported apps. Choose whether to include Steam and select **Open library**. Use **Settings → Library → Sources** to change your Steam source or refresh it later. Choose **Porting** on the first screen to set up local game builds with nxnative.
 
 **Get ready** shows the engine, build tools and keys. **Install all** prepares the engine checkout and certified Metal compiler. Install Xcode from the App Store and follow its licence and system prompts. Choose **Continue** to proceed. Build requirements can be completed later, and existing game apps remain playable.
 
@@ -125,19 +144,41 @@ If games are found, **Open library** takes you to them. **Skip for now** enters 
 
 The default Game apps folder is `~/Applications`; first use can prepare this default without an extra picker. Remembered or custom unavailable folders are never recreated automatically. Changing folders does not move installed apps, and a rebuild updates an existing app in its current location. A read-only folder still allows discovery and Play; installing new builds needs write access.
 
-Discovery includes subfolders of **Game apps**, skips app contents and limits the search depth. **Settings → Porting → Library → Scan game apps** reports search limits and unreadable folders. If several builds of a title are found, Arcane keeps the registered app while it exists. For a newly discovered title, it uses the most recently modified build.
+Discovery includes subfolders of **Game apps**, skips app contents and limits the search depth. **Settings → Porting → Library → Scan game apps** reports search limits and unreadable folders. If several builds of a title are found, Arcane Portal keeps the registered app while it exists. For a newly discovered title, it uses the most recently modified build.
 
 **Game files** is a separate optional folder preference in **Settings → Porting → Library**. Selecting individual files leaves that preference in place. Both folder choices can be changed later.
 
-Import your `prod.keys` when prompted. Arcane keeps a private copy with mode `0600` and leaves the original file unchanged. Key values are not displayed or logged.
+Import your `prod.keys` when prompted. Arcane Portal keeps a private copy with mode `0600` and leaves the original file unchanged. Key values are not displayed or logged.
 
-Reopen both setup steps from **Settings → Porting → Setup and engine → Open Setup** whenever needed; this keeps your library and completion state. Arcane never runs `sudo`, accepts the Xcode licence for you or changes `xcode-select`.
+Reopen both setup steps from **Settings → Porting → Setup and engine → Open Setup** whenever needed; this keeps your library and completion state. Arcane Portal never runs `sudo`, accepts the Xcode licence for you or changes `xcode-select`.
 
 To discover existing nxnative game apps, choose **Settings → Porting → Library → Scan game apps → Scan**. Play works with the installed app. To rebuild it, attach the original sources.
 
-If an installed app is moved or removed, its library entry stays with a blurred, locked tile and **App not found**. Restore it to its folder or change **Game apps**, then refresh the library. Arcane does not search elsewhere for it. Missing build inputs show **Game files not found** when there is no app to play. An existing app still plays when its source files are missing; only rebuilding is unavailable. To reconnect a game's moved inputs, use **Game Options → Edit details → Attach sources…**.
+If an installed app is moved or removed, its library entry stays with a blurred, locked tile and **App not found**. Restore it to its folder or change **Game apps**, then refresh the library. Arcane Portal does not search elsewhere for it. Missing build inputs show **Game files not found** when there is no app to play. An existing app still plays when its source files are missing; only rebuilding is unavailable. To reconnect a game's moved inputs, use **Game Options → Edit details → Attach sources…**.
 
-## Using Arcane
+## Windows games
+
+Windows games run through [GamePort](https://github.com/akinware/gameport), included in the app. They appear in
+Spotlight beside your other games, with a **Play** pill that says how the game will start.
+
+| How the game is installed | What Play does |
+|---|---|
+| **Downloaded in Arcane Portal** (Steam QR sign-in) or a GamePort profile | Starts it in its own Windows environment: its own Wine prefix, Windows Steam (or the Steam Bridge to your Mac Steam) and home folder. |
+| **In a CrossOver bottle** | Starts it in that bottle with CrossOver; nothing is copied. |
+| **By Mac Steam with NotProton** (Steam Play forced to CrossOver) | Asks Mac Steam to start it. If the game has not started after 90 seconds, Arcane Portal offers the other ways to play it. |
+
+**Settings → Windows & Engines** installs the engine and holds **Storage & External APFS SSD**: **Move to Another
+Drive…** moves every game, engine and Windows copy to an external drive (APFS recommended) or back to the internal
+SSD, with progress and **Cancel**; nothing changes until the copy is complete and verified.
+
+**Measure FPS (Lab)** in a game's options runs the game through Steam and measures its frame rate from the Metal HUD;
+the renderer can be changed in the same options. Before you download, a game's badge warns when its anti-cheat blocks
+Macs. Arcane Portal never works around anti-cheat.
+
+Compatibility sharing is on by default and anonymous (launch and crash results, renderer, chip, macOS version; never
+your Steam account, username or paths). Turn it off in **Settings → Windows & Engines**.
+
+## Using Arcane Portal
 
 ### Your library
 
@@ -147,11 +188,11 @@ If an installed app is moved or removed, its library entry stays with a blurred,
 
 <p align="center"><strong>A closer look at each game.</strong><br>Artwork, details and play history in one place.</p>
 
-Scroll down for screenshots, the game description and **More like this** when matching titles are in your library. Steam games can show playtime and an **Achievements** card with rarity, unlocked items and crystal tiers. The animated Arcane appears when every achievement is unlocked.
+Scroll down for screenshots, the game description and **More like this** when matching titles are in your library. Steam games can show playtime and an **Achievements** card with rarity, unlocked items and crystal tiers. The animated Arcane crystal appears when every achievement is unlocked.
 
 Use **Find a game** for search, **Game Options** for title-specific actions, and the menu for themes, Settings and running-game controls. Hidden games can be restored under **Settings → Library → Games → Hidden games**.
 
-When you quit a game, Arcane comes back to the front, unless you had moved to another app or another game is still open. A **session card** in the top right shows how long you played this time and in total; sessions under 10 seconds show none. Turn it off in **Settings → Library → Games → Session card**.
+When you quit a game, Arcane Portal comes back to the front, unless you had moved to another app or another game is still open. A **session card** in the top right shows how long you played this time and in total; sessions under 10 seconds show none. Turn it off in **Settings → Library → Games → Session card**.
 
 ![The quick menu open over Spotlight, with Theme selected](docs/media/quick-menu.webp)
 
@@ -159,7 +200,7 @@ When you quit a game, Arcane comes back to the front, unless you had moved to an
 
 ### Language and region
 
-Arcane is available in **English, Italiano, Français, Deutsch, Español, Português (Brasil) and 简体中文**. **Settings → Start-up → Language & region** follows the Mac automatically or lets you choose the app language and region separately. Changes apply immediately and are remembered. **Regional formats** controls dates, numbers and sizes. **Game options → Language** controls each supported game's language.
+Arcane Portal is available in **English, Italiano, Français, Deutsch, Español, Português (Brasil) and 简体中文**. **Settings → Start-up → Language & region** follows the Mac automatically or lets you choose the app language and region separately. Changes apply immediately and are remembered. **Regional formats** controls dates, numbers and sizes. **Game options → Language** controls each supported game's language.
 
 Choose a language directly from its list. Known catalog genres are translated locally, without changing the saved metadata. Descriptions from Nlib are requested in the app language when supported, with cached descriptions shared between regions using the same language. Switching language reuses available artwork and credits; when those are fresh, only the localized description is requested. When the store has no description in your language, **About this game** shows the game's Wikipedia introduction in that language instead, credited with a link to the article (CC BY-SA). Without one, the English text stays with a note. Nothing is machine-translated, and a description you chose is always kept. Personal names, metadata choices, artwork and game settings are preserved.
 
@@ -177,10 +218,10 @@ Use the dialog's **Developer portal** and **Setup guide** links to create your c
 
 ### Add or rebuild a game
 
-Use this workflow for games you want to port with nxnative. Arcane discovers installed Steam games through **Settings → Library → Sources**.
+Use this workflow for games you want to port with nxnative. Arcane Portal discovers installed Steam games through **Settings → Library → Sources**.
 
 1. Open **Add game** and choose or drop a supported file or folder.
-2. Review the detected base game, update and DLC. Arcane accepts NSP, XCI, NSZ, XCZ and Switch 2 NUP packages, plus supported source folders.
+2. Review the detected base game, update and DLC. Arcane Portal accepts NSP, XCI, NSZ, XCZ and Switch 2 NUP packages, plus supported source folders.
 3. Check the destination, disk estimate and game options.
 4. Choose **Add and port** to build, or **Add to library only** to keep the entry for later.
 
@@ -207,7 +248,7 @@ A rebuild of a running game waits to replace its app until it closes. If compila
 
 For games built with nxnative, options can include fullscreen, FPS target, docked mode, language, rumble, render scale, MetalFX upscaling and Metal HUD. **MetalFX upscaling** enlarges the finished picture, including the HUD, to your window or screen. **Game's upscaler** is offered for games that upscale inside the frame, such as Donkey Kong Bananza. Available options depend on the installed build and game.
 
-Arcane groups Settings into **General**, **Library**, **Porting** and **System**. Use **Search** to find a setting and **Changed** to review values you’ve adjusted. Group resets retain the cloud-sync choice and selected sources folder.
+Arcane Portal groups Settings into **General**, **Library**, **Porting** and **System**. Use **Search** to find a setting and **Changed** to review values you’ve adjusted. Group resets retain the cloud-sync choice and selected sources folder.
 
 ### Saves: back up, import, restore
 
@@ -218,13 +259,13 @@ For a ported game, open **Game Options → Saves**. Keep the game closed during 
 | **Open folder** | Opens the current local save in Finder. |
 | **Back up now** | Creates a dated, verified copy of all local users, their registry and the device save. |
 | **Save type** | Selects the import destination. **User save** is the usual choice; **Device save** is for a separate device save. |
-| **Import save…** | Previews an exported save folder or a dated Arcane backup before replacing anything. |
+| **Import save…** | Previews an exported save folder or a dated Arcane Portal backup before replacing anything. |
 | **Refresh** | Reads save and backup information again. If recovery is needed, offers **Retry recovery**. |
 | **Backup folder** | Opens this game's backups in Finder. The row shows the latest backup's date and time. |
 
-**To import:** choose the folder, review the centred **From → To** preview, then confirm. Arcane backs up existing progress first and verifies the result. A successful import shows **Imported successfully**, which disappears after three seconds.
+**To import:** choose the folder, review the centred **From → To** preview, then confirm. Arcane Portal backs up existing progress first and verifies the result. A successful import shows **Imported successfully**, which disappears after three seconds.
 
-For Ryujinx, choose the numbered game folder under `bis/user/save/`. A folder selected inside that tree is recognised too; Arcane checks its title metadata and imports the complete committed save, including all slots. For other exports, choose the folder containing the complete save.
+For Ryujinx, choose the numbered game folder under `bis/user/save/`. A folder selected inside that tree is recognised too; Arcane Portal checks its title metadata and imports the complete committed save, including all slots. For other exports, choose the folder containing the complete save.
 
 **To restore:** choose a dated backup folder through **Import save…**. A current backup restores the complete local user group, including missing destinations. Older backups restore only the primary user and device save, preserving additional users. An ordinary folder import replaces only the selected primary-user or device destination.
 
@@ -234,7 +275,7 @@ Interrupted replacements must recover before Play. The Saves panel reports what 
 
 ### Cheats
 
-For a ported game, open **Game Options → Cheats**, then choose or drop a matching cheat file. Arcane checks the title and build information. Newly imported cheats start off. Enable the master switch and the individual cheats you want, then launch the game.
+For a ported game, open **Game Options → Cheats**, then choose or drop a matching cheat file. Arcane Portal checks the title and build information. Newly imported cheats start off. Enable the master switch and the individual cheats you want, then launch the game.
 
 Changes apply at the next Play and are written only while the game is closed. An older or unrecognised engine build may require **Rebuild**. The engine's in-game panel, `⌘⇧C`, reads the same files.
 
@@ -242,7 +283,7 @@ Cheats change values while you play, for one game version only. New items, looks
 
 ### Mods
 
-Arcane manages file mods for games ported with nxnative.
+Arcane Portal manages file mods for games ported with nxnative.
 
 - **Mod store.** The **Mods** card in Spotlight opens a store of the GameBanana mods that work with your games: a featured banner, the most popular, a row per category and a row per game, sorted by Popular, Most liked, Newest or Recently updated. Hide the card in **Settings → Spotlight**.
 - **A game's Mods band.** Each game page lists its GameBanana mods and the ones you installed. Open a mod for its images, author, version and requirements, then press **Install**; **Update** appears when the author replaces the file. If the game's GameBanana page is uncertain, the band asks once, and **Wrong game?** picks another.
@@ -256,8 +297,8 @@ Mods apply at the next launch, without a rebuild. The engine reads file mods onl
 
 ### Artwork, themes and sound
 
-- **Game Options → Edit details** changes one game's artwork or metadata. Manual artwork choices take priority over automatic images. After choosing an Icon in **Change artwork**, choose **Only here** to keep it inside Arcane or **Use on the Mac** to show it in Finder and the Dock too. This choice is available for every game, including apps with no original icon, and survives restarts and rebuilds. **Only here** restores the original app icon (or its absence) if a custom one was already applied. **Automatic** removes the personal image and uses the game's own icon, then available online artwork, while keeping your location choice. On the Icon tab, **Icon location** changes **Only here** / **Use on the Mac** at any time, including with Automatic selected. If no image is found, the app keeps the standard macOS icon and remains playable; Change artwork explains that no icon is available. The finished build log records the separate icon result.
-- **Menu → Theme** opens colors first, then backgrounds. **Arcane** keeps the original blue moonlight as the default. Optional **Arcane Crystal** and **Arcane Flow** offer fine moving light threads, with barely visible ambient light. Background choices include local images, muted looping videos and optional online sources; source credits appear in the picker.
+- **Game Options → Edit details** changes one game's artwork or metadata. Manual artwork choices take priority over automatic images. After choosing an Icon in **Change artwork**, choose **Only here** to keep it inside Arcane Portal or **Use on the Mac** to show it in Finder and the Dock too. This choice is available for every game, including apps with no original icon, and survives restarts and rebuilds. **Only here** restores the original app icon (or its absence) if a custom one was already applied. **Automatic** removes the personal image and uses the game's own icon, then available online artwork, while keeping your location choice. On the Icon tab, **Icon location** changes **Only here** / **Use on the Mac** at any time, including with Automatic selected. If no image is found, the app keeps the standard macOS icon and remains playable; Change artwork explains that no icon is available. The finished build log records the separate icon result.
+- **Menu → Theme** opens colors first, then backgrounds. **Arcane Portal** keeps the original blue moonlight as the default. Optional **Arcane Crystal** and **Arcane Flow** offer fine moving light threads, with barely visible ambient light. Background choices include local images, muted looping videos and optional online sources; source credits appear in the picker.
 - **Settings → Look** controls wallpaper placement, sizing, brightness, game backgrounds, Reduce Motion and the Color/Monochrome app icon.
 - **Settings → Sound & music** controls interface cues and volume. Four interface sounds are bundled; additional sounds and wallpapers can be imported from a Selene theme folder you own.
 
@@ -300,7 +341,7 @@ Prompts follow the connected controller and supported system remapping. **Settin
 
 | What you see | What to do |
 |---|---|
-| **A Steam game is missing** | Open **Settings → Library → Sources**, verify the Steam folder, then choose **Refresh Steam**. Arcane lists supported titles installed as Mac apps. |
+| **A Steam game is missing** | Open **Settings → Library → Sources**, verify the Steam folder, then choose **Refresh Steam**. Arcane Portal lists supported titles installed as Mac apps. |
 | **Play works, Rebuild is blocked** | Open **Settings → Porting → Setup and engine** and check Compatibility. Existing apps and new builds have separate requirements. |
 | **Sources detached / missing** | Use **Attach Sources…** or locate the original files. The installed app remains usable. |
 | **Ready build waiting to install** | Close the running game or finish the save operation, then retry the installation if prompted. |
@@ -313,7 +354,7 @@ Before reporting a problem, review copied diagnostics and remove anything person
 
 ### Compatibility and limitations
 
-- Arcane uses a manually pinned engine and checks its commit, working tree, CLI contract and Metal compiler before new builds. It does not follow upstream `main` automatically. **Settings → Setup and engine → Newest engine** lets you choose `main` yourself before Arcane has tested it: an orange dot marks it, builds are recorded as untested, **Update** moves to a newer `main` when there is one, **Back to tested** returns to the pinned engine, and it is not offered when `main` needs a different Metal compiler.
+- Arcane Portal uses a manually pinned engine and checks its commit, working tree, CLI contract and Metal compiler before new builds. It does not follow upstream `main` automatically. **Settings → Setup and engine → Newest engine** lets you choose `main` yourself before Arcane Portal has tested it: an orange dot marks it, builds are recorded as untested, **Update** moves to a newer `main` when there is one, **Back to tested** returns to the pinned engine, and it is not offered when `main` needs a different Metal compiler.
 - The current engine is `99224562` and certifies Metal `32023.922`. **Build anyway with an untested toolchain** requires explicit confirmation and marks the resulting build as untested. A successful launch does not turn it into a certified combination.
 - Game compatibility depends on nxnative, the game version and the toolchain.
 - Output follows the window/display; native 1440p/4K internal rendering is not supported. Render scale is 50–100% where the build supports it. MetalFX is spatial upscaling.
@@ -323,7 +364,7 @@ The [upgrade notes](docs/history/engine-upgrades/README.md) record each engine r
 
 ### Data and cleanup
 
-App data lives in `~/Library/Application Support/NXLibrary/`. Local game data uses `~/Library/Application Support/nxnative/<title ID>/`, with mods in its `mods` folder. Backups are stored under `NXLibrary/SaveBackups/<title ID>/`.
+App data lives in `~/Library/Application Support/ArcanePortal/`; GamePort's Windows games live in `~/Library/Application Support/GamePort/` unless moved to another drive. Local game data uses `~/Library/Application Support/nxnative/<title ID>/`, with mods in its `mods` folder. Backups are stored under `ArcanePortal/SaveBackups/<title ID>/`.
 
 **Settings → Porting → Storage** shows app, build cache and log sizes for every library entry, including hidden games, with the largest caches first. **Delete cache** permanently removes only the chosen game's build cache after confirmation. Its app, original game files, saves and logs stay in place. The next rebuild may take longer. Shared cache confirmations list the other affected entries. Connect unavailable drives or check folder access, then choose **Recalculate**.
 
@@ -346,30 +387,39 @@ Storage can also clear all build caches or logs and open the shared backups fold
 | [Steam](docs/how-it-works/steam.md) | Steam integration: files read, game states, launch, playtime, achievements, limits; in Italian. |
 | [Engine upgrade notes](docs/history/engine-upgrades/README.md) | Pin changes and their evidence. |
 
-Arcane is free and open source. If you like the project and want to support it, you can [buy me a coffee](https://buymeacoffee.com/bium).
+Arcane Portal is free and open source, and [contributions are welcome](CONTRIBUTING.md). Arcane's author accepts support at [Buy Me a Coffee](https://buymeacoffee.com/bium).
 
 ## Credits and licences
 
-Arcane is MIT licensed. It uses upstream [nxnative](https://github.com/seedds/nxnative). It began from the MIT nxnative_Launcher codebase, which has been rewritten since; that repository is no longer available and its notice stays in [NOTICE](NOTICE). Adaptations from [NX2Apple](https://github.com/LNPANDY/NX2Apple) cover key checks, failure explanations, diagnostics and updates.
+Arcane Portal is a fork of [Arcane](https://github.com/Bium23/NxLibrary) by bium. The app's code is MIT licensed,
+like Arcane's; see [LICENSE](LICENSE). Windows games come from [GamePortKit](https://github.com/akinware/gameport),
+licensed under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/):
+the app as built from both repositories may be used, changed and shared for any noncommercial purpose.
+
+Arcane uses upstream [nxnative](https://github.com/seedds/nxnative). It began from the MIT nxnative_Launcher codebase, which has been rewritten since; that repository is no longer available and its notice stays in [NOTICE](NOTICE). Adaptations from [NX2Apple](https://github.com/LNPANDY/NX2Apple) cover key checks, failure explanations, diagnostics and updates.
+
+GamePort downloads Wine, DXMT, DXVK and other engine parts on demand and runs them as separate programs, each under
+its own licence. CrossOver, NotProton, Steam and Apple's D3DMetal are never bundled; Arcane Portal uses the copies
+you installed.
 
 The interface draws from the MIT [Selene](https://github.com/mattxslv/Selene) theme. Bundled fonts, sounds, palettes and runtime components retain their own licences; see [NOTICE](NOTICE), [media notices](Resources/Selene/NOTICE.txt) and [palette notices](Resources/Selene/NOTICE-palettes.txt).
 
-The app icon uses original artwork. The [master and generation notes](Resources/IconArtwork.md) are included.
+The app icon is derived from Arcane's artwork; the [master and generation notes](Resources/IconArtwork.md) are included.
 
 ## Legal and third-party notices
 
-**Project scope.** Arcane is an independent macOS game library and launcher. It supports installed Steam games for Mac and provides guided setup and local game builds through nxnative.
+**Project scope.** Arcane Portal is an independent macOS game library and launcher. It supports installed Steam games for Mac, runs Windows games through GamePort, CrossOver and NotProton, and provides guided setup and local game builds through nxnative.
 
 **Games and keys.** The project does not provide games, firmware, cryptographic keys or downloadable game packages. Users must supply their own game files and keys and have the rights and permissions required to use them. Do not submit these files through issues, pull requests or support requests.
 
-**Local processing and external services.** Game preparation uses locally supplied files and keys. Arcane checks encrypted game headers using the supplied keys and invokes nxnative to perform the build. Setup, updates and optional artwork features may contact third-party services.
+**Local processing and external services.** Game preparation uses locally supplied files and keys. Arcane Portal checks encrypted game headers using the supplied keys and invokes nxnative to perform the build. Setup, updates and optional artwork features may contact third-party services.
 
 **Permitted use.** Owning a game or console does not necessarily authorise every form of copying, decryption or conversion. Applicable rules vary by jurisdiction. This project does not grant permission to circumvent technological protections or infringe third-party rights. Do not use it to distribute game files, keys or generated packages without the necessary authorisation.
 
-**Third-party software and content.** Arcane does not distribute proprietary Nintendo game code, game assets, firmware or cryptographic keys. Open-source dependencies and bundled resources remain subject to their respective licences and notices. Artwork retrieved from external services remains subject to its owners’ rights and the applicable service terms.
+**Third-party software and content.** Arcane Portal does not distribute proprietary Nintendo game code, game assets, firmware or cryptographic keys. Open-source dependencies and bundled resources remain subject to their respective licences and notices. Artwork retrieved from external services remains subject to its owners’ rights and the applicable service terms.
 
-**Trademarks.** Arcane is not affiliated with, sponsored by or endorsed by Nintendo or any other game publisher or platform provider. Product names, game titles and trademarks belong to their respective owners.
+**Trademarks.** Arcane Portal is not affiliated with, sponsored by or endorsed by Arcane's author, Nintendo, Valve, CodeWeavers, Apple or any other game publisher or platform provider. Product names, game titles and trademarks belong to their respective owners.
 
 **Rights concerns.** If you believe material distributed by this project infringes your rights, contact the maintainer with the relevant material, your rights claim and sufficient information to assess it. Substantiated concerns will be reviewed promptly and addressed as appropriate.
 
-**No warranty.** Arcane is provided “as is”, without warranty, as described in LICENSE. Third-party components are governed by their own licences. See NOTICE for acknowledgements.
+**No warranty.** Arcane Portal is provided “as is”, without warranty, as described in LICENSE. Third-party components are governed by their own licences. See NOTICE for acknowledgements.

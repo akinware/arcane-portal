@@ -17,12 +17,12 @@ import Darwin
 /// - A failure anywhere leaves a working app where it was.
 public enum AppUpdate {
     /// Public release source. Development copies still never replace themselves.
-    public static let defaultRepository: String? = "Bium23/NxLibrary"
+    public static let defaultRepository: String? = "akinware/arcane-portal"
     /// A UserDefaults override of `defaultRepository`, for testing before publishing.
     public static let repositoryOverrideKey = "NXLibrary_UpdateRepository"
     /// The name `defaultRepository` will take. After a rename GitHub answers the old release API with links
     /// under the new name, so this copy accepts both; spelled exactly as GitHub returns it.
-    public static let successorRepository: String? = "Bium23/Arcane"
+    public static let successorRepository: String? = nil
     /// The Info.plist key that marks a release copy.
     public static let releaseMarker = "NXLibraryRelease"
     static let interval: TimeInterval = 24 * 3600
@@ -121,7 +121,7 @@ public enum AppUpdate {
 
     /// GitHub's `releases/latest` answer, with the asset named `NXLibrary-<version>.zip` in `repository`
     /// or, when there is one, in its `successor`.
-    public static func parseRelease(_ json: Data, repository: String = "Bium23/NxLibrary",
+    public static func parseRelease(_ json: Data, repository: String = "akinware/arcane-portal",
                                     successor: String? = AppUpdate.successorRepository) -> Release? {
         guard json.count <= 1024 * 1024,
               let object = try? JSONSerialization.jsonObject(with: json) as? [String: Any],

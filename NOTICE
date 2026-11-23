@@ -1,5 +1,8 @@
-NX Library
-Copyright (c) 2026 bium
+Arcane Portal
+Copyright (c) 2026 Arcane Portal contributors
+
+Arcane Portal is a fork of Arcane (formerly NX Library, https://github.com/Bium23/NxLibrary),
+Copyright (c) 2026 bium, MIT License (see LICENSE). Its app icon is derived from Arcane's artwork.
 
 This product includes and is built on work from the following MIT projects.
 The MIT permission notice is reproduced for each project below.
@@ -147,6 +150,9 @@ no source from the GPL-licensed Fritchii icon_search.cpp is included.
 
 ---
 
-## GamePort Integration
+## GamePortKit
 
-This fork (`akinware/arcane-gameport`) integrates **GamePortKit** (`https://github.com/akinware/gameport`, licensed under PolyForm Noncommercial License 1.0.0) alongside Arcane's MIT-licensed shell (`Bium23/NxLibrary`). All original Arcane copyright and MIT notices remain intact.
+Windows games come from GamePortKit (https://github.com/akinware/gameport), licensed under the PolyForm
+Noncommercial License 1.0.0. It downloads Wine, DXMT, DXVK and other engine components on demand and runs
+them as separate processes under their own licences. CrossOver, NotProton, Steam and Apple's D3DMetal are
+not bundled. All original Arcane copyright and MIT notices above remain intact.

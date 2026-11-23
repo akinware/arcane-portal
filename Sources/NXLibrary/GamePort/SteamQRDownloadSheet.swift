@@ -158,7 +158,7 @@ struct SteamQRDownloadSheet: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(SeleneTheme.ink)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("In the Steam app, tap the shield (Steam Guard) and choose Scan a QR code. Arcane remembers the sign-in, so later downloads start straight away.")
+                Text("In the Steam app, tap the shield (Steam Guard) and choose Scan a QR code. Arcane Portal remembers the sign-in, so later downloads start straight away.")
                     .font(.system(size: 12))
                     .foregroundColor(SeleneTheme.ink75)
                     .fixedSize(horizontal: false, vertical: true)

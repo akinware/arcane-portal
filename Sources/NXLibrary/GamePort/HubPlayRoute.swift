@@ -391,7 +391,7 @@ extension GamePortConsoleModel {
     private static let hubFavoritesKey = "GamePort.hubFavorites"
 
     var hubFavorites: Set<UUID> {
-        let stored = UserDefaults.standard.stringArray(forKey: Self.hubFavoritesKey) ?? []
+        let stored = AppData.preferences.stringArray(forKey: Self.hubFavoritesKey) ?? []
         return Set(stored.compactMap(UUID.init(uuidString:)))
     }
 
@@ -401,7 +401,7 @@ extension GamePortConsoleModel {
         objectWillChange.send()
         var set = hubFavorites
         if !set.insert(game.id).inserted { set.remove(game.id) }
-        UserDefaults.standard.set(set.map(\.uuidString).sorted(), forKey: Self.hubFavoritesKey)
+        AppData.preferences.set(set.map(\.uuidString).sorted(), forKey: Self.hubFavoritesKey)
     }
 }
 

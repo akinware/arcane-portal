@@ -28,10 +28,10 @@ struct FoundGamesSetupView: View {
     }
 
     private var subtitle: String {
-        if isReading { return L10n.text("Arcane reads Steam and your Game apps folder without changing anything. You can open the library now and add sources later in Settings.") }
+        if isReading { return L10n.text("Arcane Portal reads Steam, CrossOver and your Game apps folder without changing anything. You can open the library now and add sources later in Settings.") }
         return findings?.isEmpty == true
-            ? L10n.text("Steam and ported apps aren't here yet. Add them later from Settings → Sources or with Porting.")
-            : L10n.text("Arcane looked without changing anything. Choose what goes in your library.")
+            ? L10n.text("Steam, Windows and ported games aren't here yet. Add them later from Settings → Sources, Windows & Engines or with Porting.")
+            : L10n.text("Arcane Portal looked without changing anything. Choose what goes in your library.")
     }
 
     var body: some View {
@@ -59,6 +59,12 @@ struct FoundGamesSetupView: View {
                                      focused: focus == .steamToggle,
                                      onHover: { move(to: .steamToggle) }) { activate(.steamToggle) }
                     }
+                    if let windows = findings?.windowsGameCount, windows > 0 {
+                        SetupCardRow(title: L10n.text("Windows games"),
+                                     detail: L10n.count("%lld found in CrossOver, Mac Steam or GamePort. They're in your library.", windows),
+                                     icon: .gamepad, trailing: .none, height: 84, focused: false) {}
+                            .allowsHitTesting(false)
+                    }
                     if portedCount > 0 {
                         SetupCardRow(title: L10n.format("Already ported: %@", [String(portedCount)]),
                                      detail: L10n.text("They're in your library."),
@@ -67,7 +73,7 @@ struct FoundGamesSetupView: View {
                     }
                     SetupCardRow(title: AppIdentity.portingName,
                                  detail: L10n.text("Bring the Nintendo Switch games you own to the Mac."),
-                                 note: L10n.text("Arcane is not affiliated with Nintendo."),
+                                 note: L10n.text("Arcane Portal is not affiliated with Nintendo."),
                                  icon: .build, focused: focus == .portingCard,
                                  onHover: { move(to: .portingCard) }) { activate(.portingCard) }
                 }
@@ -92,7 +98,7 @@ struct FoundGamesSetupView: View {
         }
         .frame(width: canvas.size.width, height: canvas.size.height)
         .onAppear {
-            reader.start(steamRoot: steamRoot, appsFolder: viewModel.gameAppsFolder)
+            reader.start(steamRoot: steamRoot, appsFolder: viewModel.gameAppsFolder, windowsGameCount: { WindowsGamesOnThisMac.count() })
         }
         .onDisappear { reader.cancel() }
         .onChange(of: findings) { _, found in

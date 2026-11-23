@@ -221,7 +221,7 @@ extension AppShellView {
         do {
             try helper.run()
         } catch {
-            viewModel.alertMessage = L10n.format("Arcane could not restart: %@", [String(describing: error.localizedDescription)])
+            viewModel.alertMessage = L10n.format("Arcane Portal could not restart: %@", [String(describing: error.localizedDescription)])
             return
         }
         AppDelegate.relaunchScheduled = true

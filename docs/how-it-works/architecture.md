@@ -1,4 +1,4 @@
-# Arcane — guida tecnica
+# Arcane Portal — guida tecnica
 
 Questa guida descrive **come funziona l'app oggi**, area per area. Non contiene storia né stati di validazione: lo storico è nel [CHANGELOG](../../CHANGELOG.md) e nelle note datate, cosa ha provato il maintainer è in [validation.md](../working-on-it/validation.md).
 
@@ -53,7 +53,7 @@ Il Core ha una cartella per area: `App`, `Catalog`, `Library`, `Selene`, `Detail
 
 Ciò che il modulo usa della base e l'app no è `package` (per esempio `CatalogStore(directory:publication:kinds:legacy:)`, `LibraryPresentation.duration`); un'estensione del modulo che crea un valore della base chiama un init `package` con tutti i valori, perché da un altro modulo non può assegnare proprietà `let` (`GameDetailPresentation(title:…savePath:)`). Dove la base ha bisogno del modulo (righe e reset di Settings, impostazioni del modulo, conteggi del primo avvio, controlli della copia di sviluppo, tipi e import del catalogo) riceve valori o chiusure da un'entrata generica; l'entrata con lo stesso nome di sempre sta in un'estensione dentro `ArcanePorting/` e passa quelli del modulo.
 
-`NXLibrary` dipende da `NXLibraryCore`. Il Core usa anche framework macOS, fra cui Combine, AppKit, ImageIO, CommonCrypto e IOKit. Il package non dichiara dipendenze SwiftPM esterne.
+`NXLibrary` dipende da `NXLibraryCore`, `ArcanePorting` e `GamePortKit` (`../gameport` o `../kopru` se presente accanto al repository, altrimenti da `https://github.com/akinware/gameport.git`). Il Core usa anche framework macOS, fra cui Combine, AppKit, ImageIO, CommonCrypto e IOKit.
 
 ```mermaid
 flowchart TD
@@ -68,7 +68,7 @@ flowchart TD
     Core --> Network["Cataloghi artwork, metadati e release"]
 ```
 
-Il checkout nxnative fornisce estrattore, rewriter, shader, profili dei giochi e runtime dei giochi compilati. Arcane prepara gli argomenti, controlla i requisiti e presenta lo stato delle operazioni. La cache dello stato upstream si riusa soltanto quando il suo commit di base coincide con il pin.
+Il checkout nxnative fornisce estrattore, rewriter, shader, profili dei giochi e runtime dei giochi compilati. Arcane Portal prepara gli argomenti, controlla i requisiti e presenta lo stato delle operazioni. La cache dello stato upstream si riusa soltanto quando il suo commit di base coincide con il pin.
 
 ## Avvio e stato dell'app
 
@@ -80,7 +80,7 @@ Il checkout nxnative fornisce estrattore, rewriter, shader, profili dei giochi e
 - In Spotlight, Game Details usa `SpotlightState.showGameDetails` come il comando interno e conserva il titolo selezionato; in Collection apre la pagina Details. Game Options blocca l'hit testing del contenuto sottostante.
 
 **Profilo dei dati.**
-- `AppDataProfile` e `AppData` centralizzano percorsi e preferenze. Il marker di build `NXLibraryDevelopmentProfile` e il bundle ID `local.nxlibrary.development` distinguono la Dev dalla release; la release usa i percorsi di sempre.
+- `AppDataProfile` e `AppData` centralizzano percorsi e preferenze. Il marker di build `NXLibraryDevelopmentProfile` e il bundle ID `io.github.akinware.arcaneportal.development` distinguono la Dev dalla release (`io.github.akinware.arcaneportal`); la release usa `~/Library/Application Support/ArcanePortal` e `~/Library/Caches/ArcanePortal`, la Dev `ArcanePortal-Development`.
 - `DevelopmentStartupView` prepara il profilo in background prima di costruire gli store e la shell, senza schermata di preparazione. `LaunchReveal` tiene trasparente la finestra fino al primo frame del moonlight (il drawable presentato, su entrambi i percorsi di rendering), con ripiego dopo 1 s, poi la mostra con una dissolvenza di 0,25 s. Un errore mostra il recupero senza aspettare il moonlight. *Perché:* la transizione fullscreen parte da una finestra già disegnata. `DevelopmentProfileImporter` legge la sorgente senza attivare gli store che la potrebbero riparare, copia in staging una lista dichiarata di dati, verifica gli hash e attiva la destinazione separata. I file che solo il modulo sa leggere (`library.json`, il catalogo con i suoi tipi e l'import legacy) si controllano con `DevelopmentProfileImporter.portingChecks`, che `AppData.prepare()` passa.
 - Le preferenze storiche appartengono a una lista esplicita; file di credenziali e nuovi token non si copiano per semplice prefisso. Le sessioni rimaste aperte nella copia terminano all'ultimo heartbeat registrato. Ripetere l'avvio non reimporta e non sovrascrive la Dev. La copia fallisce con Retry/Close, senza ripiegare sul profilo stabile.
 - Nella Dev il recupero dei salvataggi e la riconciliazione automatica delle icone non partono all'avvio. `DevelopmentOperationStore`, escluso dall'import, registra le richieste esplicite di build e icone e ne permette la ripresa dopo un riavvio. La pulizia automatica visita solo la Temp del profilo Dev, non lo staging sui volumi condivisi. Il factory dei `ModStore` disabilita la manutenzione automatica: consultare e aggiornare le schede non scrive l'overlay né elimina installazioni residue, e la lettura usa lo stato reale dell'overlay. Le azioni manuali agiscono sui giochi reali.
@@ -93,13 +93,13 @@ Il checkout nxnative fornisce estrattore, rewriter, shader, profili dei giochi e
 - `startInFullscreen` sta in `AppSettings` (default false), compare in Search e Changed e torna al default con il reset di Start-up. `StartupWindowView` lo legge alla creazione e lo applica una sola volta alla finestra visibile e attiva, dopo `LaunchReveal.whenShown`. `isWindowSettling` tiene ferma l’entrata fino alla notifica di fine transizione, con ripiego a 4 s dall’aggancio alla finestra. Cambiare la preferenza non altera la finestra corrente.
 
 **Coordinatore.**
-- `AppViewModel.swift` coordina libreria e catalogo, Locate Sources e rimozione delle sorgenti, lancio (con salvataggi cloud e mod), primo avvio, apertura di Game options, chiusura e rimozione dei giochi, spazio su disco, icona di Arcane nel Dock, avvisi e registro, e tiene lo stato del porting che legge la home.
+- `AppViewModel.swift` coordina libreria e catalogo, Locate Sources e rimozione delle sorgenti, lancio (con salvataggi cloud e mod), primo avvio, apertura di Game options, chiusura e rimozione dei giochi, spazio su disco, icona di Arcane Portal nel Dock, avvisi e registro, e tiene lo stato del porting che legge la home.
   - Crea i modelli Switch descritti qui sotto (`lazy var`, per esempio `app.porting`) e li dà alle schermate che li mostrano.
   - Le estensioni `AppViewModel+…` collegano catalogo, fonti, controller, salvataggi, diagnostica, mod, installazioni in attesa, la tile del porting e la chiave SteamGridDB; altre dividono il coordinatore per compito (libreria, lancio, azioni su un gioco, file di un gioco, spazio su disco). Sono parti dello stesso oggetto osservabile; chi scrive le proprietà `private(set)` resta nel file del tipo.
 - `PortingModel` tiene Add Game: la bozza (cartella o file scelti, scansione, titoli trovati, selezione delle sorgenti, nome, bundle ID, scelte per il primo avvio, controllo delle chiavi, spazio su disco) e la build: avvio, eventi del motore, annullamento, fine, notifiche, azioni sugli errori riconosciuti e ciò che il passo Porting ne mostra (passo del wizard, fasi, avanzamento, esito ed errore). Tiene anche le cartelle della build e quella finale dell'app, lo spazio libero, le sorgenti che l'engine accetta, l'ultimo comando (per la diagnostica), la durata delle fasi finali per la stima e la pulizia all'avvio dei temporanei vecchi di un giorno (`PortingModel.sweepStaleBuildTemp`, statica perché gira in background).
   - Le viste di Add Game e la riga Game files di Impostazioni → Libreria lo osservano da sole, così un cambio di fase ridisegna solo quelle schermate.
   - Back (Esc, B) segue `PortingModel.stepBack` e `closingAsks`. Durante un porting chiude Add Game e il porting continua; dopo un successo chiude senza chiedere, perché non resta niente da perdere. Dopo un errore torna alle opzioni; un Rebuild, che non riempie i passi prima di Porting, chiude.
-  - Il resto di Arcane legge di un porting solo `isBuilding`, `currentBuildGameID` e `portingProgress` (la tile della home), che restano sul coordinatore; la stima della tile prende da `PortingModel` la durata delle fasi finali.
+  - Il resto di Arcane Portal legge di un porting solo `isBuilding`, `currentBuildGameID` e `portingProgress` (la tile della home), che restano sul coordinatore; la stima della tile prende da `PortingModel` la durata delle fasi finali.
   - Raggiunge il resto dell'app solo da `PortingModel.app`: libreria, chiavi, engine, catalogo e i valori di Game options. *Perché:* quell'elenco è ciò che il modulo Porting dovrà chiedere alla base.
   - Le installazioni in attesa (`AppViewModel+PendingInstall`) restano sul coordinatore. *Perché:* le avviano anche Play, i salvataggi e la chiusura di un gioco, e il loro dialogo appartiene alla libreria.
 - `SetupModel` tiene il Setup Switch: cartella, validità e commit dell'engine, ciò che l'engine sa leggere (`engineSourceCapabilities`), controllo Upstream e Newest engine (`SetupModel+NewestEngine`), chiavi importate (`KeyStore`, riepilogo, importazione), controllo dell'ambiente, compatibilità, override della toolchain non testata e gate (`canPassToolchainGate`).
@@ -133,7 +133,7 @@ Il checkout nxnative fornisce estrattore, rewriter, shader, profili dei giochi e
 - Dalla card Porting il Setup prosegue in Get ready e Your games; B su Get ready torna a `found` durante il primo avvio. Skip for now completa l'introduzione anche con libreria vuota. La verifica prima di ogni porting resta obbligatoria, e i pannelli di build possono avviarla su richiesta. I risultati asincroni di un checkout precedente si scartano, e il porting registra la propria fotografia della toolchain.
 - `FirstRunSetup` tiene insieme pagina corrente e completamento. `NXLibrary_SetupPage` permette di riprendere una configurazione interrotta; `NXLibrary_SetupSteamChoice` conserva la scelta facoltativa (acceso, spento o mai scelta) e si elimina al completamento, dopo averla mantenuta nel modello per la shell; `NXLibrary_SetupCompleted` mantiene compatibili gli utenti già configurati e impedisce ripetizioni automatiche dopo Skip. Una configurazione completata non torna mai a `found`; Open Setup riapre manualmente Get ready e Your games senza rendere incompleta una configurazione precedente.
 - `YourGamesSetupView` aspetta la scansione prima di distinguere libreria vuota o pronta; Open library e Skip tornano alla libreria. `FoundGamesSetupView` e Your games disegnano le righe con `SetupCardRow`. Le pagine condividono backdrop, indicatore, transizioni e canale di input; Add Game sospende il proprio input quando Setup è davanti.
-- **Benvenuto in Arcane.** Chi aggiorna da NX Library vede una volta `ArcaneWelcomeView`: il nome nuovo, quattro novità, l'offerta di Steam se è trovato con giochi e la sua fonte è spenta (la ricerca e l’attivazione usano la stessa `discoveryRoot`; Add accende la fonte con `CatalogSourcesModel.configure`, Not now non accende nulla) e Open library. `ArcaneWelcome` decide: Setup completato, `AppSettings.welcomeArcaneShown` falso e nessun recupero in corso.
+- **Benvenuto in Arcane Portal.** Chi aggiorna da NX Library vede una volta `ArcaneWelcomeView`: il nome nuovo, quattro novità, l'offerta di Steam se è trovato con giochi e la sua fonte è spenta (la ricerca e l’attivazione usano la stessa `discoveryRoot`; Add accende la fonte con `CatalogSourcesModel.configure`, Not now non accende nulla) e Open library. `ArcaneWelcome` decide: Setup completato, `AppSettings.welcomeArcaneShown` falso e nessun recupero in corso.
 - `AppShellState` decide il benvenuto prima di pubblicare la shell, così la libreria non compare in mezzo. Benvenuto e pagine Setup chiedono lo sfondo alla shell come ogni pagina (`SeleneBackdropRequest`): il moonlight è uno solo, quindi chiuderli lascia lo stesso sfondo in movimento. I recuperi si aprono sopra; se il benvenuto non era dovuto all’avvio, la shell lo presenta più tardi solo quando Setup, dialoghi, lancio e visore sono chiusi e nessuna operazione sui salvataggi è in corso (`hasActiveSaveOperations`). Il Setup ha precedenza nel disegno e nell’input.
 - Fino alla fine della dissolvenza del benvenuto, `AppViewModel.isWelcomeOpen` fa cedere la tastiera ai monitor delle schermate sotto e trattiene l’entrata di Spotlight, come `isUpdateOfferOpen` per l’offerta di aggiornamento; `ShellOverlayInputTests` controlla che ogni monitor ceda a entrambi. Ogni uscita (Open library, B, Esc) prima sfuma, poi salva e passa alla libreria (`SeleneTheme.screenDuration` dopo). Le uscite e la fine di un primo Setup impostano `welcomeArcaneShown`, così un’installazione nuova non lo vede mai. Non tocca `RunningGameMonitor` né `SteamPlayCoordinator`: un gioco aperto resta giocabile.
 
@@ -151,7 +151,7 @@ Il checkout nxnative fornisce estrattore, rewriter, shader, profili dei giochi e
   - Il fingerprint della base legacy, la sua verifica a ogni lettura e il conflitto (`legacyConflictCandidate`, `keepCurrentLibrary`) usano gli stessi due file; uno store senza import legacy non ne ha.
   - Le scritture concorrenti usano un lock non bloccante e la revisione attesa. Il candidato si serializza, si rilegge e si valida prima della pubblicazione atomica; una copia valida precede la sostituzione del principale.
   - Archivio danneggiato, versione sconosciuta, input legacy cambiato e principale assente con backup richiedono un recupero esplicito, mai una libreria vuota automatica. L'offerta di ripristino conserva gli hash di principale e backup: se i file cambiano, l'offerta non vale più; il principale danneggiato si conserva e il backup resta intatto.
-  - Se il catalogo è valido ma la vecchia app modifica gli input legacy, `DevelopmentStartupView` offre **Keep Arcane's library**. `CatalogLegacyConflictCandidate` cattura le impronte di catalogo, backup e input; `keepCurrentLibrary` le rivalida sotto lock e archivia i byte presenti in una cartella esclusiva `catalog-conflict-*` prima di riconoscere la nuova base legacy. Mantiene giochi e fonti Arcane, senza fusione e senza scrivere sui file legacy. Il catalogo e il suo restore point usano la stessa base riconosciuta; una successiva modifica legacy torna a bloccare letture e scritture. *Perché:* una vecchia copia riaperta dopo un aggiornamento manuale non deve imporre di scartare il catalogo nuovo.
+  - Se il catalogo è valido ma la vecchia app modifica gli input legacy, `DevelopmentStartupView` offre **Keep Arcane Portal's library**. `CatalogLegacyConflictCandidate` cattura le impronte di catalogo, backup e input; `keepCurrentLibrary` le rivalida sotto lock e archivia i byte presenti in una cartella esclusiva `catalog-conflict-*` prima di riconoscere la nuova base legacy. Mantiene giochi e fonti Arcane Portal, senza fusione e senza scrivere sui file legacy. Il catalogo e il suo restore point usano la stessa base riconosciuta; una successiva modifica legacy torna a bloccare letture e scritture. *Perché:* una vecchia copia riaperta dopo un aggiornamento manuale non deve imporre di scartare il catalogo nuovo.
   - `commitUncertain` segnala un errore della sincronizzazione finale dopo una possibile pubblicazione: il chiamante rilegge la revisione prima di ritentare.
   - Il formato usa i valori Date Codable per conservare le frazioni; solo l'ingresso legacy usa ISO8601.
 - `CatalogRepository` è l'unico writer del catalogo. Carica la versione corrente e applica ogni modifica tipizzata una volta; non ritenta da solo operazioni con effetti sui file. Le modifiche nxnative (`updateNXNative`, `mergeNXNative`, `recordNXNativeBuild`) sono estensioni in `ArcanePorting/Catalog/CatalogRepository+Porting.swift` sopra la sua `transaction`. Le scansioni confrontano la generazione osservata con build, installazione e sorgenti correnti prima di aggiornare i campi; una richiesta di refresh durante una scansione resta in coda.
@@ -209,15 +209,16 @@ Il checkout nxnative fornisce estrattore, rewriter, shader, profili dei giochi e
 
 ## Impostazioni
 
-**La barra laterale.** `SettingsSidebarGroup` raggruppa le sezioni: Search e Changed, poi quattro gruppi.
+**La barra laterale.** `SettingsSidebarGroup` raggruppa le sezioni: Search e Changed, poi cinque gruppi.
 - **General:** Start-up, Navigation, Spotlight, Sound & music, Look, Controllers, Online services.
 - **Library:** Sources, Games, Storage. Valgono per i giochi di ogni fonte.
+- **Windows (GamePort):** Windows & Engines.
 - **Porting:** Setup and engine, Keys, Library, New games, Cloud saves, Storage. Valgono solo per i giochi convertiti.
 - **System:** About, Console. In `SettingsAboutSection`, il pulsante di sostegno volontario a tutta larghezza, prima dei crediti, mostra l’icona di Buy Me a Coffee e apre la pagina nel browser predefinito. Clic, tastiera e controller usano la stessa azione.
 
 Regole della barra:
-- Porting è l'unico gruppo di piattaforma (`isPlatform`): Search, Changed e il titolo di pagina chiamano le sue sezioni col nome del gruppo ("Porting · New games").
-- `SettingsSection` dichiara i casi nell'ordine della barra, quindi `allCases` la percorre come è disegnata. I `rawValue` sono identità e non cambiano: `sources` è la pagina Sources, `library` e `games` sono Library e New games di Porting; i casi nuovi (`libraryGames`, `keys`, `cloudSaves`, `portingStorage`, `console`) hanno identità proprie.
+- Windows (GamePort) e Porting sono i gruppi di piattaforma (`isPlatform`): Search, Changed e il titolo di pagina chiamano le loro sezioni col nome del gruppo ("Porting · New games").
+- `SettingsSection` dichiara i casi nell'ordine della barra, quindi `allCases` la percorre come è disegnata. I `rawValue` sono identità e non cambiano: `sources` è la pagina Sources, `library` e `games` sono Library e New games di Porting; i casi nuovi (`libraryGames`, `gamePort`, `keys`, `cloudSaves`, `portingStorage`, `console`) hanno identità proprie.
 - Ogni riga di `SettingsCatalog` tiene il suo `rowID` quando cambia sezione.
 - Dove stanno le righe che si potrebbero cercare altrove:
   - schermata di lancio, Surprise me, card della sessione e giochi nascosti in Library → Games, perché valgono per ogni fonte;
@@ -268,8 +269,8 @@ Regole della barra:
 - Restano indipendenti dalla lingua: dati personali, rawValue salvati, regex, eventi dell'engine, variabili `DM_*` e identità dei controlli.
 - I componenti Settings risolvono le etichette alla presentazione e mantengono i rowID originali; le righe con i nomi dei giochi usano i titoli così come sono. Search confronta anche i testi tradotti.
 - I testi upstream noti di `launcher.json` si localizzano solo nella presentazione; valori e note sconosciute tengono il testo upstream.
-- Il nome dell'app, "Arcane", sta in `AppIdentity.name` e non si traduce: le viste che mostrano solo il nome lo leggono da lì, e il catalogo non contiene più il vecchio nome. Bundle ID, cartelle dei dati, chiavi delle preferenze e segni `.nxlibrary-*` tengono il nome storico, perché cambiarli separerebbe i dati di chi aggiorna.
-- Ogni richiesta di rete si presenta con `AppIdentity.userAgent()`, cioè `Arcane/<versione> (macOS; +https://github.com/Bium23/NxLibrary)`.
+- Il nome dell'app, "Arcane Portal", sta in `AppIdentity.name` e non si traduce: le viste che mostrano solo il nome lo leggono da lì, e il catalogo non contiene più il vecchio nome. Bundle ID (`io.github.akinware.arcaneportal` e `io.github.akinware.arcaneportal.development`) e cartelle dei dati (`Application Support/ArcanePortal` e `Caches/ArcanePortal`, più le varianti `-Development`) seguono il nuovo nome; chiavi delle preferenze e segni `.nxlibrary-*` tengono il nome storico per compatibilità.
+- Ogni richiesta di rete si presenta con `AppIdentity.userAgent()`, cioè `Arcane Portal/<versione> (macOS; +https://github.com/akinware/arcane-portal)`.
 - **Open project docs** in About apre `AppIdentity.documentationPage`, il README online, nel browser predefinito: è la guida per i giocatori e si apre su ogni Mac, senza dipendere da dove sta il codice sorgente.
 
 **Start-up.**
@@ -315,11 +316,11 @@ Regole della barra:
 - Play valuta la disponibilità dell'app già installata separatamente dal gate per un nuovo porting.
 
 **Newest engine.** L'engine più nuovo è una scelta esplicita del giocatore (Settings → Setup and engine → **Newest engine**).
-- Dopo il controllo Upstream, che misura sempre i commit rispetto al pin, `NewestEngine.fetchLock` legge il lock di main da GitHub. Se certifica un Metal diverso da quello del lock del pin, la riga dice che serve una versione più nuova di Arcane e non offre il cambio.
+- Dopo il controllo Upstream, che misura sempre i commit rispetto al pin, `NewestEngine.fetchLock` legge il lock di main da GitHub. Se certifica un Metal diverso da quello del lock del pin, la riga dice che serve una versione più nuova di Arcane Portal e non offre il cambio.
 - `NewestEngineSwitcher` rifiuta un checkout con file modificati, scarica, rilegge il lock con git e solo allora fa `checkout --detach`.
 - La scelta (`NewestEngineChoice`) è salvata e diventa il commit atteso dal gate e quello registrato nelle build. Accende l'override, che resta bloccato finché la scelta è attiva, e marca le build come non testate. Il gate mostra **Newest engine** in arancione, mai Certified.
 - Il Setup continua a installare il pin, ma per il commit scelto mostra la scheda pronta in arancione con **Back to tested** e non la riporta indietro da solo.
-- La scelta decade quando il checkout non è più su quel commit, o quando un aggiornamento di Arcane porta un pin che lo contiene. Se l'override l'aveva acceso la scelta, torna spento. Settings e Setup usano la stessa frase (`NewestEngineCopy.note`).
+- La scelta decade quando il checkout non è più su quel commit, o quando un aggiornamento di Arcane Portal porta un pin che lo contiene. Se l'override l'aveva acceso la scelta, torna spento. Settings e Setup usano la stessa frase (`NewestEngineCopy.note`).
 
 **Capacità dell'engine adottate** (la decisione per ogni pin è nella sua nota in `history/engine-upgrades/`):
 - **Cartelle estratte e pacchetti con più contenuti:** `EnginePackageReader` riusa il lettore content-meta upstream; `ExtractedSourceCatalog` legge NPDM e profili registrati senza chiavi.
@@ -333,12 +334,12 @@ Regole della barra:
 - **NUP senza base:** Review offre solo le versioni di update (la più recente selezionata, una sempre scelta), e la build passa quella versione con `--package`, mai `v0`.
 - **Archivio pipeline mancante:** `stage_end` con `warn: true` mostra ⚠ sulla fase e una spiegazione in **Ready to play** (`BuildWarningCopy`).
 - **Preparazione del primo avvio:** quando l'engine riporta `Prewarm pipelines`, `PortingETA` mostra un'attività localizzata invece di riusare la durata finale di un vecchio build. Il tempo trascorso resta nella lista delle fasi; senza un conteggio non si inventa una percentuale. Un warning di questa fase spiega che il gioco prepara le pipeline mancanti al primo avvio.
-- **Cache shader in un file:** cache di compilazione e librerie shader sono un file ciascuna (`shader/cache/cas.db`, `msl/b-<chain>.img`); Arcane non legge dentro nessuno dei due. Quando l'engine sposta una vecchia cache, con l'evento `say` `moving the compile cache …` (`PortingProgress.shaderCacheWorkMessage`), `PortingProgress.isUpdatingShaderCache` si accende e `PortingETA` mostra **Updating shader cache** senza avanzare la percentuale né stimare una durata. Lo stato si azzera alla fase o al passo successivo e a fine build; `PortingFailureEngineTests` verifica che l'engine del pin stampi ancora quel testo.
+- **Cache shader in un file:** cache di compilazione e librerie shader sono un file ciascuna (`shader/cache/cas.db`, `msl/b-<chain>.img`); Arcane Portal non legge dentro nessuno dei due. Quando l'engine sposta una vecchia cache, con l'evento `say` `moving the compile cache …` (`PortingProgress.shaderCacheWorkMessage`), `PortingProgress.isUpdatingShaderCache` si accende e `PortingETA` mostra **Updating shader cache** senza avanzare la percentuale né stimare una durata. Lo stato si azzera alla fase o al passo successivo e a fine build; `PortingFailureEngineTests` verifica che l'engine del pin stampi ancora quel testo.
 - **Errori delle chiavi:** si riconoscono le chiavi troppo vecchie (con la versione firmware quando è nota) e il ticket comune mancante nel pacchetto. Quest'ultimo usa il kind salvato `keys` con un dettaglio identificativo, così anche un launcher precedente legge la voce durante un rollback. La UI spiega il ticket senza proporre di sostituire le chiavi o forzare il porting.
 - **Interfaccia dei giochi:** la guida dei controlli elenca l'uscita con Home (2 s, poi A) e Shift + frecce per la levetta destra. Le righe nuove di `settings.tsv` (120 fps, upscaler del gioco, forma dell'immagine) arrivano da sole tramite Game options.
 - **Salvataggi:** un salvataggio con nomi creati prima di 7c23cc0 si rinomina al primo mount, quindi una build più vecchia dello stesso gioco potrebbe non leggerlo più.
 - **Strumenti di sviluppo:** `.github/requirements/tools.txt` dell'engine elenca numpy, pillow e texture2ddecoder, usati solo da strumenti di sviluppo; `EngineRuntimeRequirementsTests.notBundled` ne registra il motivo. dav1d si compila dalle sorgenti incluse dell'engine, e il runtime del frontend non cambia.
-- **Non adottati:** `--seen-shaders`, un selettore manuale dei programmi, le opzioni per i profili provvisori, i diagnostici come nuovi interruttori e gli hook per incorporare la vista del gioco in un frontend (Arcane avvia app di gioco separate).
+- **Non adottati:** `--seen-shaders`, un selettore manuale dei programmi, le opzioni per i profili provvisori, i diagnostici come nuovi interruttori e gli hook per incorporare la vista del gioco in un frontend (Arcane Portal avvia app di gioco separate).
 
 ## Sorgenti e porting
 
@@ -414,9 +415,9 @@ I percorsi completi sono in [flows.md](flows.md#3-play-di-un-gioco-switch-nxnati
 **Schermata di lancio.**
 - `RunningGameMonitor` confronta i bundle ID della libreria con le applicazioni in esecuzione (`RunningAppsTracker` nella base, `RunningGames.matchingIDs` per i giochi portati in `ArcanePorting/Library/`) e offre Resume e Close Game. `LaunchReadinessProbe` aspetta una finestra visibile del processo per chiudere la schermata di lancio.
 - La schermata ha una finestra propria, come la "launch cover" di Selene (`LaunchCoverWindow`). È senza bordi e trasparente (appare sfumando sopra la libreria), sta sopra ogni app, il Dock e la barra dei menu, su ogni Space compresi quelli a schermo intero, e non viene mai attivata.
-- Quando un gioco si apre a schermo intero, la schermata scorre via con la libreria e rientra con lo Space del gioco, coprendolo finché il gioco non disegna. *Perché:* tenuta nel solo Space di Arcane, lì si vedeva lo sfondo della scrivania; il maintainer preferisce la schermata (prova con MTGA, 15 nov 2026).
-- Il gioco parte dietro di lei; Steam che prende il primo piano o macOS che cambia Space restano dietro, quindi Arcane non deve mai riprendersi il primo piano.
-- Play Steam accoda la richiesta fino a quando AppKit ordina e invia il pannello al server delle finestre. Arcane lascia al pannello il passaggio SwiftUI di preparazione prima che Steam possa cambiare Space. Se il pannello manca, Play procede comunque entro un secondo. Solo la richiesta ancora corrente può partire.
+- Quando un gioco si apre a schermo intero, la schermata scorre via con la libreria e rientra con lo Space del gioco, coprendolo finché il gioco non disegna. *Perché:* tenuta nel solo Space di Arcane Portal, lì si vedeva lo sfondo della scrivania; il maintainer preferisce la schermata (prova con MTGA, 15 nov 2026).
+- Il gioco parte dietro di lei; Steam che prende il primo piano o macOS che cambia Space restano dietro, quindi Arcane Portal non deve mai riprendersi il primo piano.
+- Play Steam accoda la richiesta fino a quando AppKit ordina e invia il pannello al server delle finestre. Arcane Portal lascia al pannello il passaggio SwiftUI di preparazione prima che Steam possa cambiare Space. Se il pannello manca, Play procede comunque entro un secondo. Solo la richiesta ancora corrente può partire.
 - La schermata d'attesa mostra artwork, logo o titolo del gioco secondo lo stile scelto, con l'angolo inferiore destro libero.
 - Il movimento è quello di Selene (`LaunchMotion`), in Core Animation così resta fluido mentre il gioco o Steam si avviano:
   - l'arte si avvicina piano (scala da 1,04 a 1,12 in 20 s);
@@ -447,7 +448,7 @@ I percorsi completi sono in [flows.md](flows.md#3-play-di-un-gioco-switch-nxnati
 
 - `CheatLocator` legge title ID, build ID e percorso secondo il contratto del launcher.
 - `EngineAncestry` e `CheatStatus` decidono se l'app del gioco contiene il supporto ai cheat, dal commit del registro di build o, per un'app importata, da `DMCommit` nel suo `Info.plist`.
-- `EngineAncestry.answer` lancia `git merge-base --is-ancestor` in un task staccato, una volta per commit, e tiene la risposta fino alla chiusura di Arcane. Le viste leggono solo `keptAnswer`, che git non lo lancia mai: riga e pannello si aprono dentro un aggiornamento di SwiftUI. La riga di Game options mostra il valore, il pannello le sue righe e Copy diagnostics la riga Cheats dopo la risposta.
+- `EngineAncestry.answer` lancia `git merge-base --is-ancestor` in un task staccato, una volta per commit, e tiene la risposta fino alla chiusura di Arcane Portal. Le viste leggono solo `keptAnswer`, che git non lo lancia mai: riga e pannello si aprono dentro un aggiornamento di SwiftUI. La riga di Game options mostra il valore, il pannello le sue righe e Copy diagnostics la riga Cheats dopo la risposta.
 - `CheatFile` riproduce il parsing di codici e metadati del motore. `CheatInstall` decide se un file appartiene alla build, richiede conferma o va rifiutato.
 - `CheatStore` legge e modifica file, metadati, master switch e selezione `.enabled`. `CheatsModel` (`app.cheats`) espone contesto, stato della riga e informazioni per la diagnostica. `CheatsPanel` presenta lista, importazione, conferme e switch. La pagina del gioco legge "Cheats on" all'apertura, al cambio del gioco, alla chiusura di Game options e al ritorno da Finder (`reloadCheats`), non a ogni ridisegno; una lettura nuova annulla quella precedente.
 - Le modifiche richiedono il gioco chiuso. Il motore legge i file installati al lancio.
@@ -457,17 +458,17 @@ I percorsi completi sono in [flows.md](flows.md#3-play-di-un-gioco-switch-nxnati
 **Mod locali.**
 - Le mod di file (RomFS) di un gioco stanno in `~/Library/Application Support/nxnative/<title ID>/mods/<cartella>/romfs`.
 - `ModFolderScanner` trova le cartelle e il loro `romfs`, anche nel formato Atmosphère. Un file lasciato lì (per esempio un archivio non estratto) compare come "non è una mod"; i file nascosti come `.DS_Store` non contano per i conflitti.
-- `ModStore` tiene ordine e stato acceso/spento in `~/Library/Application Support/NXLibrary/mods/<TID>.json`. Nell'`env.txt` del gioco scrive solo la riga `DM_ROMFS_OVERLAY` (con `EnvFileEditor`), che il motore legge al lancio: le mod accese, la prima vince, senza rebuild. Il valore non supera 4077 byte, il buffer di riga del launcher.
+- `ModStore` tiene ordine e stato acceso/spento in `~/Library/Application Support/ArcanePortal/mods/<TID>.json`. Nell'`env.txt` del gioco scrive solo la riga `DM_ROMFS_OVERLAY` (con `EnvFileEditor`), che il motore legge al lancio: le mod accese, la prima vince, senza rebuild. Il valore non supera 4077 byte, il buffer di riga del launcher.
 - Remove sposta la cartella nel Cestino. Niente modifiche mentre il gioco è aperto.
-- All'apertura della pagina e del pannello, `sync()` toglie dalla riga le mod sparite. Finché Arcane non ha mai gestito le mod di un gioco, non tocca una riga `DM_ROMFS_OVERLAY` scritta a mano.
+- All'apertura della pagina e del pannello, `sync()` toglie dalla riga le mod sparite. Finché Arcane Portal non ha mai gestito le mod di un gioco, non tocca una riga `DM_ROMFS_OVERLAY` scritta a mano.
 - `AppViewModel+Mods` crea lo store e traduce gli errori; `ModsPanel` (Game options → Mods; `GameOptionsFiles` legge configurazione, impostazioni, cheat e mod una volta per apertura) e la fascia Mods della pagina (`DetailsModsBand`) presentano lo stato. Le mod che modificano il codice (exefs) non funzionano con il motore.
 
 **GameBanana** (`ArcanePorting/Mods/GameBanana/`: installa mod RomFS, formato Switch; la bottega e il suo focus `ModStoreFocus` stanno lì). Le descrizioni passano da `HTMLPlainText` della base, come quelle di Steam e dei database.
-- `GameBananaClient` parla con l'API pubblica (apiv11 e, per il contenuto degli archivi, la vecchia Core API). Usa un solo User-Agent, al massimo 4 richieste insieme, e una cache su disco in `~/Library/Caches/NXLibrary/gamebanana`:
+- `GameBananaClient` parla con l'API pubblica (apiv11 e, per il contenuto degli archivi, la vecchia Core API). Usa un solo User-Agent, al massimo 4 richieste insieme, e una cache su disco in `~/Library/Caches/ArcanePortal/gamebanana`:
   - ricerche 1 giorno, pagine delle mod 6 ore;
   - contenuto degli archivi per sempre, tranne un elenco vuoto, perché GameBanana può ancora leggere un file nuovo;
   - senza rete usa anche le voci scadute.
-- `GameBananaMatch` abbina il gioco per nome (preferisce la voce "(Switch)" e chiede quando non è sicuro); `GameBananaMatchStore` ricorda la scelta per title ID in `Application Support/NXLibrary/gamebanana/matches.json`.
+- `GameBananaMatch` abbina il gioco per nome (preferisce la voce "(Switch)" e chiede quando non è sicuro); `GameBananaMatchStore` ricorda la scelta per title ID in `Application Support/ArcanePortal/gamebanana/matches.json`.
 - `AvailableModsFinder` scorre le mod più scaricate e tiene solo quelle che `ModSupport` riconosce: un'unica cartella `romfs` per questo title ID, niente exefs, IPS o pchtxt, niente mod obsolete, private o con content rating.
 - `ModInstaller` scarica con `ModDownload` (solo host `*.gamebanana.com`) e controlla dimensione e MD5. Legge e controlla l'archivio con `/usr/bin/bsdtar`, rifiuta percorsi `..`, symlink e hard link prima di estrarre, lo estrae in una cartella nascosta dentro `mods` e passa l'albero a `ModStore.adopt`. Un aggiornamento manda la versione vecchia nel Cestino e tiene posto e stato.
 - I link presi dall'API valgono solo se sono `https` su un host GameBanana. Ogni mod mostra autore e link alla sua pagina, e la fascia dice "Mod data provided by GameBanana".
@@ -497,7 +498,7 @@ I percorsi completi sono in [flows.md](flows.md#3-play-di-un-gioco-switch-nxnati
   - una riga per categoria (`ModCategory`, raggruppate dai nomi delle categorie GameBanana);
   - una riga per gioco, dal più giocato di recente.
 - `ModStoreLayout` costruisce le sezioni e dà a ognuna un'altezza fissa, così lo scorrimento non misura nulla e si disegnano solo le sezioni vicine al focus.
-- `ModStoreModel` apre dalle copie su disco (`ModCatalogSnapshots`, `~/Library/Caches/NXLibrary/gamebanana/store`) e aggiorna in background quelle più vecchie di 6 ore, due giochi alla volta, pubblicando un gioco intero per volta. Un gioco senza abbinamento si abbina solo se il nome è certo. L'ordinamento è locale sulle mod già trovate.
+- `ModStoreModel` apre dalle copie su disco (`ModCatalogSnapshots`, `~/Library/Caches/ArcanePortal/gamebanana/store`) e aggiorna in background quelle più vecchie di 6 ore, due giochi alla volta, pubblicando un gioco intero per volta. Un gioco senza abbinamento si abbina solo se il nome è certo. L'ordinamento è locale sulle mod già trovate.
 - Le immagini decodificate restano in memoria (`GameBananaImageView`, che le prepara in anticipo con `prewarm` per le prime tessere di ogni riga).
 - La copertina della card (`ModStoreLayout.coverArt`) sono le prime quattro mod del Featured per popolarità, qualunque sia l'ordinamento, con i giochi in ordine di title ID. All'avvio si legge dalle copie su disco dei tuoi giochi ed è la stessa che trova lo store aperto. Cambia solo se lo store trova mod nuove, e solo dopo che tutte e quattro le immagini sono decodificate, in un'unica dissolvenza.
 - Sulla riga, la faccia della card è un mosaico sfocato dell'arte delle mod migliori con il puzzle al centro (`ModsCardCover`, dalle copie su disco prima che lo store abbia cercato; senza arte, il gradiente Selene).
@@ -609,7 +610,7 @@ Il percorso completo è in [flows.md](flows.md#6-importare-o-ripristinare-un-sal
   - La tile Icon location cambia la destinazione anche senza una scelta. La tile Automatic mostra l'anteprima risolta; lo stato distingue ricerca, firma e icona non disponibile.
 - **La scrittura.**
   - Crea `Resources/AppIcon.icns`, marca `Info.plist` con `NXLibraryAppIcon`, rifirma il bundle ad hoc come l'engine e verifica con `codesign --verify --deep --strict`.
-  - L'icona originale resta in `Application Support/NXLibrary/app-icons/<TitleID>/`; ogni errore rimette a posto i file toccati.
+  - L'icona originale resta in `Application Support/ArcanePortal/app-icons/<TitleID>/`; ogni errore rimette a posto i file toccati.
   - Avviene dopo ogni build installata (la rebuild sostituisce l'app), all'avvio e quando un gioco si chiude, mai mentre il gioco gira o si costruisce.
   - Durante la firma (circa 50 secondi per un gioco di 9–12 GB) avvio e build del gioco aspettano, e la riga di stato di Change artwork mostra l'avanzamento. Una scelta fatta mentre la stessa app si firma si riesegue alla fine, così vale l'ultima.
 - **Log e riconciliazione.**
@@ -646,7 +647,7 @@ Il percorso completo è in [flows.md](flows.md#6-importare-o-ripristinare-un-sal
 **Descrizioni da Wikipedia.** Quando lo store non ha la descrizione nella lingua dell'app, About this game (Spotlight e Details) mostra l'introduzione di Wikipedia in quella lingua, senza nessun gesto del giocatore.
 - `WikipediaDescriptions.wanted` decide dal testo stesso, letto con NaturalLanguage, perché Steam non dice in che lingua risponde: la descrizione è vuota o in un'altra lingua. Sotto i 40 caratteri o con fiducia sotto 0,6 si tiene lo store. Le lingue si confrontano per codice base (pt è pt-BR), il cinese anche per scrittura. Una descrizione scelta dal giocatore (`"custom"`, o un override Steam) non si sostituisce mai.
 - L'identità del gioco è quella dei voti: `WikidataRatings.entity` (ID Steam P1733 oppure nome o alias esatti, tipo videogioco). `WikipediaDescriptionService` chiede le sitelink di quell'entità, poi l'introduzione in testo semplice da `<lingua>.wikipedia.org` (`pt` per pt-BR; per il cinese `zh` con `variant=zh-cn`, così il testo arriva in semplificato con i nomi della Cina continentale). Accetta solo `www.wikidata.org` e le sette edizioni, sulla sessione di `CriticRatingService`.
-- Cache in `Application Support/NXLibrary/descriptions/wikipedia/`, per query e lingua: un'introduzione resta 30 giorni, "nessuna voce" un giorno. Un errore di rete non si salva e ferma le richieste per 60 secondi. Settings → Storage → Metadata cache la conta e la svuota con quella dello store.
+- Cache in `Application Support/ArcanePortal/descriptions/wikipedia/`, per query e lingua: un'introduzione resta 30 giorni, "nessuna voce" un giorno. Un errore di rete non si salva e ferma le richieste per 60 secondi. Settings → Storage → Metadata cache la conta e la svuota con quella dello store.
 - La pagina chiede solo quando la risposta dello store nella lingua dell'app è definitiva (`GameDetailPresentation.descriptionSettled`): mentre la nuova lingua arriva resta il testo vecchio con il suo avviso, così il testo cambia una volta sola. Aspetta 300 ms prima di chiedere, come per i voti, e mostra il testo solo se la risposta è per lo stesso gioco e la stessa lingua (`WikipediaAbout.matching`). Sotto il testo `WikipediaCredit` dice "From Wikipedia, CC BY-SA." e apre la voce, come chiede la licenza; Wikipedia è anche nei crediti di About.
 - Senza voce, per esempio un gioco che su Wikidata condivide la voce con la sua coppia (Pokémon Brilliant Diamond e Shining Pearl), resta il testo dello store con l'avviso della lingua.
   - Serializza e unisce le richieste, limita dimensione e durata e sospende le richieste dopo un errore.
@@ -716,7 +717,7 @@ Prove e misure di queste scelte: [docs/history/reviews/2026-11-16-ratings-metada
 
 **Input e suoni.**
 - `GameControllerService` produce `GamepadAction` e riconosce i simboli dei tasti. La shell dà l'input al livello attivo.
-- `GCControllerSource` ha la precedenza appena GameController espone un dispositivo. In sua assenza `HIDControllerSource` legge in condivisione soltanto il `Lic Pro Controller`; `NintendoHIDInput` decodifica i rapporti `0x3F` e `0x30` senza cambiare modalità al dispositivo. Il servizio cancella le pressioni in corso al cambio di sorgente o quando Arcane perde il focus. Il fallback riguarda solo la navigazione di Arcane, non l'input del gioco.
+- `GCControllerSource` ha la precedenza appena GameController espone un dispositivo. In sua assenza `HIDControllerSource` legge in condivisione soltanto il `Lic Pro Controller`; `NintendoHIDInput` decodifica i rapporti `0x3F` e `0x30` senza cambiare modalità al dispositivo. Il servizio cancella le pressioni in corso al cambio di sorgente o quando Arcane Portal perde il focus. Il fallback riguarda solo la navigazione di Arcane Portal, non l'input del gioco.
 - `AppShellView.nativeDialogOwnsInput` dà precedenza a un alert in attesa (`alertMessage`), a `NSApp.modalWindow`, alla sheet nella finestra key o allegata alla finestra key/main. Controller, tastiera e disponibilità dei menu condividono questo controllo; la tastiera controlla anche la finestra dell'evento. Il controller scarta l'azione prima di inoltrarla a qualunque schermata o dialogo interno. *Perché:* il controller non attraversa i monitor `NSEvent` che già cedono la tastiera ai dialoghi nativi. `run_review.py` esegue il routing reale con stati sintetici, compreso il ritorno ai comandi dopo la chiusura.
 - `ButtonPrompts` esclude i segnaposto fatti solo di forme, comprese varianti come `capsule.portrait.fill`, e usa in quel caso i simboli della marca riconosciuta; conserva i glifi significativi come `circle.circle` e `square.circle`.
 - `HoldDetector` e i modelli di focus rendono verificabili mapping e navigazione.
@@ -724,40 +725,40 @@ Prove e misure di queste scelte: [docs/history/reviews/2026-11-16-ratings-metada
 
 ## Dati su disco
 
-I percorsi sono relativi alla home. `Application Support/NXLibrary` è `~/Library/Application Support/NXLibrary`; la Dev usa la radice del suo profilo (`AppData`).
+I percorsi sono relativi alla home. `Application Support/ArcanePortal` è `~/Library/Application Support/ArcanePortal`; la Dev usa la radice del suo profilo (`Application Support/ArcanePortal-Development` e `Caches/ArcanePortal-Development`, tramite `AppData`).
 
 | Percorso | Contenuto e proprietario |
 |---|---|
-| `Application Support/NXLibrary/library.json` e `.bak` | Input del formato precedente, conservati intatti dopo la conversione da `CatalogStore`. |
-| `Application Support/NXLibrary/catalog.json` e `.bak` | Catalogo comune e copia valida, gestiti da `CatalogStore` attraverso `CatalogRepository`. |
-| `Application Support/NXLibrary/settings.json` | Impostazioni globali, gestite da `AppSettingsStore`. |
-| `Application Support/NXLibrary/play-sessions.json` | Sessioni e tempi di gioco, gestiti da `PlaySessionStore`. Array semplice delle ultime 200 sessioni, leggibile anche dalle versioni precedenti. |
-| `Application Support/NXLibrary/play-sessions-totals.json` | Tempo e ultima partita delle sessioni oltre le 200, per gioco: `totalDuration(for:)` e `lastPlayed(for:)` li sommano alle sessioni recenti. |
-| `Application Support/NXLibrary/keys/prod.keys` | Chiavi importate da `KeyStore`, con permessi `0600`. |
-| `Application Support/NXLibrary/credentials/igdb.json` | Credenziali IGDB personali (`0600`, cartella `0700`), escluse dall'importazione Dev. |
-| `Application Support/NXLibrary/app-sizes.json` | Cache delle dimensioni dei bundle. |
-| `Application Support/NXLibrary/workspaces/` e `Temp/` | Collegamenti alle sorgenti, workspace e app temporanee dei porting, quando l'app va sul volume del Mac (o su un volume che non accetta link simbolici). |
-| `Application Support/NXLibrary/artwork/` | Cache di immagini, copertine, screenshot e miniature online. |
-| `Application Support/NXLibrary/metadata/` | Cache dei metadati dello store e delle proposte di IGDB, LaunchBox e TheGamesDB. |
-| `Application Support/NXLibrary/ratings/` | Cache dei voti (Wikidata, IGDB). |
-| `Application Support/NXLibrary/descriptions/wikipedia/` | Cache delle introduzioni di Wikipedia per gioco e lingua. |
-| `Application Support/NXLibrary/artwork-picks/` e `metadata-picks.json` | Scelte manuali di immagini e campi. |
-| `Application Support/NXLibrary/app-icons/<TitleID>/` | Icona originale dell'app del gioco, conservata da `AppIconWriter`. |
-| `Application Support/NXLibrary/SeleneImports/` | Suoni, wallpaper, video e relativi crediti importati. |
-| `Application Support/NXLibrary/SaveBackups/<TID>/` | Snapshot datati, manifest e copie protettive. |
-| `Application Support/NXLibrary/Logs/<TID>.log` | Log del porting costruito dall'app. |
-| `Application Support/NXLibrary/mods/<TID>.json` | Ordine, stato e origine GameBanana delle mod di un gioco, gestiti da `ModStore`. |
-| `Application Support/NXLibrary/gamebanana/matches.json` | Pagina GameBanana scelta per ogni gioco, gestita da `GameBananaMatchStore`. |
-| `~/Library/Caches/NXLibrary/gamebanana/` | Cache delle risposte e delle immagini di GameBanana, comprese le copie dello store. |
+| `Application Support/ArcanePortal/library.json` e `.bak` | Input del formato precedente, conservati intatti dopo la conversione da `CatalogStore`. |
+| `Application Support/ArcanePortal/catalog.json` e `.bak` | Catalogo comune e copia valida, gestiti da `CatalogStore` attraverso `CatalogRepository`. |
+| `Application Support/ArcanePortal/settings.json` | Impostazioni globali, gestite da `AppSettingsStore`. |
+| `Application Support/ArcanePortal/play-sessions.json` | Sessioni e tempi di gioco, gestiti da `PlaySessionStore`. Array semplice delle ultime 200 sessioni, leggibile anche dalle versioni precedenti. |
+| `Application Support/ArcanePortal/play-sessions-totals.json` | Tempo e ultima partita delle sessioni oltre le 200, per gioco: `totalDuration(for:)` e `lastPlayed(for:)` li sommano alle sessioni recenti. |
+| `Application Support/ArcanePortal/keys/prod.keys` | Chiavi importate da `KeyStore`, con permessi `0600`. |
+| `Application Support/ArcanePortal/credentials/igdb.json` | Credenziali IGDB personali (`0600`, cartella `0700`), escluse dall'importazione Dev. |
+| `Application Support/ArcanePortal/app-sizes.json` | Cache delle dimensioni dei bundle. |
+| `Application Support/ArcanePortal/workspaces/` e `Temp/` | Collegamenti alle sorgenti, workspace e app temporanee dei porting, quando l'app va sul volume del Mac (o su un volume che non accetta link simbolici). |
+| `Application Support/ArcanePortal/artwork/` | Cache di immagini, copertine, screenshot e miniature online. |
+| `Application Support/ArcanePortal/metadata/` | Cache dei metadati dello store e delle proposte di IGDB, LaunchBox e TheGamesDB. |
+| `Application Support/ArcanePortal/ratings/` | Cache dei voti (Wikidata, IGDB). |
+| `Application Support/ArcanePortal/descriptions/wikipedia/` | Cache delle introduzioni di Wikipedia per gioco e lingua. |
+| `Application Support/ArcanePortal/artwork-picks/` e `metadata-picks.json` | Scelte manuali di immagini e campi. |
+| `Application Support/ArcanePortal/app-icons/<TitleID>/` | Icona originale dell'app del gioco, conservata da `AppIconWriter`. |
+| `Application Support/ArcanePortal/SeleneImports/` | Suoni, wallpaper, video e relativi crediti importati. |
+| `Application Support/ArcanePortal/SaveBackups/<TID>/` | Snapshot datati, manifest e copie protettive. |
+| `Application Support/ArcanePortal/Logs/<TID>.log` | Log del porting costruito dall'app. |
+| `Application Support/ArcanePortal/mods/<TID>.json` | Ordine, stato e origine GameBanana delle mod di un gioco, gestiti da `ModStore`. |
+| `Application Support/ArcanePortal/gamebanana/matches.json` | Pagina GameBanana scelta per ogni gioco, gestita da `GameBananaMatchStore`. |
+| `~/Library/Caches/ArcanePortal/gamebanana/` | Cache delle risposte e delle immagini di GameBanana, comprese le copie dello store. |
 | `~/Library/Application Support/nxnative/<TID>/` | `env.txt`, `save`, eventuale `save_device`, `save_user2`…`save_user8`, registro `save.users`, cheat, mod e dati runtime del motore. |
 | `~/Library/Logs/nxnative/<TID>.log` | Log del gioco avviato. |
 | `<Game apps>/<nome>.app` | Prima installazione del gioco; default `~/Applications`. I rebuild aggiornano l'app nella sua posizione. |
 | Accanto al gioco: `.nxlibrary-install-<hash>.json` | Ultima ricevuta di installazione per quel percorso, gestita da `BuildOutputInstaller`. |
 | Accanto al gioco: `.nxlibrary-incoming-<hash>.app` | Preparazione temporanea quando il bundle pronto si trova su un altro volume. |
 | `<Game apps>/.nxlibrary-build/workspaces/<TID>/` e `Temp/` | Workspace e app temporanee dei porting quando la cartella delle app è su un altro volume (`BuildScratch`). |
-| `UserDefaults` del bundle Arcane | Percorsi ricordati, stato del Setup, override della toolchain e cache di alcuni controlli. |
+| `UserDefaults` del bundle Arcane Portal | Percorsi ricordati, stato del Setup, override della toolchain, preferiti dei giochi Windows (`GamePort.hubFavorites`, tramite `AppData.preferences`) e cache di alcuni controlli. |
 
-I dati Steam di Arcane sono descritti in [steam.md](steam.md#dati-su-disco-di-arcane).
+I dati Steam di Arcane Portal sono descritti in [steam.md](steam.md#dati-su-disco-di-arcane-portal).
 
 Nel repository, `.build/` contiene gli output SwiftPM, `work/Runtime` il runtime preparato per il packaging, `work/release` i prodotti di release e `dist/` il DMG di sviluppo. Queste cartelle sono escluse da Git.
 
@@ -774,8 +775,8 @@ Nel repository, `.build/` contiene gli output SwiftPM, `work/Runtime` il runtime
 - Il gate si verifica prima del download e prima dell'installazione, insieme ai controlli e ai lease esistenti. Il motivo dell'attesa arriva al dialogo come valore, così la chiusura di un gioco aggiorna il pulsante Update.
 
 **Download e verifica.**
-- `AppUpdater` coordina gli aggiornamenti da `Bium23/NxLibrary`, senza autenticazione. Le regole di versione, requisiti, digest, identità del bundle e installazione sono in `AppUpdate`.
-- La release si accetta solo se lo zip `NXLibrary-<versione>.zip` sta nel percorso di download di quel repository. `AppUpdate.successorRepository` (`Bium23/Arcane`) è il nome che il repository può prendere: dopo una rinomina GitHub risponde alla vecchia API delle release con link sotto il nome nuovo, quindi anche quel percorso è accettato, scritto esattamente come lo restituisce GitHub.
+- `AppUpdater` coordina gli aggiornamenti da `akinware/arcane-portal` (`AppUpdate.defaultRepository`), senza autenticazione. Le regole di versione, requisiti, digest, identità del bundle e installazione sono in `AppUpdate`.
+- La release si accetta solo se lo zip `NXLibrary-<versione>.zip` sta nel percorso di download di quel repository (`AppUpdate.successorRepository` è `nil`, quindi le release di altri repository sono rifiutate).
 - `AppUpdateDownload` limita il trasferimento alla dimensione dichiarata e agli host HTTPS di GitHub.
 - `validate_update.py` verifica struttura e percorsi, poi estrae contando i dati davvero decompressi tramite il Python incluso. Prima della sostituzione si controllano versione, marker, identificativo e firma del bundle.
 - La firma ad hoc protegge il contenuto sigillato ma non identifica da sola il maintainer.
@@ -783,8 +784,8 @@ Nel repository, `.build/` contiene gli output SwiftPM, `work/Runtime` il runtime
 - Prima dell'installazione l'updater ottiene un'esclusione globale dal `SaveOperationGate`: aspetta che finiscano le operazioni in corso su salvataggi, Play e installazioni e impedisce nuovi ingressi durante sostituzione e riavvio. Un recupero bloccato senza I/O attivo non impedisce l'aggiornamento. Il coordinatore esclude nuovi porting mentre l'app si aggiorna.
 
 **Nome del file alla chiusura.**
-- Lo zip dell'aggiornamento contiene sempre `NXLibrary.app`, perché le copie precedenti leggono quel nome, e l'installazione tiene il nome del file corrente. Il nome Arcane arriva al file alla chiusura.
-- `AppDelegate.applicationWillTerminate` chiede ad `AppBundleRename.target` se rinominare. Lo fa solo una copia release, non traslocata, che si chiama `NX Library.app`, in una cartella scrivibile senza un `Arcane.app` accanto.
+- Lo zip dell'aggiornamento contiene sempre `NXLibrary.app`, perché le copie precedenti leggono quel nome, e l'installazione tiene il nome del file corrente. Il nome Arcane Portal arriva al file alla chiusura.
+- `AppDelegate.applicationWillTerminate` chiede ad `AppBundleRename.target` se rinominare. Lo fa solo una copia release, non traslocata, che si chiama `NX Library.app`, in una cartella scrivibile senza un `Arcane Portal.app` accanto.
 - Non rinomina mentre una build, un aggiornamento o un'operazione sui salvataggi usa ancora il bundle (`AppDelegate.isBusy`, impostato da `AppShellState`), né quando un riavvio è in programma (`AppDelegate.relaunchScheduled`, da Restart app e dall'updater): l'aiuto che riapre l'app usa il percorso attuale.
 - *Perché alla chiusura:* rinominare un bundle in esecuzione lascia `Bundle.main` sul percorso vecchio fino al riavvio. Il Dock segue la rinomina nella stessa cartella ([sonda](../history/reviews/2026-11-17-dock-rename-probe.md)).
 - Un errore va nel log e non ferma la chiusura. La copia Dev non si rinomina mai: la ricostruisce `build_app.sh`.
@@ -810,7 +811,7 @@ Nel repository, `.build/` contiene gli output SwiftPM, `work/Runtime` il runtime
 ```bash
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test
 bash scripts/build_app.sh
-codesign --verify --deep --strict "$HOME/Applications/Arcane Dev.app"
+codesign --verify --deep --strict "$HOME/Applications/Arcane Portal Dev.app"
 ```
 
 **Prove interattive.** Le esegue l'utente; gli agenti svolgono controlli sul codice, test automatici e build/installazione, secondo `AGENTS.md`.

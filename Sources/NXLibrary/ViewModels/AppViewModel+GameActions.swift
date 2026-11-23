@@ -106,7 +106,7 @@ extension AppViewModel {
     /// A library that could not be written: what the player sees would be gone at the next start, so say so once
     /// (in the log every time) instead of losing it in silence.
     func reportLibrarySaveFailure(_ error: Error) {
-        let message = L10n.text("Arcane could not save your library, so recent changes may be lost when it quits: ")
+        let message = L10n.text("Arcane Portal could not save your library, so recent changes may be lost when it quits: ")
             + error.localizedDescription
         logs.append(LogEntry(level: .error, message: message))
         if alertMessage == nil { alertMessage = message }

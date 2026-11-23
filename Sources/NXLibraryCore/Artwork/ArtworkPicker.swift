@@ -218,7 +218,7 @@ public final class ArtworkPicks: ObservableObject {
 
     public enum Failure: LocalizedError {
         case notAnImage
-        public var errorDescription: String? { L10n.text("That file is not an image Arcane can read.") }
+        public var errorDescription: String? { L10n.text("That file is not an image Arcane Portal can read.") }
     }
 
     public let directory: URL

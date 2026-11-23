@@ -108,7 +108,7 @@ final class CatalogRecoveryTests: XCTestCase {
     func testKeepCurrentLibraryArchivesBothVersionsWithoutMergingLegacyChanges() throws {
         let (root, store, original, _) = try prepared()
         var mixed = original
-        mixed.games.append(.init(steam: SteamCatalogGame(appID: 10, name: "Arcane addition")))
+        mixed.games.append(.init(steam: SteamCatalogGame(appID: 10, name: "Arcane Portal addition")))
         mixed = try store.save(mixed, expectedRevision: mixed.revision)
         let main = try Data(contentsOf: file(root, "catalog.json"))
         let backup = try Data(contentsOf: file(root, "catalog.json.bak"))

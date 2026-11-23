@@ -44,8 +44,8 @@ public enum UpstreamCommitMark: Equatable, Sendable {
 /// The words every screen uses for the newest engine, so Settings and Setup say the same thing.
 public enum NewestEngineCopy {
     public static var note: String {
-        L10n.text("Newest nxnative, not yet tested by Arcane. It usually works, but something may not. ")
-        + L10n.text("Its new features reach Arcane in a future version.")
+        L10n.text("Newest nxnative, not yet tested by Arcane Portal. It usually works, but something may not. ")
+        + L10n.text("Its new features reach Arcane Portal in a future version.")
     }
 
     public static func ahead(_ count: Int) -> String {
@@ -54,11 +54,11 @@ public enum NewestEngineCopy {
 
     /// Settings → Setup and engine, Newest engine row, while the tested engine is in use.
     public static func offer(commit: String, aheadBy: Int) -> String {
-        L10n.format("Build with nxnative main (%@, %@) before Arcane has tested it.", [String(describing: commit.prefix(7)), String(describing: ahead(aheadBy))])
+        L10n.format("Build with nxnative main (%@, %@) before Arcane Portal has tested it.", [String(describing: commit.prefix(7)), String(describing: ahead(aheadBy))])
     }
 
     public static func needsNewerApp(metal: String) -> String {
-        L10n.format("The newest nxnative needs Metal %@, so it needs a newer Arcane.", [String(describing: metal)])
+        L10n.format("The newest nxnative needs Metal %@, so it needs a newer Arcane Portal.", [String(describing: metal)])
     }
 
     /// Setup's engine card while the newest engine is in use (the note is its description).
@@ -75,7 +75,7 @@ public enum NewestEngineCopy {
     }
 
     public static var info: String {
-        L10n.text("Builds games with nxnative main instead of the engine this version of Arcane is tested with. ")
+        L10n.text("Builds games with nxnative main instead of the engine this version of Arcane Portal is tested with. ")
         + L10n.text("Builds are recorded as untested and the untested-toolchain override stays on. ")
         + L10n.text("Back to tested returns to the tested engine; games you built keep playing.")
     }
@@ -90,7 +90,7 @@ public enum NewestEngineError: Error, Equatable, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .localChanges:
-            return L10n.text("The engine folder has changed files. Arcane never touches them: put them aside, then try again.")
+            return L10n.text("The engine folder has changed files. Arcane Portal never touches them: put them aside, then try again.")
         case .downloadFailed:
             return L10n.text("The newest nxnative could not be downloaded. Check the connection, then try again.")
         case .needsNewerApp(let metal):

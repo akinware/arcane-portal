@@ -64,7 +64,7 @@ public struct SaveLocation: Equatable {
         if let sync = env["DM_SAVE_SYNC"] {
             if !sync.isEmpty && sync != "0" { reason = origins["DM_SAVE_SYNC"] }
         } else if let libraryCloudFolder, !libraryCloudFolder.isEmpty {
-            reason = "Arcane → Settings → Cloud saves"
+            reason = "Arcane Portal → Settings → Cloud saves"
         } else if let gameCloudFolder, !gameCloudFolder.isEmpty {
             reason = "the game's Cloud saves settings"
         }

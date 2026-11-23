@@ -14,7 +14,8 @@ extension FirstRunFindings {
 }
 
 extension FirstRunFindingsReader {
-    public func start(steamRoot: URL, appsFolder: URL) {
-        start(steamRoot: steamRoot, portedAppCount: { FirstRunFindings.portedApps(in: appsFolder) })
+    public func start(steamRoot: URL, appsFolder: URL, windowsGameCount: @escaping @Sendable () -> Int = { 0 }) {
+        start(steamRoot: steamRoot, portedAppCount: { FirstRunFindings.portedApps(in: appsFolder) },
+              windowsGameCount: windowsGameCount)
     }
 }

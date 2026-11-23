@@ -48,7 +48,7 @@ final class SteamReturnFocusTests: XCTestCase {
         focus.gameCameForward(id)
         XCTAssertTrue(focus.gameEnded(id, othersRunning: false).returnsToLibrary)
         focus.gameCameForward(id)
-        XCTAssertFalse(focus.gameEnded(id, othersRunning: false).returnsToLibrary, "a later start from Steam is not Arcane's")
+        XCTAssertFalse(focus.gameEnded(id, othersRunning: false).returnsToLibrary, "a later start from Steam is not Arcane Portal's")
     }
 
     // MARK: - Whether the player was still in the game
@@ -57,7 +57,7 @@ final class SteamReturnFocusTests: XCTestCase {
         var focus = SteamReturnFocus()
         focus.playPressed(id)
         focus.gameCameForward(id)
-        XCTAssertTrue(focus.gameEnded(id, othersRunning: true).wasInFront, "true even when Arcane stays back")
+        XCTAssertTrue(focus.gameEnded(id, othersRunning: true).wasInFront, "true even when Arcane Portal stays back")
     }
 
     func testAGameLeftForAnotherAppWasNotInFront() {

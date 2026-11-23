@@ -14,6 +14,6 @@ class ProfileBoundaries(unittest.TestCase):
             source = file.read_text()
             if 'UserDefaults.standard' in source or re.search(r'UserDefaults\s*=\s*\.standard', source):
                 unexpected.append(str(file.relative_to(ROOT)) + ': unscoped preferences')
-            if re.search(r'\.appendingPathComponent\("Library/Application Support/NXLibrary(?:/|"|\-)', source):
+            if re.search(r'\.appendingPathComponent\("Library/Application Support/ArcanePortal(?:/|"|\-)', source):
                 unexpected.append(str(file.relative_to(ROOT)) + ': unscoped launcher directory')
         self.assertEqual(unexpected, [], '\n'.join(unexpected))

@@ -26,7 +26,7 @@ public final class GameBananaBandModel: ObservableObject {
     @Published public private(set) var phase: Phase = .idle {
         didSet { if phase != oldValue { Self.log.notice("phase \(String(describing: self.phase), privacy: .public) available \(self.available.count, privacy: .public)") } }
     }
-    private static let log = Logger(subsystem: "local.nxlibrary", category: "gamebanana")
+    private static let log = Logger(subsystem: "io.github.akinware.arcaneportal", category: "gamebanana")
     @Published public private(set) var available: [AvailableMod] = []
     @Published public private(set) var installs: [Int: InstallState] = [:]
     /// The file each mod's install is for, while it runs and once it has ended.
@@ -252,7 +252,7 @@ public final class GameBananaBandModel: ObservableObject {
         case .looking: return L10n.text("Looking for mods that work…")
         case .ask: return L10n.text("Is this the right game?")
         case .noPage: return L10n.text("No GameBanana page found")
-        case .noneWork: return L10n.text("No mods for this game work with Arcane yet")
+        case .noneWork: return L10n.text("No mods for this game work with Arcane Portal yet")
         case .offline: return L10n.text("No connection. Mods you installed still work.")
         case .failed: return L10n.text("GameBanana didn't answer. Try again in a moment.")
         case .idle, .matching, .ready: return nil

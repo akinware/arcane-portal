@@ -24,11 +24,11 @@ final class ArcaneNameTests: XCTestCase {
     }
 
     func testUserAgentNamesArcane() {
-        XCTAssertEqual(AppIdentity.userAgent(version: "0.2"), "Arcane/0.2 (macOS; +https://github.com/Bium23/NxLibrary)")
+        XCTAssertEqual(AppIdentity.userAgent(version: "0.2"), "Arcane Portal/0.2 (macOS; +https://github.com/akinware/arcane-portal)")
     }
 
     func testProjectDocsOpenTheReadmeOnlineOnEveryMac() {
-        XCTAssertEqual(AppIdentity.documentationPage.absoluteString, "https://github.com/Bium23/NxLibrary#readme")
+        XCTAssertEqual(AppIdentity.documentationPage.absoluteString, "https://github.com/akinware/arcane-portal#readme")
     }
 
     func testNoSourceSendsTheOldUserAgent() throws {

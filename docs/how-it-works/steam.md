@@ -1,4 +1,4 @@
-# Steam in Arcane
+# Steam in Arcane Portal
 
 Riferimento unico dell’integrazione Steam: cosa legge, come decide e cosa mostra. È il
 documento da leggere prima di toccare qualunque parte Steam. `architecture.md` ne tiene solo un riassunto;
@@ -16,14 +16,14 @@ documento da leggere prima di toccare qualunque parte Steam. `architecture.md` n
 - [Ore di gioco](#ore-di-gioco)
 - [Achievement](#achievement)
 - [Metadati, arte e personalizzazioni](#metadati-arte-e-personalizzazioni)
-- [Dati su disco di Arcane](#dati-su-disco-di-arcane)
+- [Dati su disco di Arcane Portal](#dati-su-disco-di-arcane-portal)
 - [Scelte del maintainer](#scelte-del-maintainer)
 - [Limiti noti e punti rimandati](#limiti-noti-e-punti-rimandati)
 - [Cambiare l’integrazione](#cambiare-lintegrazione)
 
 ## Principi
 
-- **Steam non viene mai scritto.** Arcane legge file di Steam e invia solo URL `steam://` al client di Valve
+- **Steam non viene mai scritto.** Arcane Portal legge file di Steam e invia solo URL `steam://` al client di Valve
   (bundle `com.valvesoftware.steam`); non apre mai l’app di un gioco direttamente.
 - **Dati privati fuori dal tipo.** `localconfig.vdf`, `loginusers.vdf` e i file delle statistiche contengono ticket,
   amici e altro: ogni lettore estrae solo i campi che servono, non li registra nei log e non li conserva oltre il
@@ -103,7 +103,7 @@ Lo stato nasce dall’osservazione (`SteamGameObservation.State`) e arriva alla 
 - Un aggiornamento in coda su un gioco installato (`StateFlags` 6 o 1030: bit 4 presente) resta giocabile; Steam
   aggiorna al lancio.
 - `StateFlags` mancante o illeggibile: si guarda solo la cartella, come prima del supporto ai download.
-- Il catalogo resta leggibile da una versione più vecchia di Arcane: `isDownloading` si decodifica con `decodeIfPresent` e la
+- Il catalogo resta leggibile da una versione più vecchia di Arcane Portal: `isDownloading` si decodifica con `decodeIfPresent` e la
   disponibilità usa casi già esistenti.
 
 ## Osservazione dei file di Steam
@@ -164,7 +164,7 @@ Favorite, Hidden, Show in Finder.
 
 ## Play, sessioni e primo piano
 
-- Play invia `steam://run/<AppID>` (`SteamPlayCoordinator`) solo al client di Valve registrato. La richiesta aspetta che Arcane ordini e invii la finestra d'attesa al server delle finestre, così la copertura precede il passaggio di Space. Se il pannello non si prepara, la richiesta parte entro un secondo.
+- Play invia `steam://run/<AppID>` (`SteamPlayCoordinator`) solo al client di Valve registrato. La richiesta aspetta che Arcane Portal ordini e invii la finestra d'attesa al server delle finestre, così la copertura precede il passaggio di Space. Se il pannello non si prepara, la richiesta parte entro un secondo.
   Il controllo senza finestre attende il completamento del task di ripiego, così il carico del runner non anticipa l'asserzione rispetto all'invio.
 - La sessione inizia quando compare il processo dell’app installata (stesso bundle ed eseguibile) e finisce quando
   esce. Steam aperto non conta; un gioco avviato da Steam viene seguito allo stesso modo. Attesa massima 300 s; un pid
@@ -178,7 +178,7 @@ Favorite, Hidden, Show in Finder.
   pazienza (15 s con Steam aperto, 45 s se Play deve avviarlo). Negli ultimi due casi Steam viene mostrato e la
   testata invita a controllarlo. Perché una finestra propria: riprendersi il primo piano mentre Steam si portava davanti
   faceva alternare a macOS schermo intero e scrivania per tutta l’attesa. Mentre la schermata è aperta Play non fa
-  nulla, per nessun gioco. Un clic la chiude (Arcane torna davanti se il gioco non è arrivato, salvo un gioco in
+  nulla, per nessun gioco. Un clic la chiude (Arcane Portal torna davanti se il gioco non è arrivato, salvo un gioco in
   primo piano); se ne va comunque dopo 120 s. Un gioco avviato da Steam non la mostra.
 - `ShowInterstitials` è un passaggio di avvio che può restare in attesa oltre un secondo.
   La schermata rimane visibile durante quel passaggio, con il normale limite di 15 s o 45 s.
@@ -191,17 +191,17 @@ Favorite, Hidden, Show in Finder.
   a ogni riapertura fa oscillare macOS fra lo Space fullscreen e la scrivania.
   All'uscita di un gioco rimasto in primo piano, Steam torna fuori vista se lo era prima del Play.
   [Analisi dello sfarfallio](../history/reviews/2026-11-18-steam-launch-spaces.md)
-- All’uscita del gioco Arcane torna davanti se Play era partito da qui, il gioco era in primo piano e nessun
+- All’uscita del gioco Arcane Portal torna davanti se Play era partito da qui, il gioco era in primo piano e nessun
   altro gioco della libreria è aperto (`SteamReturnFocus`). Una sessione finita mostra la card di fine sessione dei
   giochi Switch, con il totale che include le ore di Steam.
 
 ## Ore di gioco
 
-Le ore sono quelle di Steam (`Playtime`, tutti i computer) più le sessioni di Arcane successive all’ultimo valore
+Le ore sono quelle di Steam (`Playtime`, tutti i computer) più le sessioni di Arcane Portal successive all’ultimo valore
 visto, così nulla si conta due volte anche se Steam aggiorna il file in ritardo (`SteamPlaytimeBaselines`,
 `PlaySessionStore`). Un valore più basso o un altro account ripartono da capo; il totale non torna mai indietro per
 un minuto. Le letture (`SteamPlaytimeCoordinator`, una alla volta, fuori dal thread principale) avvengono quando
-cambiano catalogo o fonti, quando Arcane torna attiva e a fine sessione Steam (subito e dopo un minuto), solo se
+cambiano catalogo o fonti, quando Arcane Portal torna attiva e a fine sessione Steam (subito e dopo un minuto), solo se
 la data del file è cambiata; la regola di ogni lettura è il tipo puro `SteamPlaytimeSync`. Un file illeggibile
 conserva gli ultimi totali buoni dello stesso account; solo l’assenza di un account li azzera. Le sessioni uscite
 dall’elenco recente restano contate (`CarriedPlaytime.afterExternal`) finché Steam non aggiorna il valore; mentre i
@@ -264,9 +264,9 @@ d'installazione negli stati non disponibili.
 - `SteamPersonalizationStore`: testo e immagini scelte in un solo manifest atomico; un errore conserva le scelte
   precedenti. SteamGridDB usa la chiave del giocatore, in `steamgriddb-api-key` con permessi `0600`, mai nei log.
 
-## Dati su disco di Arcane
+## Dati su disco di Arcane Portal
 
-Sotto `Application Support/NXLibrary` (Dev: `NXLibrary-Development`):
+Sotto `Application Support/ArcanePortal` (Dev: `ArcanePortal-Development`):
 
 | Percorso | Contenuto |
 |---|---|
@@ -325,7 +325,7 @@ con dati sintetici coprono le regressioni senza aprire finestre.
   necessari, con limiti di dimensione, test con fixture sintetiche (`SteamTestSupport`) e una riga nella tabella
   [File di Steam letti](#file-di-steam-letti).
 - Un nuovo stato o campo nel catalogo: decodifica tollerante (`decodeIfPresent`) e nessun nuovo caso persistito che una
-  versione più vecchia di Arcane non sappia leggere.
+  versione più vecchia di Arcane Portal non sappia leggere.
 - Una nuova animazione su una tile: Core Animation fuori dal `drawingGroup`, ferma con Riduci movimento.
 - Testi: sette lingue in `Localizable.xcstrings`.
 - Aggiornare questo documento, il riassunto in `architecture.md` e `file-map.md` nello stesso commit.

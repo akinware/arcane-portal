@@ -10,12 +10,12 @@ public struct AppDataProfile: Sendable {
     }
     /// Folders are built as folders (`isDirectory: true`), never by asking the disk, so a root is the same URL
     /// before and after it is created: equal to `file.deletingLastPathComponent()` on a fresh Mac too.
-    public var stableSupportRoot: URL { home.appendingPathComponent("Library/Application Support/NXLibrary", isDirectory: true) }
+    public var stableSupportRoot: URL { home.appendingPathComponent("Library/Application Support/ArcanePortal", isDirectory: true) }
     public var supportRoot: URL {
-        isDevelopment ? home.appendingPathComponent("Library/Application Support/NXLibrary-Development", isDirectory: true) : stableSupportRoot
+        isDevelopment ? home.appendingPathComponent("Library/Application Support/ArcanePortal-Development", isDirectory: true) : stableSupportRoot
     }
-    public var cacheRoot: URL { home.appendingPathComponent("Library/Caches/" + (isDevelopment ? "NXLibrary-Development" : "NXLibrary"), isDirectory: true) }
-    public var preferencesDomain: String { isDevelopment ? "local.nxlibrary.development" : "local.nxlibrary" }
+    public var cacheRoot: URL { home.appendingPathComponent("Library/Caches/" + (isDevelopment ? "ArcanePortal-Development" : "ArcanePortal"), isDirectory: true) }
+    public var preferencesDomain: String { isDevelopment ? "io.github.akinware.arcaneportal.development" : "io.github.akinware.arcaneportal" }
 }
 
 /// All app-owned stores use this composition-root policy, including their default initializers.
@@ -31,8 +31,8 @@ public enum AppData {
         let development = info["NXLibraryDevelopmentProfile"] as? Bool == true
         let release = info["NXLibraryRelease"] as? Bool == true
         let identifier = info["CFBundleIdentifier"] as? String
-        guard (development && !release && identifier == "local.nxlibrary.development")
-                || (release && !development && identifier == "local.nxlibrary") else {
+        guard (development && !release && identifier == "io.github.akinware.arcaneportal.development")
+                || (release && !development && identifier == "io.github.akinware.arcaneportal") else {
             throw DevelopmentProfileError.invalidConfiguration
         }
     }
@@ -43,7 +43,7 @@ public enum AppData {
         guard profile.isDevelopment else { return }
         let defaults = preferences
         _ = try DevelopmentProfileImporter(checks: checks).prepare(profile: profile, sourcePreferences: {
-            UserDefaults.standard.persistentDomain(forName: "local.nxlibrary") ?? [:]
+            UserDefaults.standard.persistentDomain(forName: "io.github.akinware.arcaneportal") ?? [:]
         }, savePreferences: { values in
             defaults.setPersistentDomain(values, forName: profile.preferencesDomain)
             guard CFPreferencesAppSynchronize(profile.preferencesDomain as CFString) else {

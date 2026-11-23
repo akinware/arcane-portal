@@ -30,7 +30,7 @@ public struct BuildResult: Equatable {
 
 public final class BuildService {
     private let fm: FileManager
-    private let ioQueue = DispatchQueue(label: "local.nxlibrary.build.io")
+    private let ioQueue = DispatchQueue(label: "io.github.akinware.arcaneportal.build.io")
     private let stateLock = NSLock()
     private var process: Process?
     private var logHandle: FileHandle?
@@ -98,7 +98,7 @@ public final class BuildService {
         if IOPMAssertionCreateWithName(
             kIOPMAssertionTypeNoIdleSleep as CFString,
             IOPMAssertionLevel(kIOPMAssertionLevelOn),
-            "Arcane build" as CFString,
+            "Arcane Portal build" as CFString,
             &assertion
         ) == kIOReturnSuccess {
             sleepAssertion = assertion

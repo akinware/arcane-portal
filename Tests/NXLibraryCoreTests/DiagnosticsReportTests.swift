@@ -5,7 +5,7 @@ final class DiagnosticsReportTests: XCTestCase {
     private func inputs() -> DiagnosticsReport.Inputs {
         var i = DiagnosticsReport.Inputs()
         i.appVersion = "1.0"
-        i.bundleID = "local.nxlibrary"
+        i.bundleID = "io.github.akinware.arcaneportal"
         i.macOS = "27.2"
         i.chip = "Apple M4"
         i.pinnedCommit = "ee369f09984f23adbe003f55e94be5d81cd8c0e6"

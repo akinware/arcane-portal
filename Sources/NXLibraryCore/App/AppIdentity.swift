@@ -3,12 +3,12 @@ import Foundation
 /// The app's visible name and the one User-Agent every web request sends. The public project page
 /// is the contact Wikidata asks clients for; no personal data goes in it.
 public enum AppIdentity {
-    public static let name = "Arcane"
+    public static let name = "Arcane Portal"
     /// The name players knew before Arcane; only the one-time welcome says it.
     public static let formerName = "NX Library"
     /// The module that ports games to the Mac. A name, like the app's, so it is never translated.
     public static let portingName = "Porting"
-    public static let projectPage = "https://github.com/Bium23/NxLibrary"
+    public static let projectPage = "https://github.com/akinware/arcane-portal"
     /// The player guide: the README online, so it opens on every Mac and survives a move of the source folder.
     public static let documentationPage = URL(string: projectPage + "#readme")!
 

@@ -3,7 +3,7 @@ import XCTest
 @testable import ArcanePorting
 
 final class BuildScratchTests: XCTestCase {
-    private let core = URL(fileURLWithPath: "/Users/me/Library/Application Support/NXLibrary")
+    private let core = URL(fileURLWithPath: "/Users/me/Library/Application Support/ArcanePortal")
     private let internalApps = URL(fileURLWithPath: "/Users/me/Applications")
     private let externalApps = URL(fileURLWithPath: "/Volumes/NVMe/Games")
     private let exFATApps = URL(fileURLWithPath: "/Volumes/STICK/Games")

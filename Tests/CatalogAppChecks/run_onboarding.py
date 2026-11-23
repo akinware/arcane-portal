@@ -54,7 +54,7 @@ import NXLibraryCore
 import ArcanePorting
 
 enum AppData {
-    static let domain = "local.nxlibrary.validation." + UUID().uuidString
+    static let domain = "io.github.akinware.arcaneportal.validation." + UUID().uuidString
     static let preferences = UserDefaults(suiteName: domain)!
 }
 enum NotificationRegistration { static var registered = false }
@@ -111,10 +111,11 @@ final class SoundEffectService {
     static let shared = SoundEffectService()
     func play(_ cue: Cue) {}
 }
+enum WindowsGamesOnThisMac { static func count() -> Int { 0 } }
 final class FindingsReader {
     var cancellations = 0
     func cancel() { cancellations += 1 }
-    func start(steamRoot: URL, appsFolder: URL) {}
+    func start(steamRoot: URL, appsFolder: URL, windowsGameCount: @escaping @Sendable () -> Int = { 0 }) {}
 }
 final class FoundHost {
     let viewModel: Host

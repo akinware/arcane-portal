@@ -140,7 +140,7 @@ struct SettingsEngineSection: View {
             }
 
             SeleneButtonRow("Setup",
-                            subtitle: "Open the Setup check: what Arcane needs and what is ready.",
+                            subtitle: "Open the Setup check: what Arcane Portal needs and what is ready.",
                             buttonTitle: "Open Setup") {
                 viewModel.reopenSetup()
             }
@@ -460,7 +460,7 @@ struct SettingsEngineSection: View {
     private func runtimeDetail(_ environment: EnvironmentStatus) -> String {
         guard let python = environment.pythonURL else { return "missing" }
         if setup.engineToolchain.isBundled {
-            return BundledRuntime.locate()?.versionSummary() ?? L10n.text("Included in Arcane")
+            return BundledRuntime.locate()?.versionSummary() ?? L10n.text("Included in Arcane Portal")
         }
         return L10n.format("Developer build: %@", [String(describing: python.path)])
     }

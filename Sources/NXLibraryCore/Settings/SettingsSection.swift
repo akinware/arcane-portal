@@ -54,7 +54,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable, Equatable {
         case .navigation: return L10n.text("Button hints, button names and the View button.")
         case .spotlight: return L10n.text("Which cards show on Spotlight and where it opens.")
         case .soundMusic: return L10n.text("Interface sounds, volume and the launch screen.")
-        case .look: return L10n.text("How Arcane looks and moves.")
+        case .look: return L10n.text("How Arcane Portal looks and moves.")
         case .apiServices: return L10n.text("Optional connections for ratings and game artwork.")
         case .controllers: return L10n.text("Gamepad, button layout and stick deadzone for the library.")
         case .sources: return L10n.text("Steam libraries, refresh and how Play opens Steam.")

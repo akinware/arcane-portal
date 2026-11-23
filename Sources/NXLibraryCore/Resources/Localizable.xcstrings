@@ -2022,49 +2022,49 @@
         }
       }
     },
-    "%@ has changed files. Arcane never touches them: put them aside, then check again.": {
+    "%@ has changed files. Arcane Portal never touches them: put them aside, then check again.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ has changed files. Arcane never touches them: put them aside, then check again."
+            "value": "%@ has changed files. Arcane Portal never touches them: put them aside, then check again."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ contiene file modificati. Arcane non li tocca mai: mettili da parte, poi ricontrolla."
+            "value": "%@ contiene file modificati. Arcane Portal non li tocca mai: mettili da parte, poi ricontrolla."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ contient des fichiers modifiés. Arcane n’y touche jamais : mettez-les de côté, puis vérifiez à nouveau."
+            "value": "%@ contient des fichiers modifiés. Arcane Portal n’y touche jamais : mettez-les de côté, puis vérifiez à nouveau."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ enthält geänderte Dateien. Arcane verändert sie niemals: Lege sie beiseite und prüfe erneut."
+            "value": "%@ enthält geänderte Dateien. Arcane Portal verändert sie niemals: Lege sie beiseite und prüfe erneut."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ contiene archivos modificados. Arcane nunca los modifica: apártalos y vuelve a comprobar."
+            "value": "%@ contiene archivos modificados. Arcane Portal nunca los modifica: apártalos y vuelve a comprobar."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ tem arquivos alterados. O Arcane nunca os modifica: guarde-os em outro local e verifique novamente."
+            "value": "%@ tem arquivos alterados. O Arcane Portal nunca os modifica: guarde-os em outro local e verifique novamente."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 有文件被修改。Arcane 不会触碰它们：请先将它们移到别处，然后再次检查。"
+            "value": "%@ 有文件被修改。Arcane Portal 不会触碰它们：请先将它们移到别处，然后再次检查。"
           }
         }
       }
@@ -3855,49 +3855,49 @@
         }
       }
     },
-    "%@. Reinstall Arcane from its DMG.": {
+    "%@. Reinstall Arcane Portal from its DMG.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@. Reinstall Arcane from its DMG."
+            "value": "%@. Reinstall Arcane Portal from its DMG."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@. Reinstalla Arcane dal suo DMG."
+            "value": "%@. Reinstalla Arcane Portal dal suo DMG."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@. Réinstallez Arcane depuis son DMG."
+            "value": "%@. Réinstallez Arcane Portal depuis son DMG."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@. Installiere Arcane erneut aus der DMG-Datei."
+            "value": "%@. Installiere Arcane Portal erneut aus der DMG-Datei."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@. Reinstala Arcane desde su DMG."
+            "value": "%@. Reinstala Arcane Portal desde su DMG."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@. Reinstale o Arcane a partir do DMG."
+            "value": "%@. Reinstale o Arcane Portal a partir do DMG."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@。请从 DMG 重新安装 Arcane。"
+            "value": "%@。请从 DMG 重新安装 Arcane Portal。"
           }
         }
       }
@@ -6207,49 +6207,49 @@
         }
       }
     },
-    "A notification when a porting finishes while Arcane is in the background.": {
+    "A notification when a porting finishes while Arcane Portal is in the background.": {
       "comment": "SettingsCatalog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A notification when a porting finishes while Arcane is in the background."
+            "value": "A notification when a porting finishes while Arcane Portal is in the background."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Una notifica quando la creazione dell’app per Mac termina mentre Arcane è in background."
+            "value": "Una notifica quando la creazione dell’app per Mac termina mentre Arcane Portal è in background."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Une notification quand la création d’une app Mac se termine alors qu’Arcane est en arrière-plan."
+            "value": "Une notification quand la création d’une app Mac se termine alors qu’Arcane Portal est en arrière-plan."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eine Mitteilung, wenn die App-Erstellung endet, während Arcane im Hintergrund ist."
+            "value": "Eine Mitteilung, wenn die App-Erstellung endet, während Arcane Portal im Hintergrund ist."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Envía una notificación cuando termina una compilación mientras Arcane está en segundo plano."
+            "value": "Envía una notificación cuando termina una compilación mientras Arcane Portal está en segundo plano."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Uma notificação quando uma compilação terminar enquanto o Arcane estiver em segundo plano."
+            "value": "Uma notificação quando uma compilação terminar enquanto o Arcane Portal estiver em segundo plano."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "当 Arcane 在后台时，移植完成后发送通知。"
+            "value": "当 Arcane Portal 在后台时，移植完成后发送通知。"
           }
         }
       }
@@ -9450,52 +9450,6 @@
         }
       }
     },
-    "Arcane reads Steam and your Game apps folder without changing anything. You can open the library now and add sources later in Settings.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane reads Steam and your Game apps folder without changing anything. You can open the library now and add sources later in Settings."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane legge Steam e la cartella delle app dei giochi senza cambiare nulla. Puoi aprire subito la libreria e aggiungere le fonti dopo, dalle Impostazioni."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane lit Steam et le dossier des apps de jeux sans rien modifier. Vous pouvez ouvrir la bibliothèque maintenant et ajouter les sources plus tard dans les réglages."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane liest Steam und den Spiele-App-Ordner, ohne etwas zu ändern. Du kannst die Mediathek jetzt öffnen und Quellen später in den Einstellungen hinzufügen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane lee Steam y la carpeta de apps de juegos sin cambiar nada. Puedes abrir la biblioteca ahora y añadir las fuentes más tarde en Ajustes."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O Arcane lê o Steam e a pasta de apps de jogos sem alterar nada. Você pode abrir a biblioteca agora e adicionar as fontes depois, nos Ajustes."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane 会读取 Steam 和你的“游戏 App”文件夹，但不会做任何更改。你现在就可以打开游戏库，以后再在“设置”中添加来源。"
-          }
-        }
-      }
-    },
     "Arrow keys": {
       "comment": "ControlsView.swift:30",
       "localizations": {
@@ -12692,96 +12646,96 @@
         }
       }
     },
-    "Build with nxnative main (%@, %@) before Arcane has tested it.": {
+    "Build with nxnative main (%@, %@) before Arcane Portal has tested it.": {
       "comment": "NewestEngine.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Build with nxnative main (%@, %@) before Arcane has tested it."
+            "value": "Build with nxnative main (%@, %@) before Arcane Portal has tested it."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compila con nxnative main (%@, %@) prima che Arcane l’abbia testato."
+            "value": "Compila con nxnative main (%@, %@) prima che Arcane Portal l’abbia testato."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compiler avec nxnative main (%@, %@) avant qu’il soit testé par Arcane."
+            "value": "Compiler avec nxnative main (%@, %@) avant qu’il soit testé par Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mit nxnative main (%@, %@) erstellen, bevor Arcane es getestet hat."
+            "value": "Mit nxnative main (%@, %@) erstellen, bevor Arcane Portal es getestet hat."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compila con main de nxnative (%@, %@) antes de que Arcane lo haya probado."
+            "value": "Compila con main de nxnative (%@, %@) antes de que Arcane Portal lo haya probado."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compile com o main do nxnative (%@, %@) antes de o Arcane testá-lo."
+            "value": "Compile com o main do nxnative (%@, %@) antes de o Arcane Portal testá-lo."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 Arcane 测试之前，使用 nxnative main（%@，%@）构建。"
+            "value": "在 Arcane Portal 测试之前，使用 nxnative main（%@，%@）构建。"
           }
         }
       }
     },
-    "Build with nxnative main before Arcane has tested it, or go back to the tested engine.": {
+    "Build with nxnative main before Arcane Portal has tested it, or go back to the tested engine.": {
       "comment": "SettingsCatalog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Build with nxnative main before Arcane has tested it, or go back to the tested engine."
+            "value": "Build with nxnative main before Arcane Portal has tested it, or go back to the tested engine."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compila con nxnative main prima che Arcane l’abbia testato oppure torna al motore testato."
+            "value": "Compila con nxnative main prima che Arcane Portal l’abbia testato oppure torna al motore testato."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compiler avec nxnative main avant qu’il soit testé par Arcane, ou revenir au moteur testé."
+            "value": "Compiler avec nxnative main avant qu’il soit testé par Arcane Portal, ou revenir au moteur testé."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mit nxnative main erstellen, bevor Arcane es getestet hat, oder zur getesteten Engine zurückkehren."
+            "value": "Mit nxnative main erstellen, bevor Arcane Portal es getestet hat, oder zur getesteten Engine zurückkehren."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compila con main de nxnative antes de que Arcane lo haya probado o vuelve al motor probado."
+            "value": "Compila con main de nxnative antes de que Arcane Portal lo haya probado o vuelve al motor probado."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compile com o main do nxnative antes de o Arcane testá-lo ou volte à engine testada."
+            "value": "Compile com o main do nxnative antes de o Arcane Portal testá-lo ou volte à engine testada."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 Arcane 测试之前使用 nxnative main 构建，或回到经过测试的引擎。"
+            "value": "在 Arcane Portal 测试之前使用 nxnative main 构建，或回到经过测试的引擎。"
           }
         }
       }
@@ -12833,49 +12787,49 @@
         }
       }
     },
-    "Builds games with nxnative main instead of the engine this version of Arcane is tested with. ": {
+    "Builds games with nxnative main instead of the engine this version of Arcane Portal is tested with. ": {
       "comment": "NewestEngine.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Builds games with nxnative main instead of the engine this version of Arcane is tested with. "
+            "value": "Builds games with nxnative main instead of the engine this version of Arcane Portal is tested with. "
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compila i giochi con nxnative main anziché con il motore con cui è testata questa versione di Arcane. "
+            "value": "Compila i giochi con nxnative main anziché con il motore con cui è testata questa versione di Arcane Portal. "
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compile les jeux avec nxnative main au lieu du moteur avec lequel cette version d’Arcane a été testée. "
+            "value": "Compile les jeux avec nxnative main au lieu du moteur avec lequel cette version d’Arcane Portal a été testée. "
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Erstellt Spiele-Apps mit nxnative main statt mit der Engine, mit der diese Arcane-Version getestet wurde. "
+            "value": "Erstellt Spiele-Apps mit nxnative main statt mit der Engine, mit der diese Arcane-Portal-Version getestet wurde. "
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compila juegos con main de nxnative en lugar del motor con el que se ha probado este Arcane. "
+            "value": "Compila juegos con main de nxnative en lugar del motor con el que se ha probado este Arcane Portal. "
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compila jogos com o main do nxnative em vez da engine com a qual este Arcane foi testado. "
+            "value": "Compila jogos com o main do nxnative em vez da engine com a qual este Arcane Portal foi testado. "
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "使用 nxnative main 构建游戏，而不是此版本 Arcane 经过测试的引擎。"
+            "value": "使用 nxnative main 构建游戏，而不是此版本 Arcane Portal 经过测试的引擎。"
           }
         }
       }
@@ -15653,49 +15607,49 @@
         }
       }
     },
-    "Checks the engine and toolchain each time Arcane starts.": {
+    "Checks the engine and toolchain each time Arcane Portal starts.": {
       "comment": "SettingsCatalog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Checks the engine and toolchain each time Arcane starts."
+            "value": "Checks the engine and toolchain each time Arcane Portal starts."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Controlla il motore e la toolchain a ogni avvio di Arcane."
+            "value": "Controlla il motore e la toolchain a ogni avvio di Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vérifie le moteur et la chaîne d’outils à chaque démarrage d’Arcane."
+            "value": "Vérifie le moteur et la chaîne d’outils à chaque démarrage d’Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Prüft Engine und Toolchain bei jedem Start von Arcane."
+            "value": "Prüft Engine und Toolchain bei jedem Start von Arcane Portal."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Comprueba el motor y la cadena de herramientas cada vez que se inicia Arcane."
+            "value": "Comprueba el motor y la cadena de herramientas cada vez que se inicia Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verifica a engine e o conjunto de ferramentas sempre que o Arcane inicia."
+            "value": "Verifica a engine e o conjunto de ferramentas sempre que o Arcane Portal inicia."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "每次 Arcane 启动时检查引擎和工具链。"
+            "value": "每次 Arcane Portal 启动时检查引擎和工具链。"
           }
         }
       }
@@ -16076,49 +16030,49 @@
         }
       }
     },
-    "Choose a picture for your background. Arcane keeps its own copy.": {
+    "Choose a picture for your background. Arcane Portal keeps its own copy.": {
       "comment": "ThemePickerView.swift:766",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Choose a picture for your background. Arcane keeps its own copy."
+            "value": "Choose a picture for your background. Arcane Portal keeps its own copy."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scegli un’immagine per lo sfondo. Arcane ne conserva una copia."
+            "value": "Scegli un’immagine per lo sfondo. Arcane Portal ne conserva una copia."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Choisissez une image pour votre arrière-plan. Arcane en conserve une copie."
+            "value": "Choisissez une image pour votre arrière-plan. Arcane Portal en conserve une copie."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wähle ein Bild für deinen Hintergrund. Arcane behält eine eigene Kopie."
+            "value": "Wähle ein Bild für deinen Hintergrund. Arcane Portal behält eine eigene Kopie."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elige una imagen para tu fondo. Arcane conserva su propia copia."
+            "value": "Elige una imagen para tu fondo. Arcane Portal conserva su propia copia."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escolha uma imagem para seu fundo. O Arcane mantém uma cópia própria."
+            "value": "Escolha uma imagem para seu fundo. O Arcane Portal mantém uma cópia própria."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "为背景选择一张图片。Arcane 会保留自己的副本。"
+            "value": "为背景选择一张图片。Arcane Portal 会保留自己的副本。"
           }
         }
       }
@@ -16170,49 +16124,49 @@
         }
       }
     },
-    "Choose a video for your live background (MP4, MOV or M4V). Arcane keeps its own copy and plays it muted.": {
+    "Choose a video for your live background (MP4, MOV or M4V). Arcane Portal keeps its own copy and plays it muted.": {
       "comment": "ThemePickerView.swift:765",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Choose a video for your live background (MP4, MOV or M4V). Arcane keeps its own copy and plays it muted."
+            "value": "Choose a video for your live background (MP4, MOV or M4V). Arcane Portal keeps its own copy and plays it muted."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scegli un video per lo sfondo animato (MP4, MOV o M4V). Arcane ne conserva una copia e lo riproduce senza audio."
+            "value": "Scegli un video per lo sfondo animato (MP4, MOV o M4V). Arcane Portal ne conserva una copia e lo riproduce senza audio."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Choisissez une vidéo pour votre arrière-plan animé (MP4, MOV ou M4V). Arcane en conserve une copie et la lit sans le son."
+            "value": "Choisissez une vidéo pour votre arrière-plan animé (MP4, MOV ou M4V). Arcane Portal en conserve une copie et la lit sans le son."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wähle ein Video für deinen Live-Hintergrund (MP4, MOV oder M4V). Arcane behält eine eigene Kopie und spielt es ohne Ton ab."
+            "value": "Wähle ein Video für deinen Live-Hintergrund (MP4, MOV oder M4V). Arcane Portal behält eine eigene Kopie und spielt es ohne Ton ab."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elige un vídeo para tu fondo animado (MP4, MOV o M4V). Arcane conserva su propia copia y lo reproduce sin sonido."
+            "value": "Elige un vídeo para tu fondo animado (MP4, MOV o M4V). Arcane Portal conserva su propia copia y lo reproduce sin sonido."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escolha um vídeo para seu fundo animado (MP4, MOV ou M4V). O Arcane mantém uma cópia própria e o reproduz sem som."
+            "value": "Escolha um vídeo para seu fundo animado (MP4, MOV ou M4V). O Arcane Portal mantém uma cópia própria e o reproduz sem som."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "为动态背景选择一个视频（MP4、MOV 或 M4V）。Arcane 会保留自己的副本并静音播放。"
+            "value": "为动态背景选择一个视频（MP4、MOV 或 M4V）。Arcane Portal 会保留自己的副本并静音播放。"
           }
         }
       }
@@ -17862,49 +17816,49 @@
         }
       }
     },
-    "Close the other Arcane copy, then try again. Your original library has not been changed.": {
+    "Close the other Arcane Portal copy, then try again. Your original library has not been changed.": {
       "comment": "Development profile bootstrap; do not expose credential values.",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close the other Arcane copy, then try again. Your original library has not been changed."
+            "value": "Close the other Arcane Portal copy, then try again. Your original library has not been changed."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chiudi l’altra copia di Arcane e riprova. La libreria originale non è stata modificata."
+            "value": "Chiudi l’altra copia di Arcane Portal e riprova. La libreria originale non è stata modificata."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fermez l’autre copie d’Arcane, puis réessayez. Votre bibliothèque d’origine n’a pas été modifiée."
+            "value": "Fermez l’autre copie d’Arcane Portal, puis réessayez. Votre bibliothèque d’origine n’a pas été modifiée."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Schließe die andere Kopie von Arcane und versuche es erneut. Deine Originalbibliothek wurde nicht verändert."
+            "value": "Schließe die andere Kopie von Arcane Portal und versuche es erneut. Deine Originalbibliothek wurde nicht verändert."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cierra la otra copia de Arcane e inténtalo de nuevo. Tu biblioteca original no se ha modificado."
+            "value": "Cierra la otra copia de Arcane Portal e inténtalo de nuevo. Tu biblioteca original no se ha modificado."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Feche a outra cópia do Arcane e tente novamente. Sua biblioteca original não foi alterada."
+            "value": "Feche a outra cópia do Arcane Portal e tente novamente. Sua biblioteca original não foi alterada."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请关闭另一个 Arcane 副本，然后再试。你原来的游戏库没有被更改。"
+            "value": "请关闭另一个 Arcane Portal 副本，然后再试。你原来的游戏库没有被更改。"
           }
         }
       }
@@ -18473,49 +18427,49 @@
         }
       }
     },
-    "Colors for all of Arcane. Move through them to see each one in the preview.": {
+    "Colors for all of Arcane Portal. Move through them to see each one in the preview.": {
       "comment": "ThemePickerView.swift:158",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Colors for all of Arcane. Move through them to see each one in the preview."
+            "value": "Colors for all of Arcane Portal. Move through them to see each one in the preview."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Colori per tutto Arcane. Scorri le opzioni per vederle in anteprima."
+            "value": "Colori per tutto Arcane Portal. Scorri le opzioni per vederle in anteprima."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Des couleurs pour toute l’interface d’Arcane. Parcourez-les pour voir chaque thème dans l’aperçu."
+            "value": "Des couleurs pour toute l’interface d’Arcane Portal. Parcourez-les pour voir chaque thème dans l’aperçu."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Farben für ganz Arcane. Wechsle zwischen ihnen, um jedes Design in der Vorschau zu sehen."
+            "value": "Farben für ganz Arcane Portal. Wechsle zwischen ihnen, um jedes Design in der Vorschau zu sehen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Colores para todo Arcane. Recorre los temas para ver cada uno en la vista previa."
+            "value": "Colores para todo Arcane Portal. Recorre los temas para ver cada uno en la vista previa."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cores para todo o Arcane. Navegue entre elas para ver cada uma na prévia."
+            "value": "Cores para todo o Arcane Portal. Navegue entre elas para ver cada uma na prévia."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "整个 Arcane 的配色。逐一浏览即可在预览中查看效果。"
+            "value": "整个 Arcane Portal 的配色。逐一浏览即可在预览中查看效果。"
           }
         }
       }
@@ -25211,96 +25165,96 @@
         }
       }
     },
-    "Everything Arcane can install by itself is installed.": {
+    "Everything Arcane Portal can install by itself is installed.": {
       "comment": "SetupCheckView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Everything Arcane can install by itself is installed."
+            "value": "Everything Arcane Portal can install by itself is installed."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tutto ciò che Arcane può installare da sola è installato."
+            "value": "Tutto ciò che Arcane Portal può installare da sola è installato."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tout ce qu’Arcane peut installer seul est installé."
+            "value": "Tout ce qu’Arcane Portal peut installer seul est installé."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alles, was Arcane selbst installieren kann, ist installiert."
+            "value": "Alles, was Arcane Portal selbst installieren kann, ist installiert."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ya está instalado todo lo que Arcane puede instalar por sí mismo."
+            "value": "Ya está instalado todo lo que Arcane Portal puede instalar por sí mismo."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tudo o que o Arcane pode instalar por conta própria está instalado."
+            "value": "Tudo o que o Arcane Portal pode instalar por conta própria está instalado."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 能自行安装的内容都已安装。"
+            "value": "Arcane Portal 能自行安装的内容都已安装。"
           }
         }
       }
     },
-    "Everything Arcane needs is here.": {
+    "Everything Arcane Portal needs is here.": {
       "comment": "SetupCheckView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Everything Arcane needs is here."
+            "value": "Everything Arcane Portal needs is here."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "È presente tutto ciò che serve a Arcane."
+            "value": "È presente tutto ciò che serve a Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tout ce dont Arcane a besoin est présent."
+            "value": "Tout ce dont Arcane Portal a besoin est présent."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alles, was Arcane benötigt, ist vorhanden."
+            "value": "Alles, was Arcane Portal benötigt, ist vorhanden."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ya está todo lo que necesita Arcane."
+            "value": "Ya está todo lo que necesita Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tudo o que o Arcane precisa está aqui."
+            "value": "Tudo o que o Arcane Portal precisa está aqui."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 所需的一切都已就绪。"
+            "value": "Arcane Portal 所需的一切都已就绪。"
           }
         }
       }
@@ -29676,7 +29630,7 @@
       }
     },
     "Game introductions in your language (CC BY-SA)": {
-      "comment": "About \u2192 credits: what Wikipedia provides; CC BY-SA is the licence name and stays as is",
+      "comment": "About → credits: what Wikipedia provides; CC BY-SA is the licence name and stays as is",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -32495,49 +32449,49 @@
         }
       }
     },
-    "How Arcane looks and moves.": {
+    "How Arcane Portal looks and moves.": {
       "comment": "SettingsSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "How Arcane looks and moves."
+            "value": "How Arcane Portal looks and moves."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’aspetto e le animazioni di Arcane."
+            "value": "L’aspetto e le animazioni di Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’apparence et les animations d’Arcane."
+            "value": "L’apparence et les animations d’Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wie Arcane aussieht und sich bewegt."
+            "value": "Wie Arcane Portal aussieht und sich bewegt."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El aspecto y el movimiento de Arcane."
+            "value": "El aspecto y el movimiento de Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A aparência e os movimentos do Arcane."
+            "value": "A aparência e os movimentos do Arcane Portal."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 的外观和动效。"
+            "value": "Arcane Portal 的外观和动效。"
           }
         }
       }
@@ -32871,49 +32825,49 @@
         }
       }
     },
-    "Icon used only in Arcane": {
+    "Icon used only in Arcane Portal": {
       "comment": "AppIconProgress.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Icon used only in Arcane"
+            "value": "Icon used only in Arcane Portal"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Icona usata solo in Arcane"
+            "value": "Icona usata solo in Arcane Portal"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Icône utilisée uniquement dans Arcane"
+            "value": "Icône utilisée uniquement dans Arcane Portal"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Symbol wird nur in Arcane verwendet"
+            "value": "Symbol wird nur in Arcane Portal verwendet"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Icono usado solo en Arcane"
+            "value": "Icono usado solo en Arcane Portal"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ícone usado apenas no Arcane"
+            "value": "Ícone usado apenas no Arcane Portal"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "仅在 Arcane 中使用的图标"
+            "value": "仅在 Arcane Portal 中使用的图标"
           }
         }
       }
@@ -33858,49 +33812,49 @@
         }
       }
     },
-    "Included in Arcane": {
+    "Included in Arcane Portal": {
       "comment": "SettingsEngineSection.swift:497",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Included in Arcane"
+            "value": "Included in Arcane Portal"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Incluso in Arcane"
+            "value": "Incluso in Arcane Portal"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Intégré à Arcane"
+            "value": "Intégré à Arcane Portal"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "In Arcane enthalten"
+            "value": "In Arcane Portal enthalten"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Incluido en Arcane"
+            "value": "Incluido en Arcane Portal"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Incluído no Arcane"
+            "value": "Incluído no Arcane Portal"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "包含在 Arcane 中"
+            "value": "包含在 Arcane Portal 中"
           }
         }
       }
@@ -35362,49 +35316,49 @@
         }
       }
     },
-    "Its new features reach Arcane in a future version.": {
+    "Its new features reach Arcane Portal in a future version.": {
       "comment": "NewestEngine.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Its new features reach Arcane in a future version."
+            "value": "Its new features reach Arcane Portal in a future version."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le sue nuove funzionalità arriveranno in una futura versione di Arcane."
+            "value": "Le sue nuove funzionalità arriveranno in una futura versione di Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ses nouvelles fonctionnalités seront intégrées à une future version d’Arcane."
+            "value": "Ses nouvelles fonctionnalités seront intégrées à une future version d’Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Seine neuen Funktionen kommen in einer künftigen Version in Arcane an."
+            "value": "Seine neuen Funktionen kommen in einer künftigen Version in Arcane Portal an."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sus nuevas funciones llegarán a Arcane en una versión futura."
+            "value": "Sus nuevas funciones llegarán a Arcane Portal en una versión futura."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Seus novos recursos chegarão ao Arcane em uma versão futura."
+            "value": "Seus novos recursos chegarão ao Arcane Portal em uma versão futura."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "它的新功能将在 Arcane 的未来版本中提供。"
+            "value": "它的新功能将在 Arcane Portal 的未来版本中提供。"
           }
         }
       }
@@ -35503,48 +35457,48 @@
         }
       }
     },
-    "Keep Arcane's library": {
+    "Keep Arcane Portal's library": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep Arcane's library"
+            "value": "Keep Arcane Portal's library"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mantieni la libreria di Arcane"
+            "value": "Mantieni la libreria di Arcane Portal"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Conserver la bibliothèque d’Arcane"
+            "value": "Conserver la bibliothèque d’Arcane Portal"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane-Mediathek behalten"
+            "value": "Arcane-Portal-Mediathek behalten"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Conservar la biblioteca de Arcane"
+            "value": "Conservar la biblioteca de Arcane Portal"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Manter a biblioteca do Arcane"
+            "value": "Manter a biblioteca do Arcane Portal"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "保留 Arcane 的游戏库"
+            "value": "保留 Arcane Portal 的游戏库"
           }
         }
       }
@@ -35784,48 +35738,48 @@
         }
       }
     },
-    "Keep the games and sources in Arcane. The older app's changes will be archived separately, without merging the libraries.": {
+    "Keep the games and sources in Arcane Portal. The older app's changes will be archived separately, without merging the libraries.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep the games and sources in Arcane. The older app's changes will be archived separately, without merging the libraries."
+            "value": "Keep the games and sources in Arcane Portal. The older app's changes will be archived separately, without merging the libraries."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mantieni i giochi e le fonti di Arcane. Le modifiche della vecchia app saranno archiviate separatamente, senza unire le librerie."
+            "value": "Mantieni i giochi e le fonti di Arcane Portal. Le modifiche della vecchia app saranno archiviate separatamente, senza unire le librerie."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Conservez les jeux et les sources d’Arcane. Les modifications de l’ancienne app seront archivées séparément, sans fusionner les bibliothèques."
+            "value": "Conservez les jeux et les sources d’Arcane Portal. Les modifications de l’ancienne app seront archivées séparément, sans fusionner les bibliothèques."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die Spiele und Quellen in Arcane bleiben erhalten. Änderungen aus der älteren App werden separat archiviert, ohne die Mediatheken zusammenzuführen."
+            "value": "Die Spiele und Quellen in Arcane Portal bleiben erhalten. Änderungen aus der älteren App werden separat archiviert, ohne die Mediatheken zusammenzuführen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Conserva los juegos y las fuentes de Arcane. Los cambios de la app anterior se archivarán por separado, sin combinar las bibliotecas."
+            "value": "Conserva los juegos y las fuentes de Arcane Portal. Los cambios de la app anterior se archivarán por separado, sin combinar las bibliotecas."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mantenha os jogos e as fontes do Arcane. As alterações do app antigo serão arquivadas separadamente, sem mesclar as bibliotecas."
+            "value": "Mantenha os jogos e as fontes do Arcane Portal. As alterações do app antigo serão arquivadas separadamente, sem mesclar as bibliotecas."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 Arcane 中保留游戏和来源。旧版 App 的更改会单独存档，不会合并游戏库。"
+            "value": "在 Arcane Portal 中保留游戏和来源。旧版 App 的更改会单独存档，不会合并游戏库。"
           }
         }
       }
@@ -37099,49 +37053,49 @@
         }
       }
     },
-    "Let's get Arcane ready": {
+    "Let's get Arcane Portal ready": {
       "comment": "SetupCheckView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Let's get Arcane ready"
+            "value": "Let's get Arcane Portal ready"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Prepariamo Arcane"
+            "value": "Prepariamo Arcane Portal"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Préparons Arcane"
+            "value": "Préparons Arcane Portal"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Machen wir Arcane startklar"
+            "value": "Machen wir Arcane Portal startklar"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vamos a preparar Arcane"
+            "value": "Vamos a preparar Arcane Portal"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vamos preparar o Arcane"
+            "value": "Vamos preparar o Arcane Portal"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "让我们准备好 Arcane"
+            "value": "让我们准备好 Arcane Portal"
           }
         }
       }
@@ -38180,49 +38134,49 @@
         }
       }
     },
-    "Look for a newer Arcane release at launch, at most once a day.": {
+    "Look for a newer Arcane Portal release at launch, at most once a day.": {
       "comment": "SettingsStartUpSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Look for a newer Arcane release at launch, at most once a day."
+            "value": "Look for a newer Arcane Portal release at launch, at most once a day."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cerca una nuova versione di Arcane all’avvio, al massimo una volta al giorno."
+            "value": "Cerca una nuova versione di Arcane Portal all’avvio, al massimo una volta al giorno."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rechercher une nouvelle version d’Arcane au lancement, au maximum une fois par jour."
+            "value": "Rechercher une nouvelle version d’Arcane Portal au lancement, au maximum une fois par jour."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Beim Start nach einer neueren Arcane-Veröffentlichung suchen, höchstens einmal täglich."
+            "value": "Beim Start nach einer neueren Arcane-Portal-Veröffentlichung suchen, höchstens einmal täglich."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Busca una versión más reciente de Arcane al abrir, como máximo una vez al día."
+            "value": "Busca una versión más reciente de Arcane Portal al abrir, como máximo una vez al día."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Busca uma versão mais recente do Arcane ao iniciar, no máximo uma vez por dia."
+            "value": "Busca uma versão mais recente do Arcane Portal ao iniciar, no máximo uma vez por dia."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "启动时检查是否有较新的 Arcane 版本，每天最多一次。"
+            "value": "启动时检查是否有较新的 Arcane Portal 版本，每天最多一次。"
           }
         }
       }
@@ -38556,49 +38510,49 @@
         }
       }
     },
-    "Looks for a newer Arcane release at launch, at most once a day.": {
+    "Looks for a newer Arcane Portal release at launch, at most once a day.": {
       "comment": "SettingsCatalog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Looks for a newer Arcane release at launch, at most once a day."
+            "value": "Looks for a newer Arcane Portal release at launch, at most once a day."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cerca una nuova versione di Arcane all’avvio, al massimo una volta al giorno."
+            "value": "Cerca una nuova versione di Arcane Portal all’avvio, al massimo una volta al giorno."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Recherche une nouvelle version d’Arcane au lancement, au maximum une fois par jour."
+            "value": "Recherche une nouvelle version d’Arcane Portal au lancement, au maximum une fois par jour."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sucht beim Start nach einer neueren Arcane-Veröffentlichung, höchstens einmal täglich."
+            "value": "Sucht beim Start nach einer neueren Arcane-Portal-Veröffentlichung, höchstens einmal täglich."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Busca una versión más reciente de Arcane al abrir, como máximo una vez al día."
+            "value": "Busca una versión más reciente de Arcane Portal al abrir, como máximo una vez al día."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Busca uma versão mais recente do Arcane ao iniciar, no máximo uma vez por dia."
+            "value": "Busca uma versão mais recente do Arcane Portal ao iniciar, no máximo uma vez por dia."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "启动时检查是否有较新的 Arcane 版本，每天最多一次。"
+            "value": "启动时检查是否有较新的 Arcane Portal 版本，每天最多一次。"
           }
         }
       }
@@ -39637,49 +39591,49 @@
         }
       }
     },
-    "Mod data provided by GameBanana · only mods that work with Arcane are shown": {
+    "Mod data provided by GameBanana · only mods that work with Arcane Portal are shown": {
       "comment": "ModStorePage.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mod data provided by GameBanana · only mods that work with Arcane are shown"
+            "value": "Mod data provided by GameBanana · only mods that work with Arcane Portal are shown"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dati delle mod forniti da GameBanana · vengono mostrate solo le mod compatibili con Arcane"
+            "value": "Dati delle mod forniti da GameBanana · vengono mostrate solo le mod compatibili con Arcane Portal"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Données des mods fournies par GameBanana · seuls les mods compatibles avec Arcane sont affichés"
+            "value": "Données des mods fournies par GameBanana · seuls les mods compatibles avec Arcane Portal sont affichés"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mod-Daten von GameBanana · Es werden nur Mods angezeigt, die mit Arcane funktionieren"
+            "value": "Mod-Daten von GameBanana · Es werden nur Mods angezeigt, die mit Arcane Portal funktionieren"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Datos de mods proporcionados por GameBanana · solo se muestran mods compatibles con Arcane"
+            "value": "Datos de mods proporcionados por GameBanana · solo se muestran mods compatibles con Arcane Portal"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dados de mods fornecidos pelo GameBanana · apenas mods compatíveis com o Arcane são exibidos"
+            "value": "Dados de mods fornecidos pelo GameBanana · apenas mods compatíveis com o Arcane Portal são exibidos"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "模组数据由 GameBanana 提供 · 仅显示适用于 Arcane 的模组"
+            "value": "模组数据由 GameBanana 提供 · 仅显示适用于 Arcane Portal 的模组"
           }
         }
       }
@@ -40295,96 +40249,96 @@
         }
       }
     },
-    "Move Arcane to Applications before updating.": {
+    "Move Arcane Portal to Applications before updating.": {
       "comment": "AppUpdateDialog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Move Arcane to Applications before updating."
+            "value": "Move Arcane Portal to Applications before updating."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sposta Arcane in Applicazioni prima di aggiornarla."
+            "value": "Sposta Arcane Portal in Applicazioni prima di aggiornarla."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Déplacez Arcane dans Applications avant de la mettre à jour."
+            "value": "Déplacez Arcane Portal dans Applications avant de la mettre à jour."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verschiebe Arcane vor dem Aktualisieren in den Programme-Ordner."
+            "value": "Verschiebe Arcane Portal vor dem Aktualisieren in den Programme-Ordner."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mueve Arcane a Aplicaciones antes de actualizar."
+            "value": "Mueve Arcane Portal a Aplicaciones antes de actualizar."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mova o Arcane para Applications antes de atualizar."
+            "value": "Mova o Arcane Portal para Applications antes de atualizar."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "更新前请将 Arcane 移到“应用程序”文件夹。"
+            "value": "更新前请将 Arcane Portal 移到“应用程序”文件夹。"
           }
         }
       }
     },
-    "Move Arcane to Applications to update": {
+    "Move Arcane Portal to Applications to update": {
       "comment": "SettingsAboutSection.swift:220",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Move Arcane to Applications to update"
+            "value": "Move Arcane Portal to Applications to update"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sposta Arcane in Applicazioni per aggiornarla"
+            "value": "Sposta Arcane Portal in Applicazioni per aggiornarla"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Déplacez Arcane dans Applications pour la mettre à jour"
+            "value": "Déplacez Arcane Portal dans Applications pour la mettre à jour"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane zum Aktualisieren in den Programme-Ordner verschieben"
+            "value": "Arcane Portal zum Aktualisieren in den Programme-Ordner verschieben"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mueve Arcane a Aplicaciones para actualizar"
+            "value": "Mueve Arcane Portal a Aplicaciones para actualizar"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mova o Arcane para Applications para atualizar"
+            "value": "Mova o Arcane Portal para Applications para atualizar"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "将 Arcane 移到“应用程序”文件夹以进行更新"
+            "value": "将 Arcane Portal 移到“应用程序”文件夹以进行更新"
           }
         }
       }
@@ -40953,613 +40907,613 @@
         }
       }
     },
-    "Arcane %@": {
+    "Arcane Portal %@": {
       "comment": "AppUpdateDialog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@"
+            "value": "Arcane Portal %@"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@"
+            "value": "Arcane Portal %@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@"
+            "value": "Arcane Portal %@"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@"
+            "value": "Arcane Portal %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@"
+            "value": "Arcane Portal %@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@"
+            "value": "Arcane Portal %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@"
+            "value": "Arcane Portal %@"
           }
         }
       }
     },
-    "Arcane %@ needs macOS %@ or later; nothing was changed.": {
+    "Arcane Portal %@ needs macOS %@ or later; nothing was changed.": {
       "comment": "AppUpdater.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@ needs macOS %@ or later; nothing was changed."
+            "value": "Arcane Portal %@ needs macOS %@ or later; nothing was changed."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@ richiede macOS %@ o successivo; non è stato modificato nulla."
+            "value": "Arcane Portal %@ richiede macOS %@ o successivo; non è stato modificato nulla."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@ nécessite macOS %@ ou ultérieur ; aucune modification n’a été effectuée."
+            "value": "Arcane Portal %@ nécessite macOS %@ ou ultérieur ; aucune modification n’a été effectuée."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@ benötigt macOS %@ oder neuer; es wurde nichts geändert."
+            "value": "Arcane Portal %@ benötigt macOS %@ oder neuer; es wurde nichts geändert."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@ requiere macOS %@ o posterior; no se ha cambiado nada."
+            "value": "Arcane Portal %@ requiere macOS %@ o posterior; no se ha cambiado nada."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane %@ requer macOS %@ ou posterior; nada foi alterado."
+            "value": "O Arcane Portal %@ requer macOS %@ ou posterior; nada foi alterado."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane %@ 需要 macOS %@ 或更高版本；未做任何更改。"
+            "value": "Arcane Portal %@ 需要 macOS %@ 或更高版本；未做任何更改。"
           }
         }
       }
     },
-    "Arcane cannot read this folder. Reconnect it or choose another.": {
+    "Arcane Portal cannot read this folder. Reconnect it or choose another.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane cannot read this folder. Reconnect it or choose another."
+            "value": "Arcane Portal cannot read this folder. Reconnect it or choose another."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane non può leggere questa cartella. Ricollegala o scegline un’altra."
+            "value": "Arcane Portal non può leggere questa cartella. Ricollegala o scegline un’altra."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane ne peut pas lire ce dossier. Reconnectez-le ou choisissez-en un autre."
+            "value": "Arcane Portal ne peut pas lire ce dossier. Reconnectez-le ou choisissez-en un autre."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane kann diesen Ordner nicht lesen. Verbinde ihn erneut oder wähle einen anderen."
+            "value": "Arcane Portal kann diesen Ordner nicht lesen. Verbinde ihn erneut oder wähle einen anderen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane no puede leer esta carpeta. Vuelve a conectarla o elige otra."
+            "value": "Arcane Portal no puede leer esta carpeta. Vuelve a conectarla o elige otra."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane não consegue ler esta pasta. Reconecte ou escolha outra."
+            "value": "O Arcane Portal não consegue ler esta pasta. Reconecte ou escolha outra."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 无法读取此文件夹。请重新连接或选择其他文件夹。"
+            "value": "Arcane Portal 无法读取此文件夹。请重新连接或选择其他文件夹。"
           }
         }
       }
     },
-    "Arcane clones it into %@ at %@.": {
+    "Arcane Portal clones it into %@ at %@.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane clones it into %@ at %@."
+            "value": "Arcane Portal clones it into %@ at %@."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane lo clona in %@ al commit %@."
+            "value": "Arcane Portal lo clona in %@ al commit %@."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane le clone dans %@ au commit %@."
+            "value": "Arcane Portal le clone dans %@ au commit %@."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane klont es nach %@ mit Stand %@."
+            "value": "Arcane Portal klont es nach %@ mit Stand %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane lo clona en %@ en el commit %@."
+            "value": "Arcane Portal lo clona en %@ en el commit %@."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane clona o repositório em %@ no commit %@."
+            "value": "O Arcane Portal clona o repositório em %@ no commit %@."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 会将其克隆到 %@（提交 %@）。"
+            "value": "Arcane Portal 会将其克隆到 %@（提交 %@）。"
           }
         }
       }
     },
-    "Arcane could not read the file.": {
+    "Arcane Portal could not read the file.": {
       "comment": "CheatsPanel.swift:455",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane could not read the file."
+            "value": "Arcane Portal could not read the file."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane non ha potuto leggere il file."
+            "value": "Arcane Portal non ha potuto leggere il file."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane n’a pas pu lire le fichier."
+            "value": "Arcane Portal n’a pas pu lire le fichier."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane konnte die Datei nicht lesen."
+            "value": "Arcane Portal konnte die Datei nicht lesen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane no ha podido leer el archivo."
+            "value": "Arcane Portal no ha podido leer el archivo."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane não conseguiu ler o arquivo."
+            "value": "O Arcane Portal não conseguiu ler o arquivo."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 无法读取该文件。"
+            "value": "Arcane Portal 无法读取该文件。"
           }
         }
       }
     },
-    "Arcane could not restart: %@": {
+    "Arcane Portal could not restart: %@": {
       "comment": "AppShellView.swift:1029",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane could not restart: %@"
+            "value": "Arcane Portal could not restart: %@"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane non ha potuto riavviarsi: %@"
+            "value": "Arcane Portal non ha potuto riavviarsi: %@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane n’a pas pu redémarrer : %@"
+            "value": "Arcane Portal n’a pas pu redémarrer : %@"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane konnte nicht neu gestartet werden: %@"
+            "value": "Arcane Portal konnte nicht neu gestartet werden: %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane no ha podido reiniciarse: %@"
+            "value": "Arcane Portal no ha podido reiniciarse: %@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não foi possível reiniciar o Arcane: %@"
+            "value": "Não foi possível reiniciar o Arcane Portal: %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 无法重新启动：%@"
+            "value": "Arcane Portal 无法重新启动：%@"
           }
         }
       }
     },
-    "Arcane could not save your library, so recent changes may be lost when it quits: ": {
+    "Arcane Portal could not save your library, so recent changes may be lost when it quits: ": {
       "comment": "AppViewModel.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane could not save your library, so recent changes may be lost when it quits: "
+            "value": "Arcane Portal could not save your library, so recent changes may be lost when it quits: "
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane non ha potuto salvare la libreria; le modifiche recenti potrebbero andare perse alla chiusura: "
+            "value": "Arcane Portal non ha potuto salvare la libreria; le modifiche recenti potrebbero andare perse alla chiusura: "
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane n’a pas pu enregistrer votre bibliothèque. Les modifications récentes risquent donc d’être perdues à sa fermeture : "
+            "value": "Arcane Portal n’a pas pu enregistrer votre bibliothèque. Les modifications récentes risquent donc d’être perdues à sa fermeture : "
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane konnte deine Bibliothek nicht speichern. Daher können beim Beenden die letzten Änderungen verloren gehen: "
+            "value": "Arcane Portal konnte deine Bibliothek nicht speichern. Daher können beim Beenden die letzten Änderungen verloren gehen: "
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane no ha podido guardar la biblioteca, por lo que los cambios recientes podrían perderse al salir: "
+            "value": "Arcane Portal no ha podido guardar la biblioteca, por lo que los cambios recientes podrían perderse al salir: "
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane não conseguiu salvar sua biblioteca. Por isso, as alterações recentes podem ser perdidas quando o app for encerrado: "
+            "value": "O Arcane Portal não conseguiu salvar sua biblioteca. Por isso, as alterações recentes podem ser perdidas quando o app for encerrado: "
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 无法保存你的游戏库，因此退出时可能会丢失最近的更改："
+            "value": "Arcane Portal 无法保存你的游戏库，因此退出时可能会丢失最近的更改："
           }
         }
       }
     },
-    "Arcane downloads it through Xcode.": {
+    "Arcane Portal downloads it through Xcode.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane downloads it through Xcode."
+            "value": "Arcane Portal downloads it through Xcode."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane lo scarica tramite Xcode."
+            "value": "Arcane Portal lo scarica tramite Xcode."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane le télécharge via Xcode."
+            "value": "Arcane Portal le télécharge via Xcode."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane lädt ihn über Xcode herunter."
+            "value": "Arcane Portal lädt ihn über Xcode herunter."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane lo descarga a través de Xcode."
+            "value": "Arcane Portal lo descarga a través de Xcode."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane faz o download pelo Xcode."
+            "value": "O Arcane Portal faz o download pelo Xcode."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 会通过 Xcode 下载。"
+            "value": "Arcane Portal 会通过 Xcode 下载。"
           }
         }
       }
     },
-    "Arcane is personal software released under the MIT license. nxnative, Ryujinx, SPIR-V Cross, LibHac and the other dependencies retain their own licenses through the engine.": {
+    "Arcane Portal is personal software released under the MIT license. nxnative, Ryujinx, SPIR-V Cross, LibHac and the other dependencies retain their own licenses through the engine.": {
       "comment": "SettingsAboutSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane is personal software released under the MIT license. nxnative, Ryujinx, SPIR-V Cross, LibHac and the other dependencies retain their own licenses through the engine."
+            "value": "Arcane Portal is personal software released under the MIT license. nxnative, Ryujinx, SPIR-V Cross, LibHac and the other dependencies retain their own licenses through the engine."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane è un software personale distribuito con licenza MIT. nxnative, Ryujinx, SPIR-V Cross, LibHac e le altre dipendenze mantengono le proprie licenze tramite il motore."
+            "value": "Arcane Portal è un software personale distribuito con licenza MIT. nxnative, Ryujinx, SPIR-V Cross, LibHac e le altre dipendenze mantengono le proprie licenze tramite il motore."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane est un logiciel personnel publié sous licence MIT. nxnative, Ryujinx, SPIR-V Cross, LibHac et les autres dépendances conservent leurs propres licences via le moteur."
+            "value": "Arcane Portal est un logiciel personnel publié sous licence MIT. nxnative, Ryujinx, SPIR-V Cross, LibHac et les autres dépendances conservent leurs propres licences via le moteur."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane ist persönliche Software unter der MIT-Lizenz. nxnative, Ryujinx, SPIR-V Cross, LibHac und die übrigen Abhängigkeiten behalten über die Engine ihre eigenen Lizenzen."
+            "value": "Arcane Portal ist persönliche Software unter der MIT-Lizenz. nxnative, Ryujinx, SPIR-V Cross, LibHac und die übrigen Abhängigkeiten behalten über die Engine ihre eigenen Lizenzen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane es software personal distribuido bajo la licencia MIT. nxnative, Ryujinx, SPIR-V Cross, LibHac y las demás dependencias conservan sus propias licencias a través del motor."
+            "value": "Arcane Portal es software personal distribuido bajo la licencia MIT. nxnative, Ryujinx, SPIR-V Cross, LibHac y las demás dependencias conservan sus propias licencias a través del motor."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane é um software pessoal disponibilizado sob a licença MIT. nxnative, Ryujinx, SPIR-V Cross, LibHac e as demais dependências mantêm suas próprias licenças por meio da engine."
+            "value": "O Arcane Portal é um software pessoal disponibilizado sob a licença MIT. nxnative, Ryujinx, SPIR-V Cross, LibHac e as demais dependências mantêm suas próprias licenças por meio da engine."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 是以 MIT 许可证发布的个人软件。nxnative、Ryujinx、SPIR-V Cross、LibHac 及其他依赖项通过引擎保留各自的许可证。"
+            "value": "Arcane Portal 是以 MIT 许可证发布的个人软件。nxnative、Ryujinx、SPIR-V Cross、LibHac 及其他依赖项通过引擎保留各自的许可证。"
           }
         }
       }
     },
-    "Arcane is up to date": {
+    "Arcane Portal is up to date": {
       "comment": "SettingsAboutSection.swift:223",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane is up to date"
+            "value": "Arcane Portal is up to date"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane è aggiornata"
+            "value": "Arcane Portal è aggiornata"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane est à jour"
+            "value": "Arcane Portal est à jour"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane ist auf dem neuesten Stand"
+            "value": "Arcane Portal ist auf dem neuesten Stand"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane está al día"
+            "value": "Arcane Portal está al día"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane está atualizado"
+            "value": "O Arcane Portal está atualizado"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 已是最新版本"
+            "value": "Arcane Portal 已是最新版本"
           }
         }
       }
     },
-    "Arcane restarts to finish.": {
+    "Arcane Portal restarts to finish.": {
       "comment": "AppUpdateDialog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane restarts to finish."
+            "value": "Arcane Portal restarts to finish."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane si riavvia per completare l’operazione."
+            "value": "Arcane Portal si riavvia per completare l’operazione."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane redémarre pour terminer."
+            "value": "Arcane Portal redémarre pour terminer."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane wird zum Abschließen neu gestartet."
+            "value": "Arcane Portal wird zum Abschließen neu gestartet."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane se reinicia para finalizar."
+            "value": "Arcane Portal se reinicia para finalizar."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane será reiniciado para concluir."
+            "value": "O Arcane Portal será reiniciado para concluir."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 需要重新启动以完成操作。"
+            "value": "Arcane Portal 需要重新启动以完成操作。"
           }
         }
       }
     },
-    "Arcane will reopen automatically.": {
+    "Arcane Portal will reopen automatically.": {
       "comment": "AppUpdateDialog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane will reopen automatically."
+            "value": "Arcane Portal will reopen automatically."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane si riaprirà automaticamente."
+            "value": "Arcane Portal si riaprirà automaticamente."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane se rouvrira automatiquement."
+            "value": "Arcane Portal se rouvrira automatiquement."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane wird automatisch wieder geöffnet."
+            "value": "Arcane Portal wird automatisch wieder geöffnet."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane se volverá a abrir automáticamente."
+            "value": "Arcane Portal se volverá a abrir automáticamente."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane será reaberto automaticamente."
+            "value": "O Arcane Portal será reaberto automaticamente."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 将自动重新打开。"
+            "value": "Arcane Portal 将自动重新打开。"
           }
         }
       }
     },
-    "Arcane's copy of %@ goes to the Trash, so you can bring it back from there. Your original file stays where it is.": {
+    "Arcane Portal's copy of %@ goes to the Trash, so you can bring it back from there. Your original file stays where it is.": {
       "comment": "ThemePickerView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane's copy of %@ goes to the Trash, so you can bring it back from there. Your original file stays where it is."
+            "value": "Arcane Portal's copy of %@ goes to the Trash, so you can bring it back from there. Your original file stays where it is."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La copia di %@ di Arcane viene spostata nel Cestino: puoi ripristinarla da lì. Il file originale resta dov’è."
+            "value": "La copia di %@ di Arcane Portal viene spostata nel Cestino: puoi ripristinarla da lì. Il file originale resta dov’è."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "La copie de %@ utilisée par Arcane est placée dans la corbeille ; vous pourrez l’y récupérer. Votre fichier d’origine reste à son emplacement."
+            "value": "La copie de %@ utilisée par Arcane Portal est placée dans la corbeille ; vous pourrez l’y récupérer. Votre fichier d’origine reste à son emplacement."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die Arcane-Kopie von %@ wird in den Papierkorb gelegt. Du kannst sie von dort zurückholen. Deine Originaldatei bleibt an ihrem Platz."
+            "value": "Die Arcane-Portal-Kopie von %@ wird in den Papierkorb gelegt. Du kannst sie von dort zurückholen. Deine Originaldatei bleibt an ihrem Platz."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La copia de %@ de Arcane se mueve a la Papelera para que puedas recuperarla. Tu archivo original permanece en su ubicación."
+            "value": "La copia de %@ de Arcane Portal se mueve a la Papelera para que puedas recuperarla. Tu archivo original permanece en su ubicación."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A cópia de %@ do Arcane vai para o Lixo, de onde você poderá restaurá-la. Seu arquivo original permanece onde está."
+            "value": "A cópia de %@ do Arcane Portal vai para o Lixo, de onde você poderá restaurá-la. Seu arquivo original permanece onde está."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 中 %@ 的副本将移到废纸篓，你可以从那里恢复。你的原始文件保持不变。"
+            "value": "Arcane Portal 中 %@ 的副本将移到废纸篓，你可以从那里恢复。你的原始文件保持不变。"
           }
         }
       }
@@ -41611,49 +41565,49 @@
         }
       }
     },
-    "Navigate Arcane.": {
+    "Navigate Arcane Portal.": {
       "comment": "ControlsView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Navigate Arcane."
+            "value": "Navigate Arcane Portal."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Naviga in Arcane."
+            "value": "Naviga in Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Naviguer dans Arcane."
+            "value": "Naviguer dans Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "In Arcane navigieren."
+            "value": "In Arcane Portal navigieren."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Navega por Arcane."
+            "value": "Navega por Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Navegue pelo Arcane."
+            "value": "Navegue pelo Arcane Portal."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "浏览 Arcane。"
+            "value": "浏览 Arcane Portal。"
           }
         }
       }
@@ -42504,49 +42458,49 @@
         }
       }
     },
-    "Newest nxnative, not yet tested by Arcane. It usually works, but something may not. ": {
+    "Newest nxnative, not yet tested by Arcane Portal. It usually works, but something may not. ": {
       "comment": "NewestEngine.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Newest nxnative, not yet tested by Arcane. It usually works, but something may not. "
+            "value": "Newest nxnative, not yet tested by Arcane Portal. It usually works, but something may not. "
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La versione più recente di nxnative, non ancora testata da Arcane. Di solito funziona, ma qualcosa potrebbe non funzionare. "
+            "value": "La versione più recente di nxnative, non ancora testata da Arcane Portal. Di solito funziona, ma qualcosa potrebbe non funzionare. "
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le dernier nxnative, pas encore testé par Arcane. Il fonctionne généralement, mais des problèmes restent possibles. "
+            "value": "Le dernier nxnative, pas encore testé par Arcane Portal. Il fonctionne généralement, mais des problèmes restent possibles. "
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Neuestes nxnative, noch nicht von Arcane getestet. Es funktioniert in der Regel, aber manches möglicherweise nicht. "
+            "value": "Neuestes nxnative, noch nicht von Arcane Portal getestet. Es funktioniert in der Regel, aber manches möglicherweise nicht. "
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El nxnative más reciente, aún no probado por Arcane. Suele funcionar, pero algo podría fallar. "
+            "value": "El nxnative más reciente, aún no probado por Arcane Portal. Suele funcionar, pero algo podría fallar. "
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "nxnative mais recente, ainda não testado pelo Arcane. Geralmente funciona, mas algo pode falhar. "
+            "value": "nxnative mais recente, ainda não testado pelo Arcane Portal. Geralmente funciona, mas algo pode falhar. "
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "最新的 nxnative，尚未经过 Arcane 测试。通常可以正常运行，但某些功能可能不行。"
+            "value": "最新的 nxnative，尚未经过 Arcane Portal 测试。通常可以正常运行，但某些功能可能不行。"
           }
         }
       }
@@ -42880,49 +42834,49 @@
         }
       }
     },
-    "Nintendo Switch cryptographic keys required to decrypt game packages (NSP/XCI). Arcane stores a private copy with mode 0600 permissions; key values are never displayed or logged.": {
+    "Nintendo Switch cryptographic keys required to decrypt game packages (NSP/XCI). Arcane Portal stores a private copy with mode 0600 permissions; key values are never displayed or logged.": {
       "comment": "SettingsEngineSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nintendo Switch cryptographic keys required to decrypt game packages (NSP/XCI). Arcane stores a private copy with mode 0600 permissions; key values are never displayed or logged."
+            "value": "Nintendo Switch cryptographic keys required to decrypt game packages (NSP/XCI). Arcane Portal stores a private copy with mode 0600 permissions; key values are never displayed or logged."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chiavi crittografiche Nintendo Switch necessarie per decrittare i pacchetti di gioco (NSP/XCI). Arcane ne conserva una copia privata con permessi 0600; i valori delle chiavi non vengono mai mostrati né registrati nei log."
+            "value": "Chiavi crittografiche Nintendo Switch necessarie per decrittare i pacchetti di gioco (NSP/XCI). Arcane Portal ne conserva una copia privata con permessi 0600; i valori delle chiavi non vengono mai mostrati né registrati nei log."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Clés cryptographiques Nintendo Switch nécessaires au déchiffrement des paquets de jeu (NSP/XCI). Arcane en conserve une copie privée avec des permissions 0600 ; les valeurs des clés ne sont jamais affichées ni inscrites dans les journaux."
+            "value": "Clés cryptographiques Nintendo Switch nécessaires au déchiffrement des paquets de jeu (NSP/XCI). Arcane Portal en conserve une copie privée avec des permissions 0600 ; les valeurs des clés ne sont jamais affichées ni inscrites dans les journaux."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kryptografische Nintendo Switch-Schlüssel zum Entschlüsseln von Spielpaketen (NSP/XCI). Arcane speichert eine private Kopie mit Zugriffsrechten 0600; Schlüsselwerte werden nie angezeigt oder protokolliert."
+            "value": "Kryptografische Nintendo Switch-Schlüssel zum Entschlüsseln von Spielpaketen (NSP/XCI). Arcane Portal speichert eine private Kopie mit Zugriffsrechten 0600; Schlüsselwerte werden nie angezeigt oder protokolliert."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Claves criptográficas de Nintendo Switch necesarias para descifrar paquetes de juegos (NSP/XCI). Arcane guarda una copia privada con permisos 0600; los valores de las claves nunca se muestran ni se escriben en los registros."
+            "value": "Claves criptográficas de Nintendo Switch necesarias para descifrar paquetes de juegos (NSP/XCI). Arcane Portal guarda una copia privada con permisos 0600; los valores de las claves nunca se muestran ni se escriben en los registros."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chaves criptográficas do Nintendo Switch necessárias para descriptografar pacotes de jogos (NSP/XCI). O Arcane armazena uma cópia privada com permissões 0600; os valores das chaves nunca são exibidos nem registrados em logs."
+            "value": "Chaves criptográficas do Nintendo Switch necessárias para descriptografar pacotes de jogos (NSP/XCI). O Arcane Portal armazena uma cópia privada com permissões 0600; os valores das chaves nunca são exibidos nem registrados em logs."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "解密游戏包（NSP/XCI）所需的 Nintendo Switch 加密密钥。Arcane 以 0600 权限保存一份私有副本；密钥值绝不会显示或写入日志。"
+            "value": "解密游戏包（NSP/XCI）所需的 Nintendo Switch 加密密钥。Arcane Portal 以 0600 权限保存一份私有副本；密钥值绝不会显示或写入日志。"
           }
         }
       }
@@ -44196,96 +44150,96 @@
         }
       }
     },
-    "No mods for this game work with Arcane yet": {
+    "No mods for this game work with Arcane Portal yet": {
       "comment": "GameBananaBandModel.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No mods for this game work with Arcane yet"
+            "value": "No mods for this game work with Arcane Portal yet"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Per questo gioco non ci sono ancora mod compatibili con Arcane"
+            "value": "Per questo gioco non ci sono ancora mod compatibili con Arcane Portal"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aucun mod de ce jeu n’est encore compatible avec Arcane"
+            "value": "Aucun mod de ce jeu n’est encore compatible avec Arcane Portal"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Für dieses Spiel gibt es noch keine Mods, die mit Arcane funktionieren"
+            "value": "Für dieses Spiel gibt es noch keine Mods, die mit Arcane Portal funktionieren"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aún no hay mods de este juego compatibles con Arcane"
+            "value": "Aún no hay mods de este juego compatibles con Arcane Portal"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ainda não há mods deste jogo compatíveis com o Arcane"
+            "value": "Ainda não há mods deste jogo compatíveis com o Arcane Portal"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "此游戏还没有适用于 Arcane 的模组"
+            "value": "此游戏还没有适用于 Arcane Portal 的模组"
           }
         }
       }
     },
-    "No mods for your games work with Arcane yet.": {
+    "No mods for your games work with Arcane Portal yet.": {
       "comment": "ModStorePage.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No mods for your games work with Arcane yet."
+            "value": "No mods for your games work with Arcane Portal yet."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Per i tuoi giochi non ci sono ancora mod compatibili con Arcane."
+            "value": "Per i tuoi giochi non ci sono ancora mod compatibili con Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aucun mod pour vos jeux n’est encore compatible avec Arcane."
+            "value": "Aucun mod pour vos jeux n’est encore compatible avec Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Für deine Spiele gibt es noch keine Mods, die mit Arcane funktionieren."
+            "value": "Für deine Spiele gibt es noch keine Mods, die mit Arcane Portal funktionieren."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aún no hay mods para tus juegos compatibles con Arcane."
+            "value": "Aún no hay mods para tus juegos compatibles con Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ainda não há mods para seus jogos compatíveis com o Arcane."
+            "value": "Ainda não há mods para seus jogos compatíveis com o Arcane Portal."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你的游戏还没有适用于 Arcane 的模组。"
+            "value": "你的游戏还没有适用于 Arcane Portal 的模组。"
           }
         }
       }
@@ -46687,49 +46641,49 @@
         }
       }
     },
-    "Only here changes the image inside Arcane. Use on the Mac also shows it in Finder and the Dock. Automatic uses the game's own icon, then an online image if available. Changing the image keeps this location choice.": {
+    "Only here changes the image inside Arcane Portal. Use on the Mac also shows it in Finder and the Dock. Automatic uses the game's own icon, then an online image if available. Changing the image keeps this location choice.": {
       "comment": "ChangeArtworkView.swift:192",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Only here changes the image inside Arcane. Use on the Mac also shows it in Finder and the Dock. Automatic uses the game's own icon, then an online image if available. Changing the image keeps this location choice."
+            "value": "Only here changes the image inside Arcane Portal. Use on the Mac also shows it in Finder and the Dock. Automatic uses the game's own icon, then an online image if available. Changing the image keeps this location choice."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Solo qui cambia l’immagine all’interno di Arcane. Usa sul Mac la mostra anche nel Finder e nel Dock. Automatico usa l’icona del gioco, poi un’immagine online se disponibile. Cambiare immagine mantiene questa scelta di posizione."
+            "value": "Solo qui cambia l’immagine all’interno di Arcane Portal. Usa sul Mac la mostra anche nel Finder e nel Dock. Automatico usa l’icona del gioco, poi un’immagine online se disponibile. Cambiare immagine mantiene questa scelta di posizione."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Uniquement ici modifie l’image dans Arcane. Utiliser sur le Mac l’affiche aussi dans le Finder et le Dock. Automatique utilise l’icône du jeu, puis une image en ligne si disponible. Changer l’image conserve ce choix d’emplacement."
+            "value": "Uniquement ici modifie l’image dans Arcane Portal. Utiliser sur le Mac l’affiche aussi dans le Finder et le Dock. Automatique utilise l’icône du jeu, puis une image en ligne si disponible. Changer l’image conserve ce choix d’emplacement."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "„Nur hier“ ändert das Bild innerhalb von Arcane. „Auf dem Mac verwenden“ zeigt es auch im Finder und im Dock. „Automatisch“ verwendet das spieleigene Symbol und danach ein Online-Bild, falls verfügbar. Ein Bildwechsel behält diese Ortsauswahl bei."
+            "value": "„Nur hier“ ändert das Bild innerhalb von Arcane Portal. „Auf dem Mac verwenden“ zeigt es auch im Finder und im Dock. „Automatisch“ verwendet das spieleigene Symbol und danach ein Online-Bild, falls verfügbar. Ein Bildwechsel behält diese Ortsauswahl bei."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Solo aquí cambia la imagen dentro de Arcane. Usar en el Mac también la muestra en el Finder y el Dock. Automático usa el icono propio del juego y, si no está disponible, una imagen en línea. Cambiar la imagen conserva esta elección de ubicación."
+            "value": "Solo aquí cambia la imagen dentro de Arcane Portal. Usar en el Mac también la muestra en el Finder y el Dock. Automático usa el icono propio del juego y, si no está disponible, una imagen en línea. Cambiar la imagen conserva esta elección de ubicación."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Só aqui altera a imagem dentro do Arcane. Usar no Mac também a exibe no Finder e no Dock. Automático usa o ícone do próprio jogo e, se não houver, uma imagem on-line disponível. Alterar a imagem mantém esta escolha de local."
+            "value": "Só aqui altera a imagem dentro do Arcane Portal. Usar no Mac também a exibe no Finder e no Dock. Automático usa o ícone do próprio jogo e, se não houver, uma imagem on-line disponível. Alterar a imagem mantém esta escolha de local."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "“仅在此处”只更改 Arcane 中的图片。“在 Mac 上使用”还会在访达和程序坞中显示。“自动”使用游戏自带的图标，如有在线图片则使用在线图片。更改图片会保留此位置选项。"
+            "value": "“仅在此处”只更改 Arcane Portal 中的图片。“在 Mac 上使用”还会在访达和程序坞中显示。“自动”使用游戏自带的图标，如有在线图片则使用在线图片。更改图片会保留此位置选项。"
           }
         }
       }
@@ -47016,49 +46970,49 @@
         }
       }
     },
-    "Open Arcane in fullscreen. Applies at the next launch.": {
+    "Open Arcane Portal in fullscreen. Applies at the next launch.": {
       "comment": "SettingsCatalog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open Arcane in fullscreen. Applies at the next launch."
+            "value": "Open Arcane Portal in fullscreen. Applies at the next launch."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apri Arcane a schermo intero. Si applica al prossimo avvio."
+            "value": "Apri Arcane Portal a schermo intero. Si applica al prossimo avvio."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvrir Arcane en plein écran. S’applique au prochain lancement."
+            "value": "Ouvrir Arcane Portal en plein écran. S’applique au prochain lancement."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane im Vollbild öffnen. Gilt beim nächsten Start."
+            "value": "Arcane Portal im Vollbild öffnen. Gilt beim nächsten Start."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abre Arcane en pantalla completa. Se aplica en el próximo inicio."
+            "value": "Abre Arcane Portal en pantalla completa. Se aplica en el próximo inicio."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abra o Arcane em tela cheia. Aplicado na próxima abertura."
+            "value": "Abra o Arcane Portal em tela cheia. Aplicado na próxima abertura."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "以全屏打开 Arcane。下次启动时生效。"
+            "value": "以全屏打开 Arcane Portal。下次启动时生效。"
           }
         }
       }
@@ -47768,49 +47722,49 @@
         }
       }
     },
-    "Open the Setup check: what Arcane needs and what is ready.": {
+    "Open the Setup check: what Arcane Portal needs and what is ready.": {
       "comment": "SettingsStartUpSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open the Setup check: what Arcane needs and what is ready."
+            "value": "Open the Setup check: what Arcane Portal needs and what is ready."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apri il controllo di configurazione: cosa serve a Arcane e cosa è pronto."
+            "value": "Apri il controllo di configurazione: cosa serve a Arcane Portal e cosa è pronto."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvrir la vérification de configuration : ce dont Arcane a besoin et ce qui est prêt."
+            "value": "Ouvrir la vérification de configuration : ce dont Arcane Portal a besoin et ce qui est prêt."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Einrichtungsprüfung öffnen: Was Arcane benötigt und was bereit ist."
+            "value": "Einrichtungsprüfung öffnen: Was Arcane Portal benötigt und was bereit ist."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abre la comprobación inicial: qué necesita Arcane y qué está listo."
+            "value": "Abre la comprobación inicial: qué necesita Arcane Portal y qué está listo."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abra a verificação de configuração: o que o Arcane precisa e o que já está pronto."
+            "value": "Abra a verificação de configuração: o que o Arcane Portal precisa e o que já está pronto."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "打开配置检查：Arcane 需要什么，哪些已就绪。"
+            "value": "打开配置检查：Arcane Portal 需要什么，哪些已就绪。"
           }
         }
       }
@@ -49787,49 +49741,49 @@
         }
       }
     },
-    "Play time is tracked only for launches from Arcane. Not affiliated with Nintendo.": {
+    "Play time is tracked only for launches from Arcane Portal. Not affiliated with Nintendo.": {
       "comment": "SettingsAboutSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Play time is tracked only for launches from Arcane. Not affiliated with Nintendo."
+            "value": "Play time is tracked only for launches from Arcane Portal. Not affiliated with Nintendo."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il tempo di gioco viene registrato solo per gli avvii da Arcane. Non affiliata a Nintendo."
+            "value": "Il tempo di gioco viene registrato solo per gli avvii da Arcane Portal. Non affiliata a Nintendo."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le temps de jeu est comptabilisé uniquement pour les lancements depuis Arcane. Sans affiliation avec Nintendo."
+            "value": "Le temps de jeu est comptabilisé uniquement pour les lancements depuis Arcane Portal. Sans affiliation avec Nintendo."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Spielzeit wird nur bei Starts über Arcane erfasst. Keine Verbindung zu Nintendo."
+            "value": "Spielzeit wird nur bei Starts über Arcane Portal erfasst. Keine Verbindung zu Nintendo."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El tiempo de juego solo se registra al iniciar desde Arcane. Sin afiliación con Nintendo."
+            "value": "El tiempo de juego solo se registra al iniciar desde Arcane Portal. Sin afiliación con Nintendo."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O tempo de jogo é registrado apenas quando o jogo é aberto pelo Arcane. Sem afiliação com a Nintendo."
+            "value": "O tempo de jogo é registrado apenas quando o jogo é aberto pelo Arcane Portal. Sem afiliação com a Nintendo."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "仅记录从 Arcane 启动的游戏时间。与 Nintendo 无关。"
+            "value": "仅记录从 Arcane Portal 启动的游戏时间。与 Nintendo 无关。"
           }
         }
       }
@@ -51009,49 +50963,49 @@
         }
       }
     },
-    "Python 3.14 with its modules, zstd and glslang, inside Arcane.": {
+    "Python 3.14 with its modules, zstd and glslang, inside Arcane Portal.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Python 3.14 with its modules, zstd and glslang, inside Arcane."
+            "value": "Python 3.14 with its modules, zstd and glslang, inside Arcane Portal."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Python 3.14 con i suoi moduli, zstd e glslang, all’interno di Arcane."
+            "value": "Python 3.14 con i suoi moduli, zstd e glslang, all’interno di Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Python 3.14 avec ses modules, zstd et glslang, intégrés à Arcane."
+            "value": "Python 3.14 avec ses modules, zstd et glslang, intégrés à Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Python 3.14 mit seinen Modulen, zstd und glslang, in Arcane enthalten."
+            "value": "Python 3.14 mit seinen Modulen, zstd und glslang, in Arcane Portal enthalten."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Python 3.14 con sus módulos, zstd y glslang, dentro de Arcane."
+            "value": "Python 3.14 con sus módulos, zstd y glslang, dentro de Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Python 3.14 com seus módulos, zstd e glslang, dentro do Arcane."
+            "value": "Python 3.14 com seus módulos, zstd e glslang, dentro do Arcane Portal."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 内置 Python 3.14 及其模块、zstd 和 glslang。"
+            "value": "Arcane Portal 内置 Python 3.14 及其模块、zstd 和 glslang。"
           }
         }
       }
@@ -52701,49 +52655,49 @@
         }
       }
     },
-    "Reinstall Arcane so the porting uses its own arm64 Python.": {
+    "Reinstall Arcane Portal so the porting uses its own arm64 Python.": {
       "comment": "PortingFailureReason.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reinstall Arcane so the porting uses its own arm64 Python."
+            "value": "Reinstall Arcane Portal so the porting uses its own arm64 Python."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reinstalla Arcane affinché la creazione dell’app per Mac usi il Python arm64 incluso."
+            "value": "Reinstalla Arcane Portal affinché la creazione dell’app per Mac usi il Python arm64 incluso."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Réinstallez Arcane pour que la création de l’app Mac utilise son propre Python arm64."
+            "value": "Réinstallez Arcane Portal pour que la création de l’app Mac utilise son propre Python arm64."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Installiere Arcane erneut, damit zur App-Erstellung das eigene arm64-Python verwendet wird."
+            "value": "Installiere Arcane Portal erneut, damit zur App-Erstellung das eigene arm64-Python verwendet wird."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reinstala Arcane para que la compilación use su propio Python arm64."
+            "value": "Reinstala Arcane Portal para que la compilación use su propio Python arm64."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reinstale o Arcane para que a compilação use o Python arm64 incluído no app."
+            "value": "Reinstale o Arcane Portal para que a compilação use o Python arm64 incluído no app."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请重新安装 Arcane，以便移植使用其自带的 arm64 Python。"
+            "value": "请重新安装 Arcane Portal，以便移植使用其自带的 arm64 Python。"
           }
         }
       }
@@ -57250,31 +57204,31 @@
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confronta il motore di questa versione di Arcane con seedds/nxnative main."
+            "value": "Confronta il motore di questa versione di Arcane Portal con seedds/nxnative main."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Comparer le moteur de cette version d’Arcane avec main de seedds/nxnative."
+            "value": "Comparer le moteur de cette version d’Arcane Portal avec main de seedds/nxnative."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vergleiche die Engine dieser Arcane-Version mit seedds/nxnative main."
+            "value": "Vergleiche die Engine dieser Arcane-Portal-Version mit seedds/nxnative main."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compara el motor de este Arcane con main de seedds/nxnative."
+            "value": "Compara el motor de este Arcane Portal con main de seedds/nxnative."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Veja como a engine deste Arcane se compara ao main de seedds/nxnative."
+            "value": "Veja como a engine deste Arcane Portal se compara ao main de seedds/nxnative."
           }
         },
         "zh-Hans": {
@@ -57520,49 +57474,49 @@
         }
       }
     },
-    "Selene is a Playnite theme for Windows. No Selene name, logo, wallpaper, avatar or sound is used as Arcane branding; this is a visual adaptation in SwiftUI.": {
+    "Selene is a Playnite theme for Windows. No Selene name, logo, wallpaper, avatar or sound is used as Arcane Portal branding; this is a visual adaptation in SwiftUI.": {
       "comment": "SettingsAboutSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Selene is a Playnite theme for Windows. No Selene name, logo, wallpaper, avatar or sound is used as Arcane branding; this is a visual adaptation in SwiftUI."
+            "value": "Selene is a Playnite theme for Windows. No Selene name, logo, wallpaper, avatar or sound is used as Arcane Portal branding; this is a visual adaptation in SwiftUI."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Selene è un tema di Playnite per Windows. Il nome, il logo, gli sfondi, gli avatar e i suoni di Selene non sono usati come identità di Arcane; si tratta di un adattamento visivo in SwiftUI."
+            "value": "Selene è un tema di Playnite per Windows. Il nome, il logo, gli sfondi, gli avatar e i suoni di Selene non sono usati come identità di Arcane Portal; si tratta di un adattamento visivo in SwiftUI."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Selene est un thème Playnite pour Windows. Arcane n’utilise ni le nom, ni le logo, ni les fonds d’écran, avatars ou sons de Selene comme identité de marque ; il s’agit d’une adaptation visuelle en SwiftUI."
+            "value": "Selene est un thème Playnite pour Windows. Arcane Portal n’utilise ni le nom, ni le logo, ni les fonds d’écran, avatars ou sons de Selene comme identité de marque ; il s’agit d’une adaptation visuelle en SwiftUI."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Selene ist ein Playnite-Theme für Windows. Name, Logo, Hintergrundbilder, Avatare und Sounds von Selene werden nicht als Markenauftritt von Arcane verwendet; dies ist eine visuelle Adaption in SwiftUI."
+            "value": "Selene ist ein Playnite-Theme für Windows. Name, Logo, Hintergrundbilder, Avatare und Sounds von Selene werden nicht als Markenauftritt von Arcane Portal verwendet; dies ist eine visuelle Adaption in SwiftUI."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Selene es un tema de Playnite para Windows. Arcane no usa el nombre, el logotipo, los fondos, los avatares ni los sonidos de Selene como identidad de marca; es una adaptación visual en SwiftUI."
+            "value": "Selene es un tema de Playnite para Windows. Arcane Portal no usa el nombre, el logotipo, los fondos, los avatares ni los sonidos de Selene como identidad de marca; es una adaptación visual en SwiftUI."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Selene é um tema do Playnite para Windows. Nenhum nome, logotipo, papel de parede, avatar ou som do Selene é usado como identidade do Arcane; esta é uma adaptação visual em SwiftUI."
+            "value": "Selene é um tema do Playnite para Windows. Nenhum nome, logotipo, papel de parede, avatar ou som do Selene é usado como identidade do Arcane Portal; esta é uma adaptação visual em SwiftUI."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Selene 是一款适用于 Windows 版 Playnite 的主题。Arcane 的品牌标识中未使用任何 Selene 的名称、标志、壁纸、头像或声音；这是用 SwiftUI 实现的视觉改编。"
+            "value": "Selene 是一款适用于 Windows 版 Playnite 的主题。Arcane Portal 的品牌标识中未使用任何 Selene 的名称、标志、壁纸、头像或声音；这是用 SwiftUI 实现的视觉改编。"
           }
         }
       }
@@ -63301,49 +63255,49 @@
         }
       }
     },
-    "That file is not an image Arcane can read.": {
+    "That file is not an image Arcane Portal can read.": {
       "comment": "ArtworkPicker.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "That file is not an image Arcane can read."
+            "value": "That file is not an image Arcane Portal can read."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il file non è un’immagine leggibile da Arcane."
+            "value": "Il file non è un’immagine leggibile da Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ce fichier n’est pas une image lisible par Arcane."
+            "value": "Ce fichier n’est pas une image lisible par Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Datei ist kein für Arcane lesbares Bild."
+            "value": "Diese Datei ist kein für Arcane Portal lesbares Bild."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ese archivo no es una imagen que Arcane pueda leer."
+            "value": "Ese archivo no es una imagen que Arcane Portal pueda leer."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esse arquivo não é uma imagem que o Arcane consiga ler."
+            "value": "Esse arquivo não é uma imagem que o Arcane Portal consiga ler."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "该文件不是 Arcane 能读取的图片。"
+            "value": "该文件不是 Arcane Portal 能读取的图片。"
           }
         }
       }
@@ -64241,49 +64195,49 @@
         }
       }
     },
-    "The build result is kept for this session. Free space if needed, then retry saving before closing Arcane.": {
+    "The build result is kept for this session. Free space if needed, then retry saving before closing Arcane Portal.": {
       "comment": "Catalog activation and recovery",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The build result is kept for this session. Free space if needed, then retry saving before closing Arcane."
+            "value": "The build result is kept for this session. Free space if needed, then retry saving before closing Arcane Portal."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il risultato della build viene conservato per questa sessione. Libera spazio se necessario, poi ritenta il salvataggio prima di chiudere Arcane."
+            "value": "Il risultato della build viene conservato per questa sessione. Libera spazio se necessario, poi ritenta il salvataggio prima di chiudere Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le résultat de la compilation est conservé pour cette session. Libérez de l’espace si nécessaire, puis réessayez d’enregistrer avant de fermer Arcane."
+            "value": "Le résultat de la compilation est conservé pour cette session. Libérez de l’espace si nécessaire, puis réessayez d’enregistrer avant de fermer Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Das Build-Ergebnis bleibt für diese Sitzung erhalten. Gib bei Bedarf Speicherplatz frei und versuche das Speichern erneut, bevor du Arcane schließt."
+            "value": "Das Build-Ergebnis bleibt für diese Sitzung erhalten. Gib bei Bedarf Speicherplatz frei und versuche das Speichern erneut, bevor du Arcane Portal schließt."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El resultado de la compilación se conserva durante esta sesión. Libera espacio si es necesario y vuelve a guardarlo antes de cerrar Arcane."
+            "value": "El resultado de la compilación se conserva durante esta sesión. Libera espacio si es necesario y vuelve a guardarlo antes de cerrar Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O resultado da compilação será mantido nesta sessão. Libere espaço se necessário e tente salvar novamente antes de fechar o Arcane."
+            "value": "O resultado da compilação será mantido nesta sessão. Libere espaço se necessário e tente salvar novamente antes de fechar o Arcane Portal."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "构建结果在本次会话中保留。如有需要请释放空间，然后在关闭 Arcane 前重试保存。"
+            "value": "构建结果在本次会话中保留。如有需要请释放空间，然后在关闭 Arcane Portal 前重试保存。"
           }
         }
       }
@@ -64852,49 +64806,49 @@
         }
       }
     },
-    "The download is not a valid Arcane %@; nothing was changed.": {
+    "The download is not a valid Arcane Portal %@; nothing was changed.": {
       "comment": "AppUpdater.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The download is not a valid Arcane %@; nothing was changed."
+            "value": "The download is not a valid Arcane Portal %@; nothing was changed."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il file scaricato non è una copia valida di Arcane %@; non è stato modificato nulla."
+            "value": "Il file scaricato non è una copia valida di Arcane Portal %@; non è stato modificato nulla."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le téléchargement n’est pas une copie valide d’Arcane %@ ; aucune modification n’a été effectuée."
+            "value": "Le téléchargement n’est pas une copie valide d’Arcane Portal %@ ; aucune modification n’a été effectuée."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Der Download ist keine gültige Version von Arcane %@; es wurde nichts geändert."
+            "value": "Der Download ist keine gültige Version von Arcane Portal %@; es wurde nichts geändert."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La descarga no es una copia válida de Arcane %@; no se ha cambiado nada."
+            "value": "La descarga no es una copia válida de Arcane Portal %@; no se ha cambiado nada."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O download não é uma cópia válida do Arcane %@; nada foi alterado."
+            "value": "O download não é uma cópia válida do Arcane Portal %@; nada foi alterado."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "下载内容不是有效的 Arcane %@；未做任何更改。"
+            "value": "下载内容不是有效的 Arcane Portal %@；未做任何更改。"
           }
         }
       }
@@ -65087,49 +65041,49 @@
         }
       }
     },
-    "The engine folder has changed files. Arcane never touches them: put them aside, then try again.": {
+    "The engine folder has changed files. Arcane Portal never touches them: put them aside, then try again.": {
       "comment": "NewestEngine.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The engine folder has changed files. Arcane never touches them: put them aside, then try again."
+            "value": "The engine folder has changed files. Arcane Portal never touches them: put them aside, then try again."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La cartella del motore contiene file modificati. Arcane non li tocca mai: mettili da parte, poi riprova."
+            "value": "La cartella del motore contiene file modificati. Arcane Portal non li tocca mai: mettili da parte, poi riprova."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le dossier du moteur contient des fichiers modifiés. Arcane n’y touche jamais : mettez-les de côté, puis réessayez."
+            "value": "Le dossier du moteur contient des fichiers modifiés. Arcane Portal n’y touche jamais : mettez-les de côté, puis réessayez."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Der Engine-Ordner enthält geänderte Dateien. Arcane verändert sie niemals: Lege sie beiseite und versuche es erneut."
+            "value": "Der Engine-Ordner enthält geänderte Dateien. Arcane Portal verändert sie niemals: Lege sie beiseite und versuche es erneut."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La carpeta del motor contiene archivos modificados. Arcane nunca los modifica: apártalos e inténtalo de nuevo."
+            "value": "La carpeta del motor contiene archivos modificados. Arcane Portal nunca los modifica: apártalos e inténtalo de nuevo."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A pasta da engine tem arquivos alterados. O Arcane nunca os modifica: guarde-os em outro local e tente novamente."
+            "value": "A pasta da engine tem arquivos alterados. O Arcane Portal nunca os modifica: guarde-os em outro local e tente novamente."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "引擎文件夹中有被修改的文件。Arcane 不会触碰它们：请先将它们移到别处，然后重试。"
+            "value": "引擎文件夹中有被修改的文件。Arcane Portal 不会触碰它们：请先将它们移到别处，然后重试。"
           }
         }
       }
@@ -65181,49 +65135,49 @@
         }
       }
     },
-    "The engine here is at %@, not the %@ this version of Arcane is tested with. Switch moves it to %@. Games you built keep playing.": {
+    "The engine here is at %@, not the %@ this version of Arcane Portal is tested with. Switch moves it to %@. Games you built keep playing.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The engine here is at %@, not the %@ this version of Arcane is tested with. Switch moves it to %@. Games you built keep playing."
+            "value": "The engine here is at %@, not the %@ this version of Arcane Portal is tested with. Switch moves it to %@. Games you built keep playing."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il motore qui è al commit %@, diverso da %@ con cui è testata questa versione di Arcane. Con Cambia lo porti a %@. I giochi già compilati continuano a funzionare."
+            "value": "Il motore qui è al commit %@, diverso da %@ con cui è testata questa versione di Arcane Portal. Con Cambia lo porti a %@. I giochi già compilati continuano a funzionare."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le moteur présent est au commit %@, et non au commit %@ avec lequel cette version d’Arcane a été testée. Changer le fait passer au commit %@. Les jeux déjà compilés restent jouables."
+            "value": "Le moteur présent est au commit %@, et non au commit %@ avec lequel cette version d’Arcane Portal a été testée. Changer le fait passer au commit %@. Les jeux déjà compilés restent jouables."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die Engine hier steht auf %@ statt auf %@, womit diese Arcane-Version getestet wurde. „Wechseln“ setzt sie auf %@. Bereits erstellte Spiele bleiben spielbar."
+            "value": "Die Engine hier steht auf %@ statt auf %@, womit diese Arcane-Portal-Version getestet wurde. „Wechseln“ setzt sie auf %@. Bereits erstellte Spiele bleiben spielbar."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El motor local está en %@, en lugar de %@, con el que se ha probado este Arcane. Cambiar lo mueve a %@. Los juegos ya compilados siguen funcionando."
+            "value": "El motor local está en %@, en lugar de %@, con el que se ha probado este Arcane Portal. Cambiar lo mueve a %@. Los juegos ya compilados siguen funcionando."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A engine aqui está em %@, e não em %@, com o qual este Arcane foi testado. Trocar a move para %@. Seus jogos compilados continuam funcionando."
+            "value": "A engine aqui está em %@, e não em %@, com o qual este Arcane Portal foi testado. Trocar a move para %@. Seus jogos compilados continuam funcionando."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "此处的引擎版本是 %@，而不是此版本 Arcane 测试所用的 %@。“切换”会将其移到 %@。你已构建的游戏仍可游玩。"
+            "value": "此处的引擎版本是 %@，而不是此版本 Arcane Portal 测试所用的 %@。“切换”会将其移到 %@。你已构建的游戏仍可游玩。"
           }
         }
       }
@@ -65275,49 +65229,49 @@
         }
       }
     },
-    "The engine stopped without a message Arcane recognises.": {
+    "The engine stopped without a message Arcane Portal recognises.": {
       "comment": "PortingFailureReason.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The engine stopped without a message Arcane recognises."
+            "value": "The engine stopped without a message Arcane Portal recognises."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il motore si è interrotto senza un messaggio riconosciuto da Arcane."
+            "value": "Il motore si è interrotto senza un messaggio riconosciuto da Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le moteur s’est arrêté sans message reconnu par Arcane."
+            "value": "Le moteur s’est arrêté sans message reconnu par Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die Engine wurde ohne eine für Arcane erkennbare Meldung gestoppt."
+            "value": "Die Engine wurde ohne eine für Arcane Portal erkennbare Meldung gestoppt."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El motor se ha detenido sin un mensaje que Arcane reconozca."
+            "value": "El motor se ha detenido sin un mensaje que Arcane Portal reconozca."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A engine parou sem uma mensagem que o Arcane reconheça."
+            "value": "A engine parou sem uma mensagem que o Arcane Portal reconheça."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "引擎停止运行，且没有 Arcane 能识别的消息。"
+            "value": "引擎停止运行，且没有 Arcane Portal 能识别的消息。"
           }
         }
       }
@@ -66309,49 +66263,49 @@
         }
       }
     },
-    "The icon is not an image Arcane can read.": {
+    "The icon is not an image Arcane Portal can read.": {
       "comment": "AppIconWriter.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The icon is not an image Arcane can read."
+            "value": "The icon is not an image Arcane Portal can read."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’icona non è un’immagine leggibile da Arcane."
+            "value": "L’icona non è un’immagine leggibile da Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’icône n’est pas une image lisible par Arcane."
+            "value": "L’icône n’est pas une image lisible par Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Das Symbol ist kein für Arcane lesbares Bild."
+            "value": "Das Symbol ist kein für Arcane Portal lesbares Bild."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El icono no es una imagen que Arcane pueda leer."
+            "value": "El icono no es una imagen que Arcane Portal pueda leer."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O ícone não é uma imagem que o Arcane consiga ler."
+            "value": "O ícone não é uma imagem que o Arcane Portal consiga ler."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "该图标不是 Arcane 能读取的图片。"
+            "value": "该图标不是 Arcane Portal 能读取的图片。"
           }
         }
       }
@@ -67390,49 +67344,49 @@
         }
       }
     },
-    "The newest nxnative needs Metal %@, so it needs a newer Arcane.": {
+    "The newest nxnative needs Metal %@, so it needs a newer Arcane Portal.": {
       "comment": "NewestEngine.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The newest nxnative needs Metal %@, so it needs a newer Arcane."
+            "value": "The newest nxnative needs Metal %@, so it needs a newer Arcane Portal."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La versione più recente di nxnative richiede Metal %@, quindi serve una versione più recente di Arcane."
+            "value": "La versione più recente di nxnative richiede Metal %@, quindi serve una versione più recente di Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le dernier nxnative nécessite Metal %@ et requiert donc une version plus récente d’Arcane."
+            "value": "Le dernier nxnative nécessite Metal %@ et requiert donc une version plus récente d’Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Das neueste nxnative benötigt Metal %@ und daher eine neuere Arcane-Version."
+            "value": "Das neueste nxnative benötigt Metal %@ und daher eine neuere Arcane-Portal-Version."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El nxnative más reciente necesita Metal %@, por lo que requiere una versión más reciente de Arcane."
+            "value": "El nxnative más reciente necesita Metal %@, por lo que requiere una versión más reciente de Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O nxnative mais recente precisa do Metal %@, por isso requer um Arcane mais recente."
+            "value": "O nxnative mais recente precisa do Metal %@, por isso requer um Arcane Portal mais recente."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "最新的 nxnative 需要 Metal %@，因此需要更新版本的 Arcane。"
+            "value": "最新的 nxnative 需要 Metal %@，因此需要更新版本的 Arcane Portal。"
           }
         }
       }
@@ -68189,96 +68143,96 @@
         }
       }
     },
-    "The screen Arcane opens on.": {
+    "The screen Arcane Portal opens on.": {
       "comment": "SettingsStartUpSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The screen Arcane opens on."
+            "value": "The screen Arcane Portal opens on."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La schermata iniziale di Arcane."
+            "value": "La schermata iniziale di Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’écran affiché à l’ouverture d’Arcane."
+            "value": "L’écran affiché à l’ouverture d’Arcane Portal."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die Ansicht, mit der Arcane geöffnet wird."
+            "value": "Die Ansicht, mit der Arcane Portal geöffnet wird."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La pantalla que muestra Arcane al abrirse."
+            "value": "La pantalla que muestra Arcane Portal al abrirse."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A tela inicial do Arcane."
+            "value": "A tela inicial do Arcane Portal."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 打开时显示的画面。"
+            "value": "Arcane Portal 打开时显示的画面。"
           }
         }
       }
     },
-    "The screen Arcane opens on: Spotlight, Collection, or where you left it.": {
+    "The screen Arcane Portal opens on: Spotlight, Collection, or where you left it.": {
       "comment": "SettingsCatalog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The screen Arcane opens on: Spotlight, Collection, or where you left it."
+            "value": "The screen Arcane Portal opens on: Spotlight, Collection, or where you left it."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La schermata iniziale di Arcane: Spotlight, Raccolta o l’ultima aperta."
+            "value": "La schermata iniziale di Arcane Portal: Spotlight, Raccolta o l’ultima aperta."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’écran affiché à l’ouverture d’Arcane : À la une, Collection ou le dernier écran utilisé."
+            "value": "L’écran affiché à l’ouverture d’Arcane Portal : À la une, Collection ou le dernier écran utilisé."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die Ansicht, mit der Arcane geöffnet wird: Spotlight, Sammlung oder die zuletzt verwendete."
+            "value": "Die Ansicht, mit der Arcane Portal geöffnet wird: Spotlight, Sammlung oder die zuletzt verwendete."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La pantalla que muestra Arcane al abrirse: Destacados, Colección o donde lo dejaste."
+            "value": "La pantalla que muestra Arcane Portal al abrirse: Destacados, Colección o donde lo dejaste."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A tela inicial do Arcane: Destaques, Coleção ou onde você parou."
+            "value": "A tela inicial do Arcane Portal: Destaques, Coleção ou onde você parou."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 打开时显示的画面：Spotlight、合集，或你上次离开的位置。"
+            "value": "Arcane Portal 打开时显示的画面：Spotlight、合集，或你上次离开的位置。"
           }
         }
       }
@@ -69599,96 +69553,96 @@
         }
       }
     },
-    "This version of Arcane uses nxnative %@; the engine here is at %@. Update downloads it and switches to it. Games you built keep playing.": {
+    "This version of Arcane Portal uses nxnative %@; the engine here is at %@. Update downloads it and switches to it. Games you built keep playing.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This version of Arcane uses nxnative %@; the engine here is at %@. Update downloads it and switches to it. Games you built keep playing."
+            "value": "This version of Arcane Portal uses nxnative %@; the engine here is at %@. Update downloads it and switches to it. Games you built keep playing."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Questa Arcane usa nxnative %@; il motore qui è al commit %@. Con Aggiorna lo scarichi e passi a quella versione. I giochi già compilati continuano a funzionare."
+            "value": "Questa Arcane Portal usa nxnative %@; il motore qui è al commit %@. Con Aggiorna lo scarichi e passi a quella versione. I giochi già compilati continuano a funzionare."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette version d’Arcane utilise nxnative %@ ; le moteur présent est au commit %@. Mettre à jour le télécharge et bascule dessus. Les jeux déjà compilés restent jouables."
+            "value": "Cette version d’Arcane Portal utilise nxnative %@ ; le moteur présent est au commit %@. Mettre à jour le télécharge et bascule dessus. Les jeux déjà compilés restent jouables."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Arcane-Version verwendet nxnative %@; die Engine hier steht auf %@. „Aktualisieren“ lädt die Version und wechselt zu ihr. Bereits erstellte Spiele bleiben spielbar."
+            "value": "Diese Arcane-Portal-Version verwendet nxnative %@; die Engine hier steht auf %@. „Aktualisieren“ lädt die Version und wechselt zu ihr. Bereits erstellte Spiele bleiben spielbar."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este Arcane usa nxnative %@; el motor local está en %@. Actualizar lo descarga y cambia a esa versión. Los juegos ya compilados siguen funcionando."
+            "value": "Este Arcane Portal usa nxnative %@; el motor local está en %@. Actualizar lo descarga y cambia a esa versión. Los juegos ya compilados siguen funcionando."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este Arcane usa o nxnative %@; a engine aqui está em %@. Atualizar baixa a versão e muda para ela. Seus jogos compilados continuam funcionando."
+            "value": "Este Arcane Portal usa o nxnative %@; a engine aqui está em %@. Atualizar baixa a versão e muda para ela. Seus jogos compilados continuam funcionando."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "此版本 Arcane 使用 nxnative %@；此处的引擎版本是 %@。“更新”会下载并切换到该版本。你已构建的游戏仍可游玩。"
+            "value": "此版本 Arcane Portal 使用 nxnative %@；此处的引擎版本是 %@。“更新”会下载并切换到该版本。你已构建的游戏仍可游玩。"
           }
         }
       }
     },
-    "This version of Arcane uses the newest nxnative.": {
+    "This version of Arcane Portal uses the newest nxnative.": {
       "comment": "UpstreamCopy.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This version of Arcane uses the newest nxnative."
+            "value": "This version of Arcane Portal uses the newest nxnative."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Questa Arcane usa la versione più recente di nxnative."
+            "value": "Questa Arcane Portal usa la versione più recente di nxnative."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette version d’Arcane utilise le dernier nxnative."
+            "value": "Cette version d’Arcane Portal utilise le dernier nxnative."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Arcane-Version verwendet das neueste nxnative."
+            "value": "Diese Arcane-Portal-Version verwendet das neueste nxnative."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este Arcane usa el nxnative más reciente."
+            "value": "Este Arcane Portal usa el nxnative más reciente."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este Arcane usa o nxnative mais recente."
+            "value": "Este Arcane Portal usa o nxnative mais recente."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "此版本 Arcane 使用最新的 nxnative。"
+            "value": "此版本 Arcane Portal 使用最新的 nxnative。"
           }
         }
       }
@@ -72278,49 +72232,49 @@
         }
       }
     },
-    "Update Arcane: its built-in Python includes zbic from 0.1.3.2. Installing zbic with pip does not reach it.": {
+    "Update Arcane Portal: its built-in Python includes zbic from 0.1.3.2. Installing zbic with pip does not reach it.": {
       "comment": "PortingFailureReason.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Update Arcane: its built-in Python includes zbic from 0.1.3.2. Installing zbic with pip does not reach it."
+            "value": "Update Arcane Portal: its built-in Python includes zbic from 0.1.3.2. Installing zbic with pip does not reach it."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aggiorna Arcane: dalla versione 0.1.3.2 il Python incluso contiene zbic. Installare zbic con pip non lo rende disponibile nell’ambiente incluso."
+            "value": "Aggiorna Arcane Portal: dalla versione 0.1.3.2 il Python incluso contiene zbic. Installare zbic con pip non lo rende disponibile nell’ambiente incluso."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mettez Arcane à jour : son Python intégré inclut zbic depuis la version 0.1.3.2. Installer zbic avec pip n’a aucun effet sur ce Python."
+            "value": "Mettez Arcane Portal à jour : son Python intégré inclut zbic depuis la version 0.1.3.2. Installer zbic avec pip n’a aucun effet sur ce Python."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aktualisiere Arcane: Das integrierte Python enthält zbic ab 0.1.3.2. Eine Installation von zbic mit pip erreicht es nicht."
+            "value": "Aktualisiere Arcane Portal: Das integrierte Python enthält zbic ab 0.1.3.2. Eine Installation von zbic mit pip erreicht es nicht."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actualiza Arcane: su Python integrado incluye zbic desde la versión 0.1.3.2. Instalar zbic con pip no lo añade a ese Python."
+            "value": "Actualiza Arcane Portal: su Python integrado incluye zbic desde la versión 0.1.3.2. Instalar zbic con pip no lo añade a ese Python."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atualize o Arcane: seu Python integrado inclui o zbic desde a versão 0.1.3.2. Instalar o zbic com pip não afeta esse Python."
+            "value": "Atualize o Arcane Portal: seu Python integrado inclui o zbic desde a versão 0.1.3.2. Instalar o zbic com pip não afeta esse Python."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请更新 Arcane：自 0.1.3.2 起，其内置的 Python 已包含 zbic。用 pip 安装 zbic 无法作用于它。"
+            "value": "请更新 Arcane Portal：自 0.1.3.2 起，其内置的 Python 已包含 zbic。用 pip 安装 zbic 无法作用于它。"
           }
         }
       }
@@ -73406,49 +73360,49 @@
         }
       }
     },
-    "Version %@ came with this Xcode; the engine is tested with %@. New builds wait for an Arcane update tested with it. Games you built still play.": {
+    "Version %@ came with this Xcode; the engine is tested with %@. New builds wait for an Arcane Portal update tested with it. Games you built still play.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Version %@ came with this Xcode; the engine is tested with %@. New builds wait for an Arcane update tested with it. Games you built still play."
+            "value": "Version %@ came with this Xcode; the engine is tested with %@. New builds wait for an Arcane Portal update tested with it. Games you built still play."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La versione %@ è inclusa in questo Xcode; il motore è testato con %@. Per nuove compilazioni occorre attendere un aggiornamento di Arcane testato con questa versione. I giochi già compilati funzionano comunque."
+            "value": "La versione %@ è inclusa in questo Xcode; il motore è testato con %@. Per nuove compilazioni occorre attendere un aggiornamento di Arcane Portal testato con questa versione. I giochi già compilati funzionano comunque."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "La version %@ est fournie avec ce Xcode ; le moteur est testé avec %@. Les nouvelles compilations attendent une mise à jour d’Arcane testée avec elle. Les jeux déjà compilés restent jouables."
+            "value": "La version %@ est fournie avec ce Xcode ; le moteur est testé avec %@. Les nouvelles compilations attendent une mise à jour d’Arcane Portal testée avec elle. Les jeux déjà compilés restent jouables."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Version %@ wurde mit diesem Xcode geliefert; die Engine wurde mit %@ getestet. Neue Builds warten auf ein damit getestetes Arcane-Update. Bereits erstellte Spiele bleiben spielbar."
+            "value": "Version %@ wurde mit diesem Xcode geliefert; die Engine wurde mit %@ getestet. Neue Builds warten auf ein damit getestetes Arcane-Portal-Update. Bereits erstellte Spiele bleiben spielbar."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La versión %@ viene con este Xcode; el motor se ha probado con %@. Las nuevas compilaciones deben esperar a una actualización de Arcane probada con ella. Los juegos ya compilados siguen funcionando."
+            "value": "La versión %@ viene con este Xcode; el motor se ha probado con %@. Las nuevas compilaciones deben esperar a una actualización de Arcane Portal probada con ella. Los juegos ya compilados siguen funcionando."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A versão %@ veio com este Xcode; a engine foi testada com %@. Novas compilações aguardam uma atualização do Arcane testada com ela. Seus jogos compilados continuam funcionando."
+            "value": "A versão %@ veio com este Xcode; a engine foi testada com %@. Novas compilações aguardam uma atualização do Arcane Portal testada com ela. Seus jogos compilados continuam funcionando."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "版本 %@ 随此 Xcode 附带；引擎是用 %@ 测试的。新的构建会等待经过其测试的 Arcane 更新。你已构建的游戏仍可游玩。"
+            "value": "版本 %@ 随此 Xcode 附带；引擎是用 %@ 测试的。新的构建会等待经过其测试的 Arcane Portal 更新。你已构建的游戏仍可游玩。"
           }
         }
       }
@@ -73594,49 +73548,49 @@
         }
       }
     },
-    "Version %@; the engine is tested with %@. Arcane installs %@ through Xcode.": {
+    "Version %@; the engine is tested with %@. Arcane Portal installs %@ through Xcode.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Version %@; the engine is tested with %@. Arcane installs %@ through Xcode."
+            "value": "Version %@; the engine is tested with %@. Arcane Portal installs %@ through Xcode."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Versione %@; il motore è testato con %@. Arcane installa %@ tramite Xcode."
+            "value": "Versione %@; il motore è testato con %@. Arcane Portal installa %@ tramite Xcode."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Version %@ ; le moteur est testé avec %@. Arcane installe %@ via Xcode."
+            "value": "Version %@ ; le moteur est testé avec %@. Arcane Portal installe %@ via Xcode."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Version %@; die Engine wurde mit %@ getestet. Arcane installiert %@ über Xcode."
+            "value": "Version %@; die Engine wurde mit %@ getestet. Arcane Portal installiert %@ über Xcode."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Versión %@; el motor se ha probado con %@. Arcane instala %@ a través de Xcode."
+            "value": "Versión %@; el motor se ha probado con %@. Arcane Portal instala %@ a través de Xcode."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Versão %@; a engine foi testada com %@. O Arcane instala %@ pelo Xcode."
+            "value": "Versão %@; a engine foi testada com %@. O Arcane Portal instala %@ pelo Xcode."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "版本 %@；引擎是用 %@ 测试的。Arcane 会通过 Xcode 安装 %@。"
+            "value": "版本 %@；引擎是用 %@ 测试的。Arcane Portal 会通过 Xcode 安装 %@。"
           }
         }
       }
@@ -76085,49 +76039,49 @@
         }
       }
     },
-    "You have Arcane %@. No newer release is available.": {
+    "You have Arcane Portal %@. No newer release is available.": {
       "comment": "AppUpdateDialog.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You have Arcane %@. No newer release is available."
+            "value": "You have Arcane Portal %@. No newer release is available."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hai Arcane %@. Non sono disponibili versioni più recenti."
+            "value": "Hai Arcane Portal %@. Non sono disponibili versioni più recenti."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vous disposez d’Arcane %@. Aucune version plus récente n’est disponible."
+            "value": "Vous disposez d’Arcane Portal %@. Aucune version plus récente n’est disponible."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Du hast Arcane %@. Es ist keine neuere Veröffentlichung verfügbar."
+            "value": "Du hast Arcane Portal %@. Es ist keine neuere Veröffentlichung verfügbar."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tienes Arcane %@. No hay ninguna versión más reciente."
+            "value": "Tienes Arcane Portal %@. No hay ninguna versión más reciente."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Você tem o Arcane %@. Não há versão mais recente disponível."
+            "value": "Você tem o Arcane Portal %@. Não há versão mais recente disponível."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你的 Arcane 版本是 %@。没有更新的版本。"
+            "value": "你的 Arcane Portal 版本是 %@。没有更新的版本。"
           }
         }
       }
@@ -78247,49 +78201,49 @@
         }
       }
     },
-    "macOS is running a temporary copy of Arcane, so it cannot update itself. In the Finder, move Arcane to Applications, then quit it and open it from there.": {
+    "macOS is running a temporary copy of Arcane Portal, so it cannot update itself. In the Finder, move Arcane Portal to Applications, then quit it and open it from there.": {
       "comment": "AppShellView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS is running a temporary copy of Arcane, so it cannot update itself. In the Finder, move Arcane to Applications, then quit it and open it from there."
+            "value": "macOS is running a temporary copy of Arcane Portal, so it cannot update itself. In the Finder, move Arcane Portal to Applications, then quit it and open it from there."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS sta usando una copia temporanea di Arcane, che quindi non può aggiornarsi. Nel Finder sposta Arcane in Applicazioni, poi chiudila e aprila da lì."
+            "value": "macOS sta usando una copia temporanea di Arcane Portal, che quindi non può aggiornarsi. Nel Finder sposta Arcane Portal in Applicazioni, poi chiudila e aprila da lì."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS exécute une copie temporaire d’Arcane, qui ne peut donc pas se mettre à jour. Dans le Finder, déplacez Arcane dans Applications, puis quittez-la et ouvrez-la depuis cet emplacement."
+            "value": "macOS exécute une copie temporaire d’Arcane Portal, qui ne peut donc pas se mettre à jour. Dans le Finder, déplacez Arcane Portal dans Applications, puis quittez-la et ouvrez-la depuis cet emplacement."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS führt eine temporäre Kopie von Arcane aus, die sich deshalb nicht aktualisieren kann. Verschiebe Arcane im Finder in den Programme-Ordner, beende die App und öffne sie dort erneut."
+            "value": "macOS führt eine temporäre Kopie von Arcane Portal aus, die sich deshalb nicht aktualisieren kann. Verschiebe Arcane Portal im Finder in den Programme-Ordner, beende die App und öffne sie dort erneut."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS está ejecutando una copia temporal de Arcane, así que no puede actualizarse. En el Finder, mueve Arcane a Aplicaciones, ciérralo y ábrelo desde allí."
+            "value": "macOS está ejecutando una copia temporal de Arcane Portal, así que no puede actualizarse. En el Finder, mueve Arcane Portal a Aplicaciones, ciérralo y ábrelo desde allí."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O macOS está executando uma cópia temporária do Arcane, por isso ele não pode se atualizar. No Finder, mova o Arcane para Applications, depois feche-o e abra-o de lá."
+            "value": "O macOS está executando uma cópia temporária do Arcane Portal, por isso ele não pode se atualizar. No Finder, mova o Arcane Portal para Applications, depois feche-o e abra-o de lá."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS 正在运行 Arcane 的临时副本，因此它无法自行更新。请在“访达”中将 Arcane 移到“应用程序”文件夹，然后退出并从那里重新打开。"
+            "value": "macOS 正在运行 Arcane Portal 的临时副本，因此它无法自行更新。请在“访达”中将 Arcane Portal 移到“应用程序”文件夹，然后退出并从那里重新打开。"
           }
         }
       }
@@ -78670,7 +78624,7 @@
         }
       }
     },
-    "nxnative has %lld newer commits. Engine updates reach you with Arcane updates, once tested.": {
+    "nxnative has %lld newer commits. Engine updates reach you with Arcane Portal updates, once tested.": {
       "comment": "Quantity-sensitive UI message; preserve %lld count and other placeholders.",
       "localizations": {
         "en": {
@@ -78679,13 +78633,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative has %lld newer commit. Engine updates reach you with Arcane updates, once tested."
+                  "value": "nxnative has %lld newer commit. Engine updates reach you with Arcane Portal updates, once tested."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative has %lld newer commits. Engine updates reach you with Arcane updates, once tested."
+                  "value": "nxnative has %lld newer commits. Engine updates reach you with Arcane Portal updates, once tested."
                 }
               }
             }
@@ -78697,13 +78651,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative ha %lld commit più recente. Gli aggiornamenti del motore arrivano con gli aggiornamenti di Arcane, dopo essere stati testati."
+                  "value": "nxnative ha %lld commit più recente. Gli aggiornamenti del motore arrivano con gli aggiornamenti di Arcane Portal, dopo essere stati testati."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative ha %lld commit più recenti. Gli aggiornamenti del motore arrivano con gli aggiornamenti di Arcane, dopo essere stati testati."
+                  "value": "nxnative ha %lld commit più recenti. Gli aggiornamenti del motore arrivano con gli aggiornamenti di Arcane Portal, dopo essere stati testati."
                 }
               }
             }
@@ -78715,13 +78669,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative compte %lld commit plus récent. Les mises à jour du moteur vous parviennent avec celles de Arcane, une fois testées."
+                  "value": "nxnative compte %lld commit plus récent. Les mises à jour du moteur vous parviennent avec celles de Arcane Portal, une fois testées."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative compte %lld commits plus récents. Les mises à jour du moteur vous parviennent avec celles de Arcane, une fois testées."
+                  "value": "nxnative compte %lld commits plus récents. Les mises à jour du moteur vous parviennent avec celles de Arcane Portal, une fois testées."
                 }
               }
             }
@@ -78733,13 +78687,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative hat %lld neueren Commit. Engine-Updates erhältst du mit Arcane-Updates, sobald sie getestet wurden."
+                  "value": "nxnative hat %lld neueren Commit. Engine-Updates erhältst du mit Arcane-Portal-Updates, sobald sie getestet wurden."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative hat %lld neuere Commits. Engine-Updates erhältst du mit Arcane-Updates, sobald sie getestet wurden."
+                  "value": "nxnative hat %lld neuere Commits. Engine-Updates erhältst du mit Arcane-Portal-Updates, sobald sie getestet wurden."
                 }
               }
             }
@@ -78751,13 +78705,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative tiene %lld commit más reciente. Las actualizaciones del motor te llegan con las de Arcane, una vez probadas."
+                  "value": "nxnative tiene %lld commit más reciente. Las actualizaciones del motor te llegan con las de Arcane Portal, una vez probadas."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative tiene %lld commits más recientes. Las actualizaciones del motor te llegan con las de Arcane, una vez probadas."
+                  "value": "nxnative tiene %lld commits más recientes. Las actualizaciones del motor te llegan con las de Arcane Portal, una vez probadas."
                 }
               }
             }
@@ -78769,13 +78723,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "O nxnative tem %lld commit mais recente. As atualizações da engine chegam com as atualizações do Arcane, após serem testadas."
+                  "value": "O nxnative tem %lld commit mais recente. As atualizações da engine chegam com as atualizações do Arcane Portal, após serem testadas."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "O nxnative tem %lld commits mais recentes. As atualizações da engine chegam com as atualizações do Arcane, após serem testadas."
+                  "value": "O nxnative tem %lld commits mais recentes. As atualizações da engine chegam com as atualizações do Arcane Portal, após serem testadas."
                 }
               }
             }
@@ -78787,13 +78741,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative 有 %lld 个更新的提交。引擎更新经过测试后会随 Arcane 更新一起提供。"
+                  "value": "nxnative 有 %lld 个更新的提交。引擎更新经过测试后会随 Arcane Portal 更新一起提供。"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "nxnative 有 %lld 个更新的提交。引擎更新经过测试后会随 Arcane 更新一起提供。"
+                  "value": "nxnative 有 %lld 个更新的提交。引擎更新经过测试后会随 Arcane Portal 更新一起提供。"
                 }
               }
             }
@@ -78801,49 +78755,49 @@
         }
       }
     },
-    "nxnative, used as it is upstream, at the commit this version of Arcane is tested with.": {
+    "nxnative, used as it is upstream, at the commit this version of Arcane Portal is tested with.": {
       "comment": "SetupCheck.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "nxnative, used as it is upstream, at the commit this version of Arcane is tested with."
+            "value": "nxnative, used as it is upstream, at the commit this version of Arcane Portal is tested with."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "nxnative, usato senza modifiche rispetto a upstream, al commit con cui è testata questa versione di Arcane."
+            "value": "nxnative, usato senza modifiche rispetto a upstream, al commit con cui è testata questa versione di Arcane Portal."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "nxnative, utilisé tel quel depuis le dépôt amont, au commit avec lequel cette version d’Arcane a été testée."
+            "value": "nxnative, utilisé tel quel depuis le dépôt amont, au commit avec lequel cette version d’Arcane Portal a été testée."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "nxnative, unverändert aus dem Upstream, mit dem Commit, mit dem diese Arcane-Version getestet wurde."
+            "value": "nxnative, unverändert aus dem Upstream, mit dem Commit, mit dem diese Arcane-Portal-Version getestet wurde."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "nxnative, sin modificar respecto al proyecto original, en el commit con el que se ha probado este Arcane."
+            "value": "nxnative, sin modificar respecto al proyecto original, en el commit con el que se ha probado este Arcane Portal."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "nxnative, usado sem alterações do repositório original, no commit com o qual este Arcane foi testado."
+            "value": "nxnative, usado sem alterações do repositório original, no commit com o qual este Arcane Portal foi testado."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "nxnative，按上游原样使用，锁定在此版本 Arcane 经过测试的提交。"
+            "value": "nxnative，按上游原样使用，锁定在此版本 Arcane Portal 经过测试的提交。"
           }
         }
       }
@@ -79177,49 +79131,49 @@
         }
       }
     },
-    "the bundled Python is missing; reinstall Arcane": {
+    "the bundled Python is missing; reinstall Arcane Portal": {
       "comment": "AppViewModel.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "the bundled Python is missing; reinstall Arcane"
+            "value": "the bundled Python is missing; reinstall Arcane Portal"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "il Python incluso non è disponibile; reinstalla Arcane"
+            "value": "il Python incluso non è disponibile; reinstalla Arcane Portal"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "le Python intégré est introuvable ; réinstallez Arcane"
+            "value": "le Python intégré est introuvable ; réinstallez Arcane Portal"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "das mitgelieferte Python fehlt; installiere Arcane erneut"
+            "value": "das mitgelieferte Python fehlt; installiere Arcane Portal erneut"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "falta el Python incluido; reinstala Arcane"
+            "value": "falta el Python incluido; reinstala Arcane Portal"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "o Python incluído não foi encontrado; reinstale o Arcane"
+            "value": "o Python incluído não foi encontrado; reinstale o Arcane Portal"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "内置的 Python 缺失；请重新安装 Arcane"
+            "value": "内置的 Python 缺失；请重新安装 Arcane Portal"
           }
         }
       }
@@ -83940,96 +83894,49 @@
         }
       }
     },
-    "Steam and ported apps aren't here yet. Add them later from Settings → Sources or with Porting.": {
+    "Arcane Portal looked without changing anything. Choose what goes in your library.": {
       "comment": "FoundGamesSetupView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Steam and ported apps aren't here yet. Add them later from Settings → Sources or with Porting."
+            "value": "Arcane Portal looked without changing anything. Choose what goes in your library."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Steam e le app portate non ci sono ancora. Puoi aggiungerli dopo, da Impostazioni → Fonti o con Porting."
+            "value": "Arcane Portal ha guardato senza cambiare nulla. Scegli cosa mettere nella libreria."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Steam et les apps portées ne sont pas encore là. Ajoutez-les plus tard depuis Réglages → Sources ou avec Porting."
+            "value": "Arcane Portal a regardé sans rien modifier. Choisissez ce qui va dans votre bibliothèque."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Steam und portierte Apps sind noch nicht da. Füge sie später unter Einstellungen → Quellen oder mit Porting hinzu."
+            "value": "Arcane Portal hat nachgesehen, ohne etwas zu ändern. Wähle, was in deine Bibliothek kommt."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Steam y las apps portadas aún no están. Añádelos después desde Ajustes → Fuentes o con Porting."
+            "value": "Arcane Portal ha mirado sin cambiar nada. Elige qué va a tu biblioteca."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Steam e os apps portados ainda não estão aqui. Adicione-os depois em Ajustes → Fontes ou com Porting."
+            "value": "O Arcane Portal olhou sem alterar nada. Escolha o que vai para a sua biblioteca."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Steam 和移植的 App 还不在这里。以后可在“设置”→“来源”中或通过“移植”添加。"
-          }
-        }
-      }
-    },
-    "Arcane looked without changing anything. Choose what goes in your library.": {
-      "comment": "FoundGamesSetupView.swift",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane looked without changing anything. Choose what goes in your library."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane ha guardato senza cambiare nulla. Scegli cosa mettere nella libreria."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane a regardé sans rien modifier. Choisissez ce qui va dans votre bibliothèque."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane hat nachgesehen, ohne etwas zu ändern. Wähle, was in deine Bibliothek kommt."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane ha mirado sin cambiar nada. Elige qué va a tu biblioteca."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O Arcane olhou sem alterar nada. Escolha o que vai para a sua biblioteca."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arcane 只做了查看，没有做任何更改。请选择要加入游戏库的内容。"
+            "value": "Arcane Portal 只做了查看，没有做任何更改。请选择要加入游戏库的内容。"
           }
         }
       }
@@ -84175,49 +84082,49 @@
         }
       }
     },
-    "Arcane is not affiliated with Nintendo.": {
+    "Arcane Portal is not affiliated with Nintendo.": {
       "comment": "FoundGamesSetupView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane is not affiliated with Nintendo."
+            "value": "Arcane Portal is not affiliated with Nintendo."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane non è affiliato a Nintendo."
+            "value": "Arcane Portal non è affiliato a Nintendo."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane n'est pas affilié à Nintendo."
+            "value": "Arcane Portal n'est pas affilié à Nintendo."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane ist nicht mit Nintendo verbunden."
+            "value": "Arcane Portal ist nicht mit Nintendo verbunden."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane no está afiliado a Nintendo."
+            "value": "Arcane Portal no está afiliado a Nintendo."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Arcane não é afiliado à Nintendo."
+            "value": "O Arcane Portal não é afiliado à Nintendo."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arcane 与 Nintendo 无关。"
+            "value": "Arcane Portal 与 Nintendo 无关。"
           }
         }
       }
@@ -84353,49 +84260,49 @@
         }
       }
     },
-    "Welcome to Arcane": {
+    "Welcome to Arcane Portal": {
       "comment": "ArcaneWelcomeView.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Welcome to Arcane"
+            "value": "Welcome to Arcane Portal"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Benvenuto in Arcane"
+            "value": "Benvenuto in Arcane Portal"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bienvenue dans Arcane"
+            "value": "Bienvenue dans Arcane Portal"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Willkommen bei Arcane"
+            "value": "Willkommen bei Arcane Portal"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Te damos la bienvenida a Arcane"
+            "value": "Te damos la bienvenida a Arcane Portal"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Boas-vindas ao Arcane"
+            "value": "Boas-vindas ao Arcane Portal"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "欢迎使用 Arcane"
+            "value": "欢迎使用 Arcane Portal"
           }
         }
       }
@@ -84856,6 +84763,278 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ 有了新名字：你的游戏和设置都还在原处。"
+          }
+        }
+      }
+    },
+    "Windows games": {
+      "comment": "FoundGamesSetupView.swift",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows games"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giochi Windows"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeux Windows"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows-Spiele"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Juegos de Windows"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jogos do Windows"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows 游戏"
+          }
+        }
+      }
+    },
+    "%lld found in CrossOver, Mac Steam or GamePort. They're in your library.": {
+      "comment": "Quantity-sensitive UI message; preserve %lld count and other placeholders.",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld found in CrossOver, Mac Steam or GamePort. It's in your library."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld found in CrossOver, Mac Steam or GamePort. They're in your library."
+                }
+              }
+            }
+          }
+        },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld trovato in CrossOver, Steam per Mac o GamePort. È nella tua libreria."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld trovati in CrossOver, Steam per Mac o GamePort. Sono nella tua libreria."
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld trouvé dans CrossOver, Steam pour Mac ou GamePort. Il est dans votre bibliothèque."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld trouvés dans CrossOver, Steam pour Mac ou GamePort. Ils sont dans votre bibliothèque."
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld in CrossOver, Mac-Steam oder GamePort gefunden. Es ist in deiner Mediathek."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld in CrossOver, Mac-Steam oder GamePort gefunden. Sie sind in deiner Mediathek."
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld encontrado en CrossOver, Steam para Mac o GamePort. Está en tu biblioteca."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld encontrados en CrossOver, Steam para Mac o GamePort. Están en tu biblioteca."
+                }
+              }
+            }
+          }
+        },
+        "pt-BR": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld encontrado no CrossOver, no Steam para Mac ou no GamePort. Ele está na sua biblioteca."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld encontrados no CrossOver, no Steam para Mac ou no GamePort. Eles estão na sua biblioteca."
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "在 CrossOver、Mac 版 Steam 或 GamePort 中找到 %lld 个。已在你的游戏库中。"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "在 CrossOver、Mac 版 Steam 或 GamePort 中找到 %lld 个。已在你的游戏库中。"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Steam, Windows and ported games aren't here yet. Add them later from Settings → Sources, Windows & Engines or with Porting.": {
+      "comment": "FoundGamesSetupView.swift",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steam, Windows and ported games aren't here yet. Add them later from Settings → Sources, Windows & Engines or with Porting."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giochi Steam, Windows e portati non ci sono ancora. Puoi aggiungerli dopo, da Impostazioni → Sorgenti, Windows & Engines o con Porting."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les jeux Steam, Windows et portés ne sont pas encore là. Ajoutez-les plus tard depuis Réglages → Sources, Windows & Engines ou avec Porting."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steam-, Windows- und portierte Spiele sind noch nicht da. Füge sie später unter Einstellungen → Quellen, Windows & Engines oder mit Porting hinzu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los juegos de Steam, Windows y portados aún no están. Añádelos después desde Ajustes → Fuentes, Windows & Engines o con Porting."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os jogos do Steam, do Windows e portados ainda não estão aqui. Adicione-os depois em Ajustes → Fontes, Windows & Engines ou com Porting."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steam、Windows 和移植的游戏还不在这里。以后可在“设置”→“来源”、Windows & Engines 中或通过“移植”添加。"
+          }
+        }
+      }
+    },
+    "Arcane Portal reads Steam, CrossOver and your Game apps folder without changing anything. You can open the library now and add sources later in Settings.": {
+      "comment": "FoundGamesSetupView.swift",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arcane Portal reads Steam, CrossOver and your Game apps folder without changing anything. You can open the library now and add sources later in Settings."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arcane Portal legge Steam, CrossOver e la cartella delle app dei giochi senza cambiare nulla. Puoi aprire subito la libreria e aggiungere le fonti dopo, dalle Impostazioni."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arcane Portal lit Steam, CrossOver et le dossier des apps de jeux sans rien modifier. Vous pouvez ouvrir la bibliothèque maintenant et ajouter les sources plus tard dans les réglages."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arcane Portal liest Steam, CrossOver und den Spiele-App-Ordner, ohne etwas zu ändern. Du kannst die Mediathek jetzt öffnen und Quellen später in den Einstellungen hinzufügen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arcane Portal lee Steam, CrossOver y la carpeta de apps de juegos sin cambiar nada. Puedes abrir la biblioteca ahora y añadir las fuentes más tarde en Ajustes."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Arcane Portal lê o Steam, CrossOver e a pasta de apps de jogos sem alterar nada. Você pode abrir a biblioteca agora e adicionar as fontes depois, nos Ajustes."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arcane Portal 会读取 Steam、CrossOver 和你的“游戏 App”文件夹，但不会做任何更改。你现在就可以打开游戏库，以后再在“设置”中添加来源。"
           }
         }
       }

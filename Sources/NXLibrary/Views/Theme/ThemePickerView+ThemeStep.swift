@@ -10,7 +10,7 @@ extension ThemePickerView {
     var themeStep: some View {
         let palette = palettes[min(state.themeIndex, palettes.count - 1)]
         return ZStack(alignment: .top) {
-            header(L10n.text("Choose your theme"), L10n.text("Colors for all of Arcane. Move through them to see each one in the preview."))
+            header(L10n.text("Choose your theme"), L10n.text("Colors for all of Arcane Portal. Move through them to see each one in the preview."))
             HStack(alignment: .top, spacing: canvas.u(60)) {
                 grid(count: palettes.count, columns: ThemePickerState.themeColumns) { index in
                     swatch(palettes[index], focused: index == state.themeIndex)

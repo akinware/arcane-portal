@@ -1,8 +1,28 @@
 # Changelog
 
-User-visible changes to Arcane (formerly NX Library) are recorded here. Entries are grouped by release, with the newest first. Engine changes also have their own [upgrade notes](docs/history/engine-upgrades/README.md).
+User-visible changes to Arcane Portal are recorded here, newest first. Arcane Portal is a fork of
+[Arcane](https://github.com/Bium23/NxLibrary) (formerly NX Library); the entries from 0.2.1 down are Arcane's own
+releases, kept as they were. Engine changes also have their own [upgrade notes](docs/history/engine-upgrades/README.md).
 
 ## Unreleased
+
+### Added
+
+- **Arcane Portal.** The fork has its own name, icon (Arcane's crystal with a portal opening behind it), project
+  page and data: `~/Library/Application Support/ArcanePortal`, bundle ID `io.github.akinware.arcaneportal`. It sits
+  beside Arcane without either changing the other, and updates only from `akinware/arcane-portal` releases.
+- **Windows games** through GamePortKit: games downloaded with a Steam QR sign-in, GamePort profiles, CrossOver
+  bottles and Windows games that Mac Steam installed with NotProton appear in one library and start the way they
+  were installed. A NotProton game that has not started after 90 seconds offers the other ways to play it.
+- **Move to Another Drive…** and **Move Back to Internal SSD** in **Settings → Windows & Engines** move every
+  Windows game, engine and Windows copy, with progress and **Cancel**; nothing changes until the copy is verified.
+  An ejected drive is noticed, and automatic snapshots never make full copies on drives without APFS.
+- Contributions are open to everyone: issue forms for bugs, Windows game reports and features, a pull request
+  template, and checks that run on every pull request, forks included.
+
+### Changed
+
+- Windows-game favourites in Spotlight are stored with the app's other preferences.
 
 ### Fixed
 

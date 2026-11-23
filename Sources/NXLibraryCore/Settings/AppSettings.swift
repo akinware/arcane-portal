@@ -176,7 +176,7 @@ public struct AppSettings: Codable, Equatable {
     public var showsSessionCard = true
     /// Steam starts silently and stays out of sight while a Steam game starts; it comes back if it needs the player.
     public var steamInBackground = true
-    /// The one-time "Welcome to Arcane" screen was shown, or a first setup finished (new installs never see it).
+    /// The one-time "Welcome to Arcane Portal" screen was shown, or a first setup finished (new installs never see it).
     public var welcomeArcaneShown = false
     /// The modules' own settings, kept as written under `moduleKeys` (Porting reads them in
     /// `AppSettings+Porting.swift`).

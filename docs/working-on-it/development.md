@@ -1,6 +1,6 @@
 # Development and releases
 
-This guide covers building Arcane itself. For app setup, game preparation and daily use, start with the [user guide](../../README.md). Read [AGENTS.md](../../AGENTS.md) before changing engine integration or installation behaviour.
+This guide covers building Arcane Portal itself. For app setup, game preparation and daily use, start with the [user guide](../../README.md). Read [AGENTS.md](../../AGENTS.md) before changing engine integration or installation behaviour.
 
 ## Development prerequisites
 
@@ -10,7 +10,7 @@ This guide covers building Arcane itself. For app setup, game preparation and da
 - Python 3 for the publication checks and packaging helpers.
 - Homebrew's `zstd` and `glslang`, at the versions recorded in [runtime.lock](../../runtime.lock), when preparing the bundled runtime. The script checks installed versions; it does not install or silently upgrade them.
 
-Building the frontend alone does not need games or keys. Running the game's build workflow also needs the pinned nxnative checkout (its tools are native executables since 641636e2, so no .NET) and the user's own authorised sources and keys. Setup explains and prepares the supported prerequisites.
+Building from source clones both repositories side by side (`git clone https://github.com/akinware/arcane-portal.git` and `git clone https://github.com/akinware/gameport.git`) or lets SwiftPM fetch `GamePortKit` from GitHub. Building the frontend alone does not need games or keys. Running the game's build workflow also needs the pinned nxnative checkout (its tools are native executables since 641636e2, so no .NET) and the user's own authorised sources and keys. Setup explains and prepares the supported prerequisites.
 
 ## Build a development app
 
@@ -19,10 +19,10 @@ From the repository root:
 ~~~sh
 bash scripts/bundle_runtime.sh
 bash scripts/build_app.sh
-codesign --verify --deep --strict "$HOME/Applications/Arcane Dev.app"
+codesign --verify --deep --strict "$HOME/Applications/Arcane Portal Dev.app"
 ~~~
 
-The default destination is `~/Applications/Arcane Dev.app`, named **Arcane Dev**: the copy every change is tested in, kept apart from the released copy (`~/Applications/NX Library.app`, installed from GitHub and updated by itself), which a development build never replaces. On the launcher-development branch, Dev uses bundle ID `local.nxlibrary.development`, app data under `~/Library/Application Support/NXLibrary-Development`, a separate cache root and preference domain. At its first launch it prepares an independent, one-time copy of selected launcher data; games and build caches are not copied, and credential files are excluded. Close the previous launcher copy before that initial import. The held 0.1.4.3 branch retains its previously validated behavior. `build_app.sh` compiles the Release configuration, creates the bundle in staging, includes resources and notices, ad-hoc signs and verifies it, then installs it through the same atomic installer used by the application. It does not launch the app.
+The default destination is `~/Applications/Arcane Portal Dev.app`, named **Arcane Portal Dev**: the copy every change is tested in, kept apart from the released copy (`~/Applications/Arcane Portal.app`, installed from GitHub and updated by itself), which a development build never replaces. Dev uses bundle ID `io.github.akinware.arcaneportal.development`, app data under `~/Library/Application Support/ArcanePortal-Development`, a separate cache root (`~/Library/Caches/ArcanePortal-Development`) and preference domain. At its first launch it prepares an independent, one-time copy of selected launcher data; games and build caches are not copied, and credential files are excluded. Close the previous launcher copy before that initial import. `build_app.sh` compiles the Release configuration, creates the bundle in staging, includes resources and notices, ad-hoc signs and verifies it, then installs it through the same atomic installer used by the application. It does not launch the app.
 
 A development copy carries the version in progress from the `VERSION` file at the repository root and shows it as "(Dev · Launcher)" on this development line in Settings; it has no release marker, so it never offers or installs app updates. `scripts/release.sh <version>` sets the released version itself and refuses to run unless `VERSION` already says that version. After a release, raise `VERSION` to the next version being worked on.
 
@@ -32,7 +32,7 @@ An alternate destination can be supplied without replacing the installed develop
 bash scripts/build_app.sh /tmp/NXLibrary-Review.app
 ~~~
 
-A plain development app uses bundle ID `local.nxlibrary.development`, takes its version from `VERSION` and has no release marker. It never installs its own updates.
+A plain development app uses bundle ID `io.github.akinware.arcaneportal.development`, takes its version from `VERSION` and has no release marker. It never installs its own updates.
 
 ### Bundled runtime
 
@@ -61,7 +61,7 @@ python3 -m unittest discover -s Tests/PublicationChecks
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test
 for check in Tests/CatalogAppChecks/run_*.py; do DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer python3 "$check" || break; done
 bash scripts/build_app.sh
-codesign --verify --deep --strict "$HOME/Applications/Arcane Dev.app"
+codesign --verify --deep --strict "$HOME/Applications/Arcane Portal Dev.app"
 ~~~
 
 When reviewing an engine upgrade in a separate checkout, set `NX_TEST_ENGINE_REPO` to that checkout's absolute path for `swift test`. The engine-fragment regression reads the application's pin and checks it in that repository; an invalid explicit path fails. Without the variable it uses `~/nxnative`, skipping only when that default checkout is absent. This allows verification without fetching into or changing the engine used by the installed app.
@@ -86,7 +86,7 @@ For manual setup checks on an existing account, use **Settings → Start-up → 
 
 ### Continuous integration
 
-The [Checks workflow](../../.github/workflows/ci.yml) runs publication checks and their regressions, Swift tests, all `Tests/CatalogAppChecks/run_*.py` headless regressions, Release compilation, development-app packaging and signature verification on the `xcode-27` runner. Pull requests from forks stay off that runner and receive the hosted publication checks instead. The checkout action is pinned, repository permissions are read-only and credentials are not retained by checkout. It does not publish releases or run the UI, games or engine builds.
+The [Checks workflow](../../.github/workflows/ci.yml) runs publication checks and their regressions, Swift tests, all `Tests/CatalogAppChecks/run_*.py` headless regressions, Release compilation, development-app packaging and signature verification on GitHub's hosted `macos-26` runner with its newest Xcode, for every push and every pull request, forks included. It checks out GamePortKit (`akinware/gameport`, `main`) beside the app first. The checkout action is pinned, repository permissions are read-only and credentials are not retained by checkout. It does not publish releases or run the UI, games or engine builds.
 
 The engine-log-fragment test skips when `~/nxnative` is absent. A private CI run completed with **703 Swift tests reported: 702 passed and one skipped**, plus five Python checks. It verifies frontend packaging without the bundled game runtime; it does not replace the runtime check or the engine compatibility gate.
 
@@ -120,9 +120,9 @@ Publishing requires an explicit maintainer decision and the script's `--publish 
 
 ### Distribution work still open
 
-The first public alpha uses the existing `local.nxlibrary` bundle identity and ad-hoc signing, without notarisation. Developer ID distribution will need signing-identity verification and notarisation. Updates verify GitHub's SHA-256 digest and the sealed app signature; ad-hoc signatures do not independently identify the publisher.
+The release uses the `io.github.akinware.arcaneportal` bundle identity and ad-hoc signing, without notarisation. Developer ID distribution will need signing-identity verification and notarisation. Updates verify GitHub's SHA-256 digest and the sealed app signature; ad-hoc signatures do not independently identify the publisher.
 
-The updater uses `Bium23/NxLibrary` directly, with anonymous public access. No separate download repository or login is needed for users. Release copies update themselves; source builds remain excluded. `release.sh --publish` requires the configured repository to be public. ZIP downloads are limited to 512 MiB, restricted to GitHub's HTTPS download hosts and checked against the published size and digest. The bundled Python checks paths, symlinks, duplicates, special files and a 30,000-entry limit, then extracts using bounded raw decompression with a 2 GiB total limit. It verifies actual output size and CRC rather than trusting ZIP size fields. Release packaging uses this same extraction path and verifies the extracted bundle signature; ZIPs omit Finder metadata sidecars.
+The updater uses `akinware/arcane-portal` directly, with anonymous public access. No separate download repository or login is needed for users. Release copies update themselves; source builds remain excluded. `release.sh --publish` requires the configured repository to be public. ZIP downloads are limited to 512 MiB, restricted to GitHub's HTTPS download hosts and checked against the published size and digest. The bundled Python checks paths, symlinks, duplicates, special files and a 30,000-entry limit, then extracts using bounded raw decompression with a 2 GiB total limit. It verifies actual output size and CRC rather than trusting ZIP size fields. Release packaging uses this same extraction path and verifies the extracted bundle signature; ZIPs omit Finder metadata sidecars.
 
 ### First installation and A → B update test
 
@@ -160,7 +160,7 @@ SwiftPM processes the shared string catalog into `NXLibrary_NXLibraryCore.bundle
 
 ### Isolated launcher-development data
 
-`AppDataProfile` selects immutable roots from the explicit build marker, and `AppData` routes app-owned stores/default preferences through that policy. `DevelopmentStartupView` completes the background import before constructing app stores or the shell. A failure shows Retry/Close; it never opens a writable fallback on the release profile. A changed legacy library with a valid catalog also offers **Keep Arcane’s library**: it archives the catalog, backup and legacy inputs before acknowledging the changed fingerprint, keeping the catalog’s games and sources without merging older changes. `run_startup_recovery.py` exercises this coordinator using a synthetic profile without windows. The source is read directly, not through store load/recovery methods. A staged, hashed allowlist copy and preference import can resume after failure; a completed profile is never automatically reimported. Copied unfinished sessions end at their last recorded heartbeat.
+`AppDataProfile` selects immutable roots from the explicit build marker, and `AppData` routes app-owned stores/default preferences through that policy. `DevelopmentStartupView` completes the background import before constructing app stores or the shell. A failure shows Retry/Close; it never opens a writable fallback on the release profile. A changed legacy library with a valid catalog also offers **Keep Arcane Portal’s library**: it archives the catalog, backup and legacy inputs before acknowledging the changed fingerprint, keeping the catalog’s games and sources without merging older changes. `run_startup_recovery.py` exercises this coordinator using a synthetic profile without windows. The source is read directly, not through store load/recovery methods. A staged, hashed allowlist copy and preference import can resume after failure; a completed profile is never automatically reimported. Copied unfinished sessions end at their last recorded heartbeat.
 
 After the import, `AppShellState` creates the view model and initial router and applies the initial locale/theme on the main actor before publishing the ready shell. Views retain these prepared objects; they do not run model startup or mutate shared theme state as SwiftUI inserts the shell into an already-visible window. Startup logs record only phase boundaries, without library contents or preference values.
 

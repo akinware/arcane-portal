@@ -10,8 +10,8 @@ extension ThemePickerView {
         let live = state.tab == .live
         let panel = NSOpenPanel()
         panel.message = live
-            ? L10n.text("Choose a video for your live background (MP4, MOV or M4V). Arcane keeps its own copy and plays it muted.")
-            : L10n.text("Choose a picture for your background. Arcane keeps its own copy.")
+            ? L10n.text("Choose a video for your live background (MP4, MOV or M4V). Arcane Portal keeps its own copy and plays it muted.")
+            : L10n.text("Choose a picture for your background. Arcane Portal keeps its own copy.")
         panel.allowedContentTypes = live
             ? WallpaperCatalog.videoExtensions.compactMap { UTType(filenameExtension: $0) }
             : [.image]
@@ -78,7 +78,7 @@ extension ThemePickerView {
         let name = theme.credits[id]?.title ?? theme.wallpaperTitle(for: id)
         var message = downloaded
             ? L10n.format("%@ goes to the Trash, so you can bring it back from there, or download it again whenever you like.", [String(describing: name)])
-            : L10n.format("Arcane's copy of %@ goes to the Trash, so you can bring it back from there. Your original file stays where it is.", [String(describing: name)])
+            : L10n.format("Arcane Portal's copy of %@ goes to the Trash, so you can bring it back from there. Your original file stays where it is.", [String(describing: name)])
         if settings.settings.wallpaperID == id { message += L10n.text(" Your theme’s own background takes its place.") }
         return ZStack {
             SeleneTheme.scrim45

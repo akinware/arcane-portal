@@ -6,26 +6,32 @@ public struct FirstRunFindings: Equatable, Sendable {
     /// Ready Mac games in Steam; nil when Steam is absent, unreadable, read only in part, or the read was cancelled.
     public let steamGameCount: Int?
     public let portedAppCount: Int
+    /// Windows games already installed (CrossOver bottles, Mac Steam with NotProton, GamePort); counted by the app.
+    public let windowsGameCount: Int
     /// An error or partial read is not evidence that Steam or its games are absent.
     public let steamReadFailed: Bool
 
-    public init(steamGameCount: Int?, portedAppCount: Int, steamReadFailed: Bool = false) {
+    public init(steamGameCount: Int?, portedAppCount: Int, steamReadFailed: Bool = false, windowsGameCount: Int = 0) {
         self.steamGameCount = steamGameCount
         self.portedAppCount = portedAppCount
+        self.windowsGameCount = windowsGameCount
         self.steamReadFailed = steamReadFailed
     }
 
-    public var isEmpty: Bool { !steamReadFailed && steamGameCount == nil && portedAppCount == 0 }
+    public var isEmpty: Bool { !steamReadFailed && steamGameCount == nil && portedAppCount == 0 && windowsGameCount == 0 }
 
     /// Blocking; run it on a worker. A failed/partial Steam scan can be retried without changing sources.
     /// `portedAppCount` counts the module's apps (Porting: `read(steamRoot:appsFolder:cancelled:)`).
-    public static func read(steamRoot: URL, portedAppCount: () -> Int,
+    public static func read(steamRoot: URL, portedAppCount: () -> Int, windowsGameCount: () -> Int = { 0 },
                             cancelled: @escaping () -> Bool) -> FirstRunFindings {
         let steam = readSteam(root: steamRoot, cancelled: cancelled)
         guard !cancelled() else { return FirstRunFindings(steamGameCount: nil, portedAppCount: 0) }
         let ported = portedAppCount()
         guard !cancelled() else { return FirstRunFindings(steamGameCount: nil, portedAppCount: 0) }
-        return FirstRunFindings(steamGameCount: steam.count, portedAppCount: ported, steamReadFailed: steam.failed)
+        let windows = windowsGameCount()
+        guard !cancelled() else { return FirstRunFindings(steamGameCount: nil, portedAppCount: 0) }
+        return FirstRunFindings(steamGameCount: steam.count, portedAppCount: ported, steamReadFailed: steam.failed,
+                                windowsGameCount: windows)
     }
 
     private static func readSteam(root: URL, cancelled: @escaping () -> Bool) -> (count: Int?, failed: Bool) {
@@ -55,12 +61,14 @@ public final class FirstRunFindingsReader: ObservableObject {
 
     public var isReading: Bool { task != nil }
 
-    public func start(steamRoot: URL, portedAppCount: @escaping @Sendable () -> Int) {
+    public func start(steamRoot: URL, portedAppCount: @escaping @Sendable () -> Int,
+                      windowsGameCount: @escaping @Sendable () -> Int = { 0 }) {
         cancel()
         findings = nil
         let id = requestID
         let worker = Task.detached(priority: .userInitiated) {
-            FirstRunFindings.read(steamRoot: steamRoot, portedAppCount: portedAppCount, cancelled: { Task.isCancelled })
+            FirstRunFindings.read(steamRoot: steamRoot, portedAppCount: portedAppCount, windowsGameCount: windowsGameCount,
+                                  cancelled: { Task.isCancelled })
         }
         task = Task { [weak self] in
             let result = await withTaskCancellationHandler(operation: { await worker.value },

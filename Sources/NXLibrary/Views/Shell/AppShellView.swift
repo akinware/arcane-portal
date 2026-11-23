@@ -25,7 +25,7 @@ struct AppShellView: View {
     /// Rescans the Steam source when Steam rewrites a manifest (a download finishing, a game installed or removed).
     @State var steamWatcher = SteamManifestWatcher()
     @State var setupSourceEntryID: UUID?
-    /// "Welcome to Arcane" is on screen (once, after the update from NX Library).
+    /// "Welcome to Arcane Portal" is on screen (once, after the update from NX Library).
     @State var showsWelcome = false
     /// Closed in this session: never presented again, even while its fade has not yet saved it as shown.
     @State var welcomeDismissed = false

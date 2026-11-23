@@ -24,8 +24,8 @@ extension AppShellView {
     func askToMoveIfTranslocated() {
         guard AppUpdate.asksToBeMoved(Bundle.main.bundleURL) else { return }
         viewModel.showSettingsNotice(
-            title: L10n.text("Move Arcane to Applications to update"),
-            message: L10n.text("macOS is running a temporary copy of Arcane, so it cannot update itself. In the Finder, move Arcane to Applications, then quit it and open it from there."),
+            title: L10n.text("Move Arcane Portal to Applications to update"),
+            message: L10n.text("macOS is running a temporary copy of Arcane Portal, so it cannot update itself. In the Finder, move Arcane Portal to Applications, then quit it and open it from there."),
             actionTitle: L10n.text("Open Applications"),
             cancelTitle: L10n.text("Not now"),
             retry: { NSWorkspace.shared.open(URL(fileURLWithPath: "/Applications", isDirectory: true)) })

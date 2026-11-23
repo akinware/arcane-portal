@@ -76,9 +76,9 @@ final class MultiuserSaveTests: XCTestCase {
         try seed("before", h, location)
         let snapshot = try store.create(location: location, identity: h.identity, reason: .manual)
         let preview = try store.stageRestore(snapshot, location: location)
-        try h.write("changed outside Arcane", location.directory(.users))
+        try h.write("changed outside Arcane Portal", location.directory(.users))
         XCTAssertThrowsError(try SaveTransaction(store: store, isRunning: { false }).restore(preview, location: location, identity: h.identity))
-        XCTAssertEqual(try String(contentsOf: location.directory(.users), encoding: .utf8), "changed outside Arcane")
+        XCTAssertEqual(try String(contentsOf: location.directory(.users), encoding: .utf8), "changed outside Arcane Portal")
         try store.discardRestore(preview, location: location)
     }
 

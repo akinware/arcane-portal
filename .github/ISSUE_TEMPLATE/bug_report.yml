@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible problem in NX Library.
+description: Report a reproducible problem in Arcane Portal.
 body:
   - type: markdown
     attributes:

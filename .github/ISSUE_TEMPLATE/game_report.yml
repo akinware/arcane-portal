@@ -1,0 +1,56 @@
+name: Windows game report
+description: Tell us how a Windows game runs in Arcane Portal.
+title: "[Game] "
+labels: ["game report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One game per report. Do not attach game files, keys, account names or raw logs.
+  - type: input
+    id: game
+    attributes:
+      label: Game and Steam app ID
+      placeholder: "Among Us (945360)"
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: Mac, chip, memory and macOS version
+      placeholder: "MacBook Air M3, 16 GB, macOS 27.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: route
+    attributes:
+      label: How the game is installed
+      options:
+        - Downloaded in Arcane Portal (Steam QR sign-in)
+        - GamePort profile with Windows Steam or the Steam Bridge
+        - CrossOver bottle
+        - Mac Steam with NotProton
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: renderer
+    attributes:
+      label: Renderer and engine
+      description: From the game's Options, for example DXMT · CrossOver 26.3.
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Plays well
+        - Plays with issues
+        - Starts but is not playable
+        - Does not start
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: FPS from Measure FPS (Lab) if you ran it, what goes wrong, and anything you changed to make it work.

@@ -240,7 +240,7 @@ struct SettingsGamePortSection: View {
             }
             SeleneValueRow(
                 "In-App Steam Downloads (DepotDownloader \(DepotDownloaderTool.version))",
-                subtitle: "Downloads Windows Steam games inside Arcane. Sign in once with the Steam Mobile App QR code — no password, no Windows Steam.",
+                subtitle: "Downloads Windows Steam games inside Arcane Portal. Sign in once with the Steam Mobile App QR code — no password, no Windows Steam.",
                 value: steamDownloadAccountSummary,
                 actionTitle: gp.gameport.steamQRDownloader.tool.rememberedAccounts().isEmpty ? "Refresh" : "Sign Out"
             ) {

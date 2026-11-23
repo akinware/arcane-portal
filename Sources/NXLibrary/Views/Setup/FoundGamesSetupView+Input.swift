@@ -27,7 +27,7 @@ extension FoundGamesSetupView {
         switch target {
         case .steamToggle where findings?.steamReadFailed == true:
             SoundEffectService.shared.play(.click)
-            reader.start(steamRoot: steamRoot, appsFolder: viewModel.gameAppsFolder)
+            reader.start(steamRoot: steamRoot, appsFolder: viewModel.gameAppsFolder, windowsGameCount: { WindowsGamesOnThisMac.count() })
         case .steamToggle where steamCount != nil:
             viewModel.chooseSteamOnFound(!steamOn)
             SoundEffectService.shared.play(.key)

@@ -200,7 +200,7 @@ final class AppUpdater: ObservableObject {
 
     private func verifyAndInstall(zip: URL, release: AppUpdate.Release, folder: URL) {
         state = .verifying
-        let expectedID = Bundle.main.bundleIdentifier ?? "local.nxlibrary"
+        let expectedID = Bundle.main.bundleIdentifier ?? "io.github.akinware.arcaneportal"
         let runningOS = ProcessInfo.processInfo.operatingSystemVersion
         Task {
             let prepared = await Task.detached(priority: .userInitiated) {
@@ -232,9 +232,9 @@ final class AppUpdater: ObservableObject {
         let staged = unpacked.appendingPathComponent("NXLibrary.app")
         if let problem = AppUpdate.bundleProblem(staged, expectedID: expectedID, version: release.version, runningOS: runningOS) {
             if case .needsNewerMacOS(let minimum) = problem {
-                return .failure(.init(message: L10n.format("Arcane %@ needs macOS %@ or later; nothing was changed.", [String(describing: release.version), String(describing: minimum)])))
+                return .failure(.init(message: L10n.format("Arcane Portal %@ needs macOS %@ or later; nothing was changed.", [String(describing: release.version), String(describing: minimum)])))
             }
-            return .failure(.init(message: L10n.format("The download is not a valid Arcane %@; nothing was changed.", [String(describing: release.version)])))
+            return .failure(.init(message: L10n.format("The download is not a valid Arcane Portal %@; nothing was changed.", [String(describing: release.version)])))
         }
         guard AppUpdate.validCodeSignature(staged) else {
             return .failure(.init(message: L10n.text("The app signature could not be verified; nothing was changed.")))
@@ -263,10 +263,10 @@ final class AppUpdater: ObservableObject {
                         AppDelegate.relaunchScheduled = true
                         NSApp.terminate(nil)
                     } else {
-                        self.state = .failed("Arcane \(release.version) is installed; open it again to finish.")
+                        self.state = .failed("Arcane Portal \(release.version) is installed; open it again to finish.")
                     }
                 case .failure:
-                    self.fail("Arcane could not be replaced; the current version is unchanged.")
+                    self.fail("Arcane Portal could not be replaced; the current version is unchanged.")
                 }
             }
         }

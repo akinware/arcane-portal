@@ -266,7 +266,7 @@ extension PortingModel {
             metalVersion: environmentStatus.metalVersion, xcodeVersion: environmentStatus.xcodeVersion,
             verified: certified,
             note: certified ? "Certified toolchain"
-                : app.setup.usesNewestEngine ? "Newest engine, not yet tested by Arcane"
+                : app.setup.usesNewestEngine ? "Newest engine, not yet tested by Arcane Portal"
                 : "Untested toolchain (explicit override)")
 
         let merged = try app.catalogRepository.mergeNXNative(scanned: [target], enableSource: true)
@@ -340,7 +340,7 @@ extension PortingModel {
         let toolchain = app.setup.engineToolchain
         guard FileManager.default.isExecutableFile(atPath: toolchain.python.path) else {
             throw NXLibraryError.environmentBlocked(toolchain.isBundled
-                ? L10n.text("the bundled Python is missing; reinstall Arcane")
+                ? L10n.text("the bundled Python is missing; reinstall Arcane Portal")
                 : L10n.text("the nxnative venv Python is missing"))
         }
 

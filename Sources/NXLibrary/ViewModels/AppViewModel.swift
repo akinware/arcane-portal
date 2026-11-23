@@ -19,7 +19,7 @@ final class AppViewModel: ObservableObject {
     /// The automatic Icon's online lookup, shared by Switch and Steam games' Change artwork.
     static let automaticIconArtwork = ArtworkStore()
     let saveGate = SaveOperationGate()
-    let saveQueue = DispatchQueue(label: "local.nxlibrary.saves", qos: .userInitiated)
+    let saveQueue = DispatchQueue(label: "io.github.akinware.arcaneportal.saves", qos: .userInitiated)
     @Published var settingsNotice: SettingsNotice? {
         didSet {
             if let waitingGame = appIcon.iconLaunchWait.gameID, settingsNotice?.id != appIcon.iconLaunchWait.noticeID {
@@ -64,7 +64,7 @@ final class AppViewModel: ObservableObject {
 
     /// The update dialog is up (set by the shell); screens leave input to it.
     var isUpdateOfferOpen = false
-    /// "Welcome to Arcane" is on screen, until its fade has ended: screens' own keyboard monitors let Return and
+    /// "Welcome to Arcane Portal" is on screen, until its fade has ended: screens' own keyboard monitors let Return and
     /// the arrows go to it, and Spotlight holds its entrance until it has gone.
     @Published var isWelcomeOpen = false
     /// The window is still taking its launch mode (Start in fullscreen): Spotlight's entrance waits for it, so the

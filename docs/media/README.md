@@ -1,6 +1,6 @@
 # Immagini e video del README
 
-Il README apre con l'icona di Arcane, il nome e la descrizione. Spotlight introduce la libreria. Le altre immagini accompagnano le funzioni della guida.
+Il README apre con l'icona di Arcane Portal, il nome e la descrizione. Spotlight introduce la libreria. Le altre immagini accompagnano le funzioni della guida.
 
 ## Screenshot inclusi
 

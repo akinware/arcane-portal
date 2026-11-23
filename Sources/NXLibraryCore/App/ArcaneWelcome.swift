@@ -1,6 +1,6 @@
 import Foundation
 
-/// The one-time "Welcome to Arcane" screen for players who update from NX Library: when it shows,
+/// The one-time "Welcome to Arcane Portal" screen for players who update from NX Library: when it shows,
 /// the Steam offer it may carry, its focus and how every exit marks it shown.
 public enum ArcaneWelcome {
     /// Once, after the update: setup already done, never shown, and no save recovery or failed

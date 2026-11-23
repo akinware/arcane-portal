@@ -1,4 +1,4 @@
-# Arcane documentation
+# Arcane Portal documentation
 
 Each folder answers one question. Start from the [project README](../README.md) to use the app; come here to understand or change it.
 

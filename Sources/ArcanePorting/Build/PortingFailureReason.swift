@@ -105,15 +105,15 @@ public struct PortingFailureReason: Codable, Equatable, Sendable {
         case .unknown:
             if let language = missingLanguage { return L10n.format("%@ has no %@, the language set in its Game options.", [String(describing: game), String(describing: language)]) }
             if isProfileMismatch { return L10n.format("The engine's profile for %@ expects other shaders than these files hold: either they are another version or update than the one the profile supports, or the engine now reads them differently and the profile is not updated yet.", [String(describing: game)]) }
-            return L10n.text("The engine stopped without a message Arcane recognises.")
+            return L10n.text("The engine stopped without a message Arcane Portal recognises.")
         }
     }
 
     public var next: String {
         switch kind {
-        case .rosetta: return L10n.text("Reinstall Arcane so the porting uses its own arm64 Python.")
+        case .rosetta: return L10n.text("Reinstall Arcane Portal so the porting uses its own arm64 Python.")
         case .translator: return L10n.text("Open Setup and check the nxnative engine card.")
-        case .zbic: return L10n.text("Update Arcane: its built-in Python includes zbic from 0.1.3.2. Installing zbic with pip does not reach it.")
+        case .zbic: return L10n.text("Update Arcane Portal: its built-in Python includes zbic from 0.1.3.2. Installing zbic with pip does not reach it.")
         case .cltSelected: return L10n.text("Open Setup and select Xcode.")
         case .otherMetal: return L10n.text("Install the certified compiler from Setup, or allow untested toolchains in Settings → Setup and engine.")
         case .shaderRegression: return L10n.text("Port anyway to keep the broken shaders out, or wait for an engine update.")

@@ -119,4 +119,14 @@ final class FirstRunFindingsTests: XCTestCase {
                                               cancelled: { true })
         XCTAssertEqual(cancelled.portedAppCount, 0)
     }
+
+    /// A Mac with only Windows games (a CrossOver bottle, Mac Steam with NotProton) is not an empty Mac.
+    func testWindowsGamesAloneAreFindings() {
+        XCTAssertFalse(FirstRunFindings(steamGameCount: nil, portedAppCount: 0, windowsGameCount: 1).isEmpty)
+        XCTAssertTrue(FirstRunFindings(steamGameCount: nil, portedAppCount: 0).isEmpty)
+        let read = FirstRunFindings.read(steamRoot: URL(fileURLWithPath: "/nonexistent-\(UUID().uuidString)"),
+                                         portedAppCount: { 0 }, windowsGameCount: { 2 }, cancelled: { false })
+        XCTAssertEqual(read.windowsGameCount, 2)
+        XCTAssertFalse(read.isEmpty)
+    }
 }

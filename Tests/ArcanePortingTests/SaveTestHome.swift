@@ -8,7 +8,7 @@ final class SaveTestHome {
     let app: URL
     let tid = "0100000000000001"
     var support: URL { home.appendingPathComponent("Library/Application Support/nxnative/\(tid)") }
-    var backups: URL { home.appendingPathComponent("Library/Application Support/NXLibrary/SaveBackups") }
+    var backups: URL { home.appendingPathComponent("Library/Application Support/ArcanePortal/SaveBackups") }
     init() throws {
         base = FileManager.default.temporaryDirectory.resolvingSymlinksInPath().appendingPathComponent("nx-save-test-\(UUID())")
         home = base.appendingPathComponent("home")

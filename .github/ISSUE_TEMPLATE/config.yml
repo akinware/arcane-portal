@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions and ideas
+    url: https://github.com/akinware/arcane-portal/discussions
+    about: Ask how something works or share an idea before it becomes an issue.
+  - name: Windows engine, recipes and the GamePort CLI
+    url: https://github.com/akinware/gameport/issues
+    about: Problems in GamePortKit itself (engines, Wine prefixes, recipes, Lab) belong there.

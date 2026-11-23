@@ -20,12 +20,12 @@ extension SettingsCatalog {
     static let portingRows: [SettingDescriptor] = [
         // Engine
         row("checkEngineAtLaunch", .engine, "Check engine at launch",
-            "Checks the engine and toolchain each time Arcane starts.") { $0.checkEngineAtLaunch },
+            "Checks the engine and toolchain each time Arcane Portal starts.") { $0.checkEngineAtLaunch },
         action("engineFolder", .engine, "Engine repository", "The upstream checkout used for porting; updates stay manual."),
         action("engineStatus", .engine, "Compatibility", "Engine commit, Metal compiler, build environment, toolchain gate and required flags."),
         action("toolchainOverride", .engine, "Untested toolchain override", "Explicitly allow unverified new portings."),
         action("upstream", .engine, "Upstream", "Check newer engine commits without installing them."),
-        action("newestEngine", .engine, "Newest engine", "Build with nxnative main before Arcane has tested it, or go back to the tested engine."),
+        action("newestEngine", .engine, "Newest engine", "Build with nxnative main before Arcane Portal has tested it, or go back to the tested engine."),
         action("compare", .engine, "Compare", "Open the commit comparison on GitHub."),
         action("setup", .engine, "Setup", "Open the setup checklist."),
 
@@ -40,7 +40,7 @@ extension SettingsCatalog {
         action("libraryFolder", .library, GameFoldersCopy.appsTitle, "Choose where to find existing nxnative game apps and install new builds."),
         action("libraryRefresh", .library, "Scan game apps", "Find existing nxnative builds and refresh the library."),
         row("notifyPortingEnds", .library, "Notify when a porting ends",
-            "A notification when a porting finishes while Arcane is in the background.") { $0.notifyPortingEnds },
+            "A notification when a porting finishes while Arcane Portal is in the background.") { $0.notifyPortingEnds },
 
         // New games
         row("gameDefaults.fullscreen", .games, "Fullscreen",

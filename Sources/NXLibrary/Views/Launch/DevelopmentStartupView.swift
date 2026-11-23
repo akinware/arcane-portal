@@ -10,7 +10,7 @@ final class DevelopmentStartup: ObservableObject {
     @Published private(set) var working = false
     @Published private(set) var recovery: CatalogRecoveryCandidate?
     @Published private(set) var legacyConflict: CatalogLegacyConflictCandidate?
-    private let logger = Logger(subsystem: "local.nxlibrary", category: "Startup")
+    private let logger = Logger(subsystem: "io.github.akinware.arcaneportal", category: "Startup")
 
     func prepare() async {
         guard shell == nil, !working else { return }
@@ -22,7 +22,7 @@ final class DevelopmentStartup: ObservableObject {
         do {
             // Services and SwiftUI StateObjects are created only after the profile transaction finishes.
             if AppData.profile.isDevelopment,
-               NSRunningApplication.runningApplications(withBundleIdentifier: "local.nxlibrary")
+               NSRunningApplication.runningApplications(withBundleIdentifier: "io.github.akinware.arcaneportal")
                 .contains(where: { $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }) {
                 throw DevelopmentStartupFailure.otherCopyRunning
             }
@@ -88,7 +88,7 @@ final class DevelopmentStartup: ObservableObject {
 private enum DevelopmentStartupFailure: LocalizedError {
     case otherCopyRunning
     var errorDescription: String? {
-        L10n.text("Close the other Arcane copy, then try again. Your original library has not been changed.", context: AppLocale(language: .automatic, region: nil))
+        L10n.text("Close the other Arcane Portal copy, then try again. Your original library has not been changed.", context: AppLocale(language: .automatic, region: nil))
     }
 }
 
@@ -101,7 +101,7 @@ struct DevelopmentStartupView: View {
             if let shell = startup.shell {
                 MainView(state: shell)
                     .onAppear {
-                        Logger(subsystem: "local.nxlibrary", category: "Startup").notice("Library view appeared")
+                        Logger(subsystem: "io.github.akinware.arcaneportal", category: "Startup").notice("Library view appeared")
                     }
             } else if let failure = startup.failure {
                 VStack(spacing: 20) {
@@ -111,9 +111,9 @@ struct DevelopmentStartupView: View {
                     Text(failure)
                         .font(.system(size: 17)).multilineTextAlignment(.center)
                     if startup.legacyConflict != nil {
-                        Text(L10n.text("Keep the games and sources in Arcane. The older app's changes will be archived separately, without merging the libraries.", context: context))
+                        Text(L10n.text("Keep the games and sources in Arcane Portal. The older app's changes will be archived separately, without merging the libraries.", context: context))
                             .font(.system(size: 15)).multilineTextAlignment(.center)
-                        Button(L10n.text("Keep Arcane's library", context: context)) {
+                        Button(L10n.text("Keep Arcane Portal's library", context: context)) {
                             Task { await startup.keepCurrentLibrary() }
                         }.keyboardShortcut("k", modifiers: [.command, .shift])
                             .disabled(startup.working)

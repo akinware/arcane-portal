@@ -1,6 +1,6 @@
-# Arcane — catalogo dei file
+# Arcane Portal — catalogo dei file
 
-Aggiornato il 21 novembre 2026. Copertura di **801 file** del progetto, compresi i controlli di pubblicazione, la CI con regressioni app senza UI, il master dell’icona, le guide per sviluppo e media, gli screenshot del README, l'integrazione di nxnative, il canale di aggiornamento e il primo avvio che parte da ciò che è già sul Mac, il setup del porting con cartella unica per scoperta e installazione dei giochi. Le cartelle personali, gli output generati e gli appunti non versionati sono esclusi.
+Aggiornato il 23 novembre 2026. Copertura di **817 file** del progetto, compresi i controlli di pubblicazione, la CI con regressioni app senza UI, il master dell’icona, le guide per sviluppo e media, gli screenshot del README, l'integrazione di nxnative e di GamePortKit, il canale di aggiornamento e il primo avvio che parte da ciò che è già sul Mac, il setup del porting con cartella unica per scoperta e installazione dei giochi. Le cartelle personali, gli output generati e gli appunti non versionati sono esclusi.
 
 La [guida tecnica](../how-it-works/architecture.md) spiega come collaborano i componenti. Qui ogni riga identifica un file e la sua responsabilità. Le sezioni Core seguono le cartelle del Core, una per area; le sezioni Porting seguono le cartelle del target `ArcanePorting`, con lo Switch; quelle UI seguono schermate e componenti. Le viste usano i modelli e i servizi del Core attraverso il coordinamento applicativo.
 
@@ -58,14 +58,17 @@ La pubblicazione comprende anche [CONTRIBUTING.md](../../CONTRIBUTING.md), [SECU
 
 | File | Responsabilità |
 |---|---|
-| [.github/FUNDING.yml](../../.github/FUNDING.yml) | Collega il pulsante Sponsor del repository alla pagina Buy Me a Coffee di Arcane. |
+| [.github/ISSUE_TEMPLATE/game_report.yml](../../.github/ISSUE_TEMPLATE/game_report.yml) | Modulo per riferire come gira un gioco Windows: gioco, Mac, come è installato, renderer, esito. |
+| [.github/ISSUE_TEMPLATE/feature_request.yml](../../.github/ISSUE_TEMPLATE/feature_request.yml) | Modulo per proporre una funzione partendo dal problema. |
+| [.github/ISSUE_TEMPLATE/config.yml](../../.github/ISSUE_TEMPLATE/config.yml) | Rimanda domande alle Discussions e i problemi del motore Windows al repository GamePort. |
+| [.github/pull_request_template.md](../../.github/pull_request_template.md) | Modello di pull request: cosa e perché, controlli eseguiti, documenti aggiornati. |
 | [.gitignore](../../.gitignore) | Esclude output di build, bundle, cache, work e file personali dell’IDE dal versionamento. |
 | [AGENTS.md](../../AGENTS.md) | Definisce vincoli per gli agenti, procedura di upgrade del motore e verifiche assegnate all’utente. |
 | [CHANGELOG.md](../../CHANGELOG.md) | Registra le modifiche visibili all'utente per versione. |
-| [LICENSE](../../LICENSE) | Contiene la licenza MIT di Arcane. |
+| [LICENSE](../../LICENSE) | Contiene la licenza MIT di Arcane Portal. |
 | [NOTICE](../../NOTICE) | Conserva attribuzioni del motore al pin corrente, dei componenti, dei loghi e delle altre risorse riutilizzate. |
-| [Package.swift](../../Package.swift) | Dichiara i target SwiftPM (`NXLibraryCore`, il modulo `ArcanePorting` che dipende dalla base, l'app che li importa entrambi, i test), le loro dipendenze e il deployment macOS minimo. |
-| [README.md](../../README.md) | Presenta Arcane come libreria e launcher Mac, con guide, requisiti, sostegno volontario, crediti e note legali. |
+| [Package.swift](../../Package.swift) | Dichiara i target SwiftPM (`NXLibraryCore`, il modulo `ArcanePorting` che dipende dalla base, l'app che importa entrambi e `GamePortKit`, i test), le loro dipendenze e il deployment macOS minimo. |
+| [README.md](../../README.md) | Presenta Arcane Portal come libreria e launcher Mac, con guide, requisiti, sostegno volontario, crediti e note legali. |
 | [runtime.lock](../../runtime.lock) | Fissa versioni, download e hash del runtime Python e degli strumenti inclusi nel bundle. |
 | [VERSION](../../VERSION) | Versione in sviluppo usata dal packaging e verificata dalla procedura di release. |
 
@@ -74,9 +77,9 @@ La pubblicazione comprende anche [CONTRIBUTING.md](../../CONTRIBUTING.md), [SECU
 | File | Responsabilità |
 |---|---|
 | [Sources/NXLibrary/NXLibraryApp.swift](../../Sources/NXLibrary/NXLibraryApp.swift) | Punto @main, finestra SwiftUI, notifiche interne e comandi della barra menu. |
-| [Sources/NXLibrary/AppDelegate.swift](../../Sources/NXLibrary/AppDelegate.swift) | Registra Material Icons, gestisce il ciclo della finestra, completa la scrittura della selezione alla chiusura e dà a una copia release il nome `Arcane.app`. |
+| [Sources/NXLibrary/AppDelegate.swift](../../Sources/NXLibrary/AppDelegate.swift) | Registra Material Icons, gestisce il ciclo della finestra, completa la scrittura della selezione alla chiusura e dà a una copia release il nome `Arcane Portal.app`. |
 | [Sources/NXLibrary/Views/MainView.swift](../../Sources/NXLibrary/Views/MainView.swift) | Presenta AppShellView come contenuto della finestra principale. |
-| [Sources/NXLibrary/Views/Shell/AppShellView.swift](../../Sources/NXLibrary/Views/Shell/AppShellView.swift) | Possiede il backdrop persistente e aggiorna le richieste delle pagine e la palette nello snapshot reattivo, possiede lo stato condiviso, passa a Spotlight il modello Mods della shell, compone schermate e overlay (compreso il benvenuto in Arcane) e assegna priorità all’input; `nativeDialogOwnsInput` sospende controller, tastiera e comandi dei menu sotto alert e selettori nativi; all’avvio chiede di spostare in Applicazioni una copia temporanea. Il file tiene stato, init e `body`; il resto sta nelle estensioni qui sotto. |
+| [Sources/NXLibrary/Views/Shell/AppShellView.swift](../../Sources/NXLibrary/Views/Shell/AppShellView.swift) | Possiede il backdrop persistente e aggiorna le richieste delle pagine e la palette nello snapshot reattivo, possiede lo stato condiviso, passa a Spotlight il modello Mods della shell, compone schermate e overlay (compreso il benvenuto in Arcane Portal) e assegna priorità all’input; `nativeDialogOwnsInput` sospende controller, tastiera e comandi dei menu sotto alert e selettori nativi; all’avvio chiede di spostare in Applicazioni una copia temporanea. Il file tiene stato, init e `body`; il resto sta nelle estensioni qui sotto. |
 | [Sources/NXLibrary/Views/Shell/AppShellView+Layers.swift](../../Sources/NXLibrary/Views/Shell/AppShellView+Layers.swift) | Strati della shell: schermata, overlay e modificatori, separati da body per il type checker. |
 | [Sources/NXLibrary/Views/Shell/AppShellView+Startup.swift](../../Sources/NXLibrary/Views/Shell/AppShellView+Startup.swift) | Cosa parte quando la shell appare, le scelte del primo avvio e l’ultima home usata. |
 | [Sources/NXLibrary/Views/Shell/AppShellView+Overlays.swift](../../Sources/NXLibrary/Views/Shell/AppShellView+Overlays.swift) | Dialoghi e avvisi della shell: avvisi delle impostazioni, benvenuto, installazione fallita, Close Game, rimozione e offerta di aggiornamento. |
@@ -93,7 +96,7 @@ La pubblicazione comprende anche [CONTRIBUTING.md](../../CONTRIBUTING.md), [SECU
 
 | File | Responsabilità |
 |---|---|
-| [Sources/NXLibrary/ViewModels/AppViewModel.swift](../../Sources/NXLibrary/ViewModels/AppViewModel.swift) | Coordina libreria e catalogo, sorgenti, lancio (con la sincronizzazione delle mod prima di Play), primo avvio, Game options, spazio su disco e icona di Arcane nel Dock. Crea i modelli Switch, conserva la scelta Steam del Setup, tiene lo stato del porting letto dalla home e non scansiona Game files all’avvio. Il file tiene stato, init, primo avvio, icona nel Dock e i due scrittori della libreria e dello spazio (`applyCatalog`, `cleanStorage`); il resto sta nelle estensioni qui sotto. |
+| [Sources/NXLibrary/ViewModels/AppViewModel.swift](../../Sources/NXLibrary/ViewModels/AppViewModel.swift) | Coordina libreria e catalogo, sorgenti, lancio (con la sincronizzazione delle mod prima di Play), primo avvio, Game options, spazio su disco e icona di Arcane Portal nel Dock. Crea i modelli Switch, conserva la scelta Steam del Setup, tiene lo stato del porting letto dalla home e non scansiona Game files all’avvio. Il file tiene stato, init, primo avvio, icona nel Dock e i due scrittori della libreria e dello spazio (`applyCatalog`, `cleanStorage`); il resto sta nelle estensioni qui sotto. |
 | [Sources/NXLibrary/ViewModels/AppViewModel+Storage.swift](../../Sources/NXLibrary/ViewModels/AppViewModel+Storage.swift) | Spazio su disco: misura, cancella cache e log. |
 | [Sources/NXLibrary/ViewModels/AppViewModel+Library.swift](../../Sources/NXLibrary/ViewModels/AppViewModel+Library.swift) | Libreria: file trascinati, caricamento e scansione, import delle build esistenti, Locate Sources e cartella della libreria. |
 | [Sources/NXLibrary/ViewModels/AppViewModel+Launch.swift](../../Sources/NXLibrary/ViewModels/AppViewModel+Launch.swift) | Play: salvataggi cloud e mod prima dell’avvio, sorveglianza dell’avvio e overlay. |
@@ -140,7 +143,7 @@ La pubblicazione comprende anche [CONTRIBUTING.md](../../CONTRIBUTING.md), [SECU
 
 | File | Responsabilità |
 |---|---|
-| [Sources/NXLibrary/Services/AppUpdater.swift](../../Sources/NXLibrary/Services/AppUpdater.swift) | Coordina controllo release, download, verifica, installazione e riavvio di Arcane. |
+| [Sources/NXLibrary/Services/AppUpdater.swift](../../Sources/NXLibrary/Services/AppUpdater.swift) | Coordina controllo release, download, verifica, installazione e riavvio di Arcane Portal. |
 | [Sources/NXLibrary/Services/NativeMenuCommands.swift](../../Sources/NXLibrary/Services/NativeMenuCommands.swift) | Coordina tracking, disponibilità nella scena e passaggio differito dai menu macOS alle azioni del launcher. |
 | [Sources/NXLibrary/Services/ControllerSource.swift](../../Sources/NXLibrary/Services/ControllerSource.swift) | Contratto delle sorgenti e identità del controller sulle code della UI. |
 | [Sources/NXLibrary/Services/GCControllerSource.swift](../../Sources/NXLibrary/Services/GCControllerSource.swift) | Adatta GameController, simboli e rimappature agli eventi del servizio. |
@@ -150,7 +153,7 @@ La pubblicazione comprende anche [CONTRIBUTING.md](../../CONTRIBUTING.md), [SECU
 | [Sources/NXLibrary/Services/NotificationService.swift](../../Sources/NXLibrary/Services/NotificationService.swift) | Invia notifiche dei porting e instrada i clic verso il titolo o l’errore interessato. |
 | [Sources/NXLibrary/Services/OnlineBackgroundService.swift](../../Sources/NXLibrary/Services/OnlineBackgroundService.swift) | Carica pagine e miniature e scarica wallpaper o video conservando progressi e crediti. |
 | [Sources/NXLibrary/Services/RunningGameMonitor.swift](../../Sources/NXLibrary/Services/RunningGameMonitor.swift) | Riconcilia applicazioni in esecuzione e libreria e offre Resume e chiusura del gioco. |
-| [Sources/NXLibrary/Services/LibraryWindow.swift](../../Sources/NXLibrary/Services/LibraryWindow.swift) | Riporta davanti la finestra di Arcane dopo un gioco nxnative o Steam, mai sopra un gioco della libreria. |
+| [Sources/NXLibrary/Services/LibraryWindow.swift](../../Sources/NXLibrary/Services/LibraryWindow.swift) | Riporta davanti la finestra di Arcane Portal dopo un gioco nxnative o Steam, mai sopra un gioco della libreria. |
 | [Sources/NXLibrary/Services/SoundEffectService.swift](../../Sources/NXLibrary/Services/SoundEffectService.swift) | Riproduce i cue Selene e applica attivazione, volume e file importati. |
 | [Sources/NXLibrary/Services/SystemDetector.swift](../../Sources/NXLibrary/Services/SystemDetector.swift) | Individua checkout nxnative, root personale e possibili percorsi delle chiavi. |
 
@@ -163,24 +166,24 @@ Cartella `Sources/NXLibraryCore/App/`.
 | [Sources/NXLibraryCore/App/AppRouter.swift](../../Sources/NXLibraryCore/App/AppRouter.swift) | Gestisce route, ritorno, menu, ricerca e richieste Spotlight; ShellBackdropCover definisce quali strati sono coperti da Setup, benvenuto e scelta tema. |
 | [Sources/NXLibraryCore/App/FirstRunSetup.swift](../../Sources/NXLibraryCore/App/FirstRunSetup.swift) | Coordina pagina e completamento del Setup, scelta Steam persistente fino alla fine, ripresa, focus e consumo unico delle selezioni da Your games. |
 | [Sources/NXLibraryCore/App/FirstRunFindings.swift](../../Sources/NXLibraryCore/App/FirstRunFindings.swift) | Conta giochi Steam senza modifiche, e le app del modulo con il conteggio che riceve; distingue lettura incompleta da assenza e permette nuove letture annullabili. |
-| [Sources/NXLibraryCore/App/ArcaneWelcome.swift](../../Sources/NXLibraryCore/App/ArcaneWelcome.swift) | Decide quando compare il benvenuto in Arcane, l'offerta di Steam, il focus e come ogni uscita lo segna visto. |
+| [Sources/NXLibraryCore/App/ArcaneWelcome.swift](../../Sources/NXLibraryCore/App/ArcaneWelcome.swift) | Decide quando compare il benvenuto in Arcane Portal, l'offerta di Steam, il focus e come ogni uscita lo segna visto. |
 | [Sources/NXLibraryCore/App/ReleaseNotesLayout.swift](../../Sources/NXLibraryCore/App/ReleaseNotesLayout.swift) | Divide le note di release in titoli, voci e testo, una riga per volta, per il dialogo degli aggiornamenti. |
 | [Sources/NXLibraryCore/App/CommandRunner.swift](../../Sources/NXLibraryCore/App/CommandRunner.swift) | Confine sostituibile per comandi e output, con esecuzione sincrona o streaming delle righe. `Process.runWithExitWait` aspetta la fine di un processo senza far girare il run loop. |
 | [Sources/NXLibraryCore/App/DiagnosticsReport.swift](../../Sources/NXLibraryCore/App/DiagnosticsReport.swift) | Genera il rapporto diagnostico e rimuove percorso home e valori riconosciuti come chiavi. |
 | [Sources/NXLibraryCore/App/AppUpdate.swift](../../Sources/NXLibraryCore/App/AppUpdate.swift) | Definisce repository, versioni, verifica del download e sostituzione atomica dell’app in staging esclusivo, con conservazione della vecchia copia se il Cestino fallisce; riconosce la copia temporanea di App Translocation. |
-| [Sources/NXLibraryCore/App/AppBundleRename.swift](../../Sources/NXLibraryCore/App/AppBundleRename.swift) | Decide se una copia release che si chiama ancora `NX Library.app` diventa `Arcane.app` alla chiusura, e fa lo spostamento nella stessa cartella. |
+| [Sources/NXLibraryCore/App/AppBundleRename.swift](../../Sources/NXLibraryCore/App/AppBundleRename.swift) | Decide se una copia release che si chiama ancora `NX Library.app` diventa `Arcane Portal.app` alla chiusura, e fa lo spostamento nella stessa cartella. |
 | [Sources/NXLibraryCore/App/AppUpdatePresentation.swift](../../Sources/NXLibraryCore/App/AppUpdatePresentation.swift) | Definisce gli stati dell’updater e il gate di installazione per versione e tipo di copia. |
 | [Sources/NXLibraryCore/App/AppUpdateDownload.swift](../../Sources/NXLibraryCore/App/AppUpdateDownload.swift) | Scarica gli aggiornamenti con limiti di dimensione, redirect HTTPS vincolati a GitHub e gestione del file temporaneo. |
 | [Sources/NXLibraryCore/App/BoundedDownload.swift](../../Sources/NXLibraryCore/App/BoundedDownload.swift) | Lettura HTTP limitata a blocchi, senza redirect né byte per byte: usata da Wikidata, IGDB, LaunchBox/TheGamesDB e Steam. |
 | [Sources/NXLibraryCore/App/ConnectivityWatcher.swift](../../Sources/NXLibraryCore/App/ConnectivityWatcher.swift) | Avvisa sul main thread quando il Mac torna online, perché il giro delle descrizioni riprenda da solo; la prima lettura non conta. |
 | [Sources/NXLibraryCore/App/DisplayNameCache.swift](../../Sources/NXLibraryCore/App/DisplayNameCache.swift) | Nomi visualizzati di cartelle e volumi letti una volta per URL: la pagina si ricostruisce a ogni disegno e un disco esterno in stop bloccherebbe ogni volta. |
-| [Sources/NXLibraryCore/App/AppIdentity.swift](../../Sources/NXLibraryCore/App/AppIdentity.swift) | Nome visibile dell'app ("Arcane", non tradotto), il vecchio nome detto solo dal benvenuto, il nome del modulo Porting, pagina del progetto, guida online aperta da About e User-Agent unico delle richieste di rete. |
+| [Sources/NXLibraryCore/App/AppIdentity.swift](../../Sources/NXLibraryCore/App/AppIdentity.swift) | Nome visibile dell'app ("Arcane Portal", non tradotto), il vecchio nome detto solo dal benvenuto, il nome del modulo Porting, pagina del progetto, guida online aperta da About e User-Agent unico delle richieste di rete. |
 | [Sources/NXLibraryCore/App/AppDataProfile.swift](../../Sources/NXLibraryCore/App/AppDataProfile.swift) | Policy di percorsi, cache e preferenze del profilo; prepara il profilo di sviluppo con i controlli che riceve. |
 | [Sources/NXLibraryCore/App/DevelopmentProfileImporter.swift](../../Sources/NXLibraryCore/App/DevelopmentProfileImporter.swift) | Copia iniziale selettiva (compresa la scelta Steam del Setup), hash, validazione e ripresa senza modificare la sorgente; i file che solo un modulo sa leggere si controllano con i `checks` ricevuti. |
 | [Sources/NXLibraryCore/App/DevelopmentOperationStore.swift](../../Sources/NXLibraryCore/App/DevelopmentOperationStore.swift) | Autorizzazioni persistenti per le operazioni richieste nella Dev, distinte da quelle importate. |
 | [Sources/NXLibraryCore/App/VersionNumber.swift](../../Sources/NXLibraryCore/App/VersionNumber.swift) | Confronta numeri di versione puntati parte per parte, per i requisiti della toolchain e l'updater. |
 | [Sources/NXLibraryCore/App/LineBuffer.swift](../../Sources/NXLibraryCore/App/LineBuffer.swift) | Divide un flusso di byte in righe su \n o \r, comprese le righe parziali dei misuratori di avanzamento. |
-| [Sources/NXLibraryCore/App/BuildInstallIO.swift](../../Sources/NXLibraryCore/App/BuildInstallIO.swift) | Confine sostituibile per la pubblicazione atomica di un bundle (stesso volume, rinomina o scambio) e il suo errore; lo usano installazione dei giochi e aggiornamento di Arcane. |
+| [Sources/NXLibraryCore/App/BuildInstallIO.swift](../../Sources/NXLibraryCore/App/BuildInstallIO.swift) | Confine sostituibile per la pubblicazione atomica di un bundle (stesso volume, rinomina o scambio) e il suo errore; lo usano installazione dei giochi e aggiornamento di Arcane Portal. |
 
 ## Core · catalogo comune e fonti
 
@@ -217,7 +220,7 @@ Cartella `Sources/NXLibraryCore/Library/`.
 | [Sources/NXLibraryCore/Library/PlaySession.swift](../../Sources/NXLibraryCore/Library/PlaySession.swift) | Descrive una sessione persistibile con gioco e riferimenti temporali. |
 | [Sources/NXLibraryCore/Library/ActivitySummary.swift](../../Sources/NXLibraryCore/Library/ActivitySummary.swift) | Aggrega sessioni, giorni e tempi della settimana per la scheda Activity. |
 | [Sources/NXLibraryCore/Library/PlaySessionStore.swift](../../Sources/NXLibraryCore/Library/PlaySessionStore.swift) | Registra avvio (per id, identità della fonte e bundle ID facoltativo), heartbeat, fine e riconciliazione delle sessioni di gioco; unisce i totali esterni (Steam) con le sessioni successive. |
-| [Sources/NXLibraryCore/Library/GameFocus.swift](../../Sources/NXLibraryCore/Library/GameFocus.swift) | Quando un gioco che esce riporta Arcane davanti: solo se era l’app in primo piano e nessun altro gioco della libreria è aperto. |
+| [Sources/NXLibraryCore/Library/GameFocus.swift](../../Sources/NXLibraryCore/Library/GameFocus.swift) | Quando un gioco che esce riporta Arcane Portal davanti: solo se era l’app in primo piano e nessun altro gioco della libreria è aperto. |
 | [Sources/NXLibraryCore/Library/SessionSummary.swift](../../Sources/NXLibraryCore/Library/SessionSummary.swift) | Cosa dice la card di fine sessione: gioco, durata di questa sessione e totale scritto come nelle info del gioco; niente card sotto i dieci secondi. |
 | [Sources/NXLibraryCore/Library/RunningAppsTracker.swift](../../Sources/NXLibraryCore/Library/RunningAppsTracker.swift) | Snapshot dei bundle ID delle applicazioni in esecuzione e cosa è partito o finito dall’ultima lettura. |
 | [Sources/NXLibraryCore/Library/DirectorySize.swift](../../Sources/NXLibraryCore/Library/DirectorySize.swift) | Misura le cartelle con fts come du, così il refresh non resta bloccato su app grandi in dischi esterni (issue #2). |
@@ -331,7 +334,7 @@ Cartella `Sources/NXLibraryCore/Settings/`. Il catalogo dei testi sta in `Resour
 | [Sources/NXLibraryCore/Settings/AppSettingsStore.swift](../../Sources/NXLibraryCore/Settings/AppSettingsStore.swift) | Pubblica impostazioni ed errori, preserva i file illeggibili e salva settings.json in modo atomico. Tiene l'ultima selezione fuori dalle notifiche e la scrive in background. |
 | [Sources/NXLibraryCore/Settings/SettingsRowAction.swift](../../Sources/NXLibraryCore/Settings/SettingsRowAction.swift) | Identifica azioni e righe Settings, mantenendo una sola azione primaria per riga senza accorpare giochi omonimi. |
 | [Sources/NXLibraryCore/Settings/SettingsCatalog.swift](../../Sources/NXLibraryCore/Settings/SettingsCatalog.swift) | Descrive le righe delle sezioni fuori dal gruppo Porting (`baseRows`) e le regole che ordinano, confrontano e cercano un elenco di righe; ogni riga tiene il suo `rowID` e sta in una sola sezione. |
-| [Sources/NXLibraryCore/Settings/SettingsSection.swift](../../Sources/NXLibraryCore/Settings/SettingsSection.swift) | Sezioni di Settings con titoli e icone, dichiarate in ordine di sidebar, e `SettingsSidebarGroup`: General, Library, Porting (il gruppo di piattaforma) e System. |
+| [Sources/NXLibraryCore/Settings/SettingsSection.swift](../../Sources/NXLibraryCore/Settings/SettingsSection.swift) | Sezioni di Settings con titoli e icone, dichiarate in ordine di sidebar, e `SettingsSidebarGroup`: General, Library, Windows (GamePort), Porting e System. |
 | [Sources/NXLibraryCore/Settings/SettingsReset.swift](../../Sources/NXLibraryCore/Settings/SettingsReset.swift) | Reset group per sezione: quali sezioni si azzerano e quali valori della base tornano ai default (`resetShared`). |
 | [Sources/NXLibraryCore/Settings/AppLocale.swift](../../Sources/NXLibraryCore/Settings/AppLocale.swift) | Sette lingue, risoluzione delle preferenze e regione indipendente; nomi e ricerca delle regioni. |
 | [Sources/NXLibraryCore/Settings/AppLocalization.swift](../../Sources/NXLibraryCore/Settings/AppLocalization.swift) | Contesto osservabile, lookup portabile delle risorse e interpolazioni/plurali. |
@@ -347,7 +350,7 @@ Cartella `Sources/NXLibraryCore/Steam/`.
 | [Sources/NXLibraryCore/Steam/SteamKeyValues.swift](../../Sources/NXLibraryCore/Steam/SteamKeyValues.swift) | Parser testuale limitato e lookup condivisi dei lettori: prima chiave, primo valore tipizzato o campo unico, con regole esplicite sui duplicati; nessuna direttiva eseguita. |
 | [Sources/NXLibraryCore/Steam/SteamPlaytimeReader.swift](../../Sources/NXLibraryCore/Steam/SteamPlaytimeReader.swift) | Ore e ultima partita dell’account Steam più recente da `localconfig.vdf`; nient’altro del file esce dal tipo. |
 | [Sources/NXLibraryCore/Steam/SteamPlaytimeBaselines.swift](../../Sources/NXLibraryCore/Steam/SteamPlaytimeBaselines.swift) | Totali Steam con il momento in cui sono stati visti; nuovo valore o account ripartono; mappa ai giochi del catalogo. |
-| [Sources/NXLibraryCore/Steam/SteamReturnFocus.swift](../../Sources/NXLibraryCore/Steam/SteamReturnFocus.swift) | Quando un gioco Steam che esce riporta Arcane davanti: Play premuto qui, gioco in primo piano, nessun altro gioco aperto. |
+| [Sources/NXLibraryCore/Steam/SteamReturnFocus.swift](../../Sources/NXLibraryCore/Steam/SteamReturnFocus.swift) | Quando un gioco Steam che esce riporta Arcane Portal davanti: Play premuto qui, gioco in primo piano, nessun altro gioco aperto. |
 | [Sources/NXLibraryCore/Steam/SteamLaunchQuestions.swift](../../Sources/NXLibraryCore/Steam/SteamLaunchQuestions.swift) | Domande con cui Steam ferma un avvio, dalle righe `GameAction` di `logs/console_log.txt`. `ShowInterstitials` è avanzamento; le domande contano dopo 1 s. |
 | [Sources/NXLibraryCore/Steam/SteamPlaytimeSync.swift](../../Sources/NXLibraryCore/Steam/SteamPlaytimeSync.swift) | Una lettura dei file Steam e cosa fa (pubblica, conserva gli ultimi totali buoni dello stesso account o azzera); coda di una lettura alla volta. |
 | [Sources/NXLibraryCore/Steam/InstallationFileSnapshot.swift](../../Sources/NXLibraryCore/Steam/InstallationFileSnapshot.swift) | Letture limitate e non bloccanti di file regolari; verifica dell'identità prima della pubblicazione. |
@@ -439,7 +442,7 @@ Cartella `Sources/ArcanePorting/Setup/`.
 | [Sources/ArcanePorting/Setup/SetupCheck.swift](../../Sources/ArcanePorting/Setup/SetupCheck.swift) | Converte fatti e override del Setup in schede, stati, azioni e condizioni di riapertura. |
 | [Sources/ArcanePorting/Setup/GameFoldersCopy.swift](../../Sources/ArcanePorting/Setup/GameFoldersCopy.swift) | Condivide nomi delle cartelle, formati e descrizioni tra Setup, Settings e selettori dei percorsi. |
 | [Sources/ArcanePorting/Setup/SetupGrid.swift](../../Sources/ArcanePorting/Setup/SetupGrid.swift) | Calcola disposizione, centratura e navigazione del focus nella griglia del Setup. |
-| [Sources/ArcanePorting/Setup/UpstreamCopy.swift](../../Sources/ArcanePorting/Setup/UpstreamCopy.swift) | Prepara i testi del changelog upstream e dell’adozione degli aggiornamenti tramite Arcane. |
+| [Sources/ArcanePorting/Setup/UpstreamCopy.swift](../../Sources/ArcanePorting/Setup/UpstreamCopy.swift) | Prepara i testi del changelog upstream e dell’adozione degli aggiornamenti tramite Arcane Portal. |
 | [Sources/ArcanePorting/Setup/NXNativeEnvironment.swift](../../Sources/ArcanePorting/Setup/NXNativeEnvironment.swift) | Ispeziona strumenti, Python, Xcode e Metal e restituisce uno stato dell’ambiente. |
 | [Sources/ArcanePorting/Setup/EngineLocation.swift](../../Sources/ArcanePorting/Setup/EngineLocation.swift) | Risolve checkout predefinito o scelto e produce i candidati per prod.keys. |
 | [Sources/ArcanePorting/Setup/EngineToolchain.swift](../../Sources/ArcanePorting/Setup/EngineToolchain.swift) | Individua runtime incluso o venv del checkout e prepara ambiente e PATH dei processi. |
@@ -696,7 +699,7 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 |---|---|
 | [Sources/NXLibrary/Views/Setup/SetupCheckView.swift](../../Sources/NXLibrary/Views/Setup/SetupCheckView.swift) | Disegna schede dei requisiti, dettagli, progressi e pulsanti Install all/Continue. |
 | [Sources/NXLibrary/Views/Setup/SetupCheckView+Input.swift](../../Sources/NXLibrary/Views/Setup/SetupCheckView+Input.swift) | Gestisce focus iniziale, navigazione della griglia, attivazione delle schede Setup e B verso `found` durante il primo avvio. |
-| [Sources/NXLibrary/Views/Setup/ArcaneWelcomeView.swift](../../Sources/NXLibrary/Views/Setup/ArcaneWelcomeView.swift) | Disegna il benvenuto in Arcane: nome nuovo, novità, offerta Steam dalla cartella scelta, Add / Not now e Open library. |
+| [Sources/NXLibrary/Views/Setup/ArcaneWelcomeView.swift](../../Sources/NXLibrary/Views/Setup/ArcaneWelcomeView.swift) | Disegna il benvenuto in Arcane Portal: nome nuovo, novità, offerta Steam dalla cartella scelta, Add / Not now e Open library. |
 | [Sources/NXLibrary/Views/Setup/ArcaneWelcomeView+Input.swift](../../Sources/NXLibrary/Views/Setup/ArcaneWelcomeView+Input.swift) | Gestisce focus, mouse, tastiera e controller del benvenuto. |
 | [Sources/NXLibrary/Views/Setup/FoundGamesSetupView.swift](../../Sources/NXLibrary/Views/Setup/FoundGamesSetupView.swift) | Prima pagina del Setup: Steam con interruttore o Retry, app portate e card Porting; Open library resta disponibile durante la lettura. |
 | [Sources/NXLibrary/Views/Setup/FoundGamesSetupView+Input.swift](../../Sources/NXLibrary/Views/Setup/FoundGamesSetupView+Input.swift) | Focus, mouse, tastiera e controller di found; Retry della lettura Steam e uscita che annulla la richiesta prima di aprire la libreria. |
@@ -740,7 +743,7 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | [Sources/NXLibrary/Views/Components/SteamPlatformLogo.swift](../../Sources/NXLibrary/Views/Components/SteamPlatformLogo.swift) | Logo ufficiale Steam per la piattaforma dei giochi Steam: da solo, almeno 50 pixel, spazio libero della manovella. |
 | [Sources/NXLibrary/Views/Components/GameLogoArea.swift](../../Sources/NXLibrary/Views/Components/GameLogoArea.swift) | Area del logo del gioco con la geometria condivisa da Spotlight e Collection; caricamento e impostazioni restano fuori. |
 | [Sources/NXLibrary/Views/Components/GamePrimaryActions.swift](../../Sources/NXLibrary/Views/Components/GamePrimaryActions.swift) | Play, Options e preferito con lo stesso aspetto e gli stessi bersagli di input per ogni fonte; i puntini di «Porting» e «Downloading». |
-| [Sources/NXLibrary/Views/Components/SessionCard.swift](../../Sources/NXLibrary/Views/Components/SessionCard.swift) | Card di fine sessione: aspetta che Arcane sia davanti, compare 1,8 s dopo per 8 s; una sessione più recente sostituisce quella in attesa. |
+| [Sources/NXLibrary/Views/Components/SessionCard.swift](../../Sources/NXLibrary/Views/Components/SessionCard.swift) | Card di fine sessione: aspetta che Arcane Portal sia davanti, compare 1,8 s dopo per 8 s; una sessione più recente sostituisce quella in attesa. |
 
 ## UI · temi, rendering e sfondi
 
@@ -782,6 +785,18 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | [SteamGamePage.swift](../../Sources/NXLibrary/Views/Catalog/SteamGamePage.swift) | Dati store Steam dei giochi a schermo, una copia condivisa da Spotlight e Collection, per AppID e lingua; una risposta per un gioco o una lingua non più chiesti si scarta; offline mostra il testo di un'altra lingua con l'avviso. |
 | [SteamArtwork.swift](../../Sources/NXLibrary/Views/Catalog/SteamArtwork.swift) | Immagini Steam con cache disponibile prima del task, identità di richiesta/build e ripiego già letto; rivalidazione dei file, scelte personali, annullamento e `TileArtPendingKey`. |
 | [SteamPersonalizations.swift](../../Sources/NXLibrary/Views/Catalog/SteamPersonalizations.swift) | Archivio delle scelte personali Steam (metadati e artwork), modificate da Change artwork e Change metadata. |
+| [Sources/NXLibrary/GamePort/GameLaunchStatusPanel.swift](../../Sources/NXLibrary/GamePort/GameLaunchStatusPanel.swift) | Pannello di stato dell'avvio di un gioco Windows: fasi di Windows Steam o dello Steam Bridge, tempo trascorso, FPS e azioni di recupero. |
+| [Sources/NXLibrary/GamePort/GamePortConsoleModel.swift](../../Sources/NXLibrary/GamePort/GamePortConsoleModel.swift) | Modello condiviso che collega la UI ai servizi di `GamePortKit`: profili, engine, ricette, Steam Bridge, download QR, CrossOver, Epic, GOG, telemetria e spostamento della cartella dati. |
+| [Sources/NXLibrary/GamePort/HubGameOptionsSheet.swift](../../Sources/NXLibrary/GamePort/HubGameOptionsSheet.swift) | Opzioni di un gioco Windows/PC in Spotlight: come parte Play, percorsi alternativi, sessioni, correzioni automatiche, verdetti della community e impostazioni del profilo. |
+| [Sources/NXLibrary/GamePort/HubPlayRoute.swift](../../Sources/NXLibrary/GamePort/HubPlayRoute.swift) | Sceglie ed esegue il percorso di Play per un gioco Windows/PC (Mac Steam, Steam Bridge, Windows Steam, CrossOver, storefront, download) e salva i preferiti in `AppData.preferences`. |
+| [Sources/NXLibrary/GamePort/MacSteamStart.swift](../../Sources/NXLibrary/GamePort/MacSteamStart.swift) | Avvia tramite Mac Steam un gioco Windows installato nella sua libreria (es. con NotProton), ne osserva il processo e passa allo Steam Bridge o a Windows Steam se non parte. |
+| [Sources/NXLibrary/GamePort/SettingsGamePortSection.swift](../../Sources/NXLibrary/GamePort/SettingsGamePortSection.swift) | Sezione Settings `Windows (GamePort)`: setup guidato, cartella dati e spostamento su SSD APFS esterno, engine Windows, licenza D3DMetal, x87sidecar, AArchX, launcher esterni, Epic/GOG, Steam Bridge, download QR e telemetria. |
+| [Sources/NXLibrary/GamePort/SteamQRDownloadSheet.swift](../../Sources/NXLibrary/GamePort/SteamQRDownloadSheet.swift) | Foglio di download nativo dei giochi Windows di Steam tramite `SteamQRDownloader` (accesso con QR code della Steam Mobile App) e barra compatta di avanzamento. |
+| [Sources/NXLibrary/GamePort/StorageMoveModel.swift](../../Sources/NXLibrary/GamePort/StorageMoveModel.swift) | Pianifica, conferma, esegue e annulla lo spostamento della cartella dati di GamePort su un altro volume APFS o il ritorno al disco interno. |
+| [Sources/NXLibrary/GamePort/WindowsGamesOnThisMac.swift](../../Sources/NXLibrary/GamePort/WindowsGamesOnThisMac.swift) | Conta per il primo avvio i giochi Windows già sul Mac: giochi Steam nelle bottle CrossOver, giochi Windows installati da Steam per Mac (NotProton) e profili GamePort; solo lettura. |
+| [Sources/NXLibrary/GamePort/UnifiedHubGame.swift](../../Sources/NXLibrary/GamePort/UnifiedHubGame.swift) | Voce unificata di un gioco PC/Mac per la riga Spotlight: unisce profili GamePort, bottiglie CrossOver, giochi Epic/GOG/Heroic e giochi Steam posseduti con UUID deterministico e artwork. |
+| [Sources/NXLibrary/GamePort/UnifiedHubSpotlightInfo.swift](../../Sources/NXLibrary/GamePort/UnifiedHubSpotlightInfo.swift) | Testata Selene e riquadro artwork (`UnifiedHubTileArtwork`) di un `UnifiedHubGame` in Spotlight: logo, Play/Options/preferito, statistiche, percorso scelto e stato dell'avvio o del download. |
+| [Sources/NXLibrary/GamePort/WindowsGamesConsoleView.swift](../../Sources/NXLibrary/GamePort/WindowsGamesConsoleView.swift) | Schermata dedicata ai giochi Windows (`GamePortKit`): catalogo delle ricette, filtri per store, configurazione dei profili, Steam Bridge, Lab FPS, snapshot APFS e collegamento a Epic, GOG e CrossOver. |
 
 ## UI · achievement
 
@@ -810,7 +825,7 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | File | Responsabilità |
 |---|---|
 | [Tests/NXLibraryCoreTests/ActivitySummaryTests.swift](../../Tests/NXLibraryCoreTests/ActivitySummaryTests.swift) | Totali settimanali, distribuzione giornaliera, sessioni aperte e passaggi di mezzanotte. |
-| [Tests/NXLibraryCoreTests/AppBundleRenameTests.swift](../../Tests/NXLibraryCoreTests/AppBundleRenameTests.swift) | Rinomina alla chiusura: nome vecchio, `Arcane.app` già presente, cartella in sola lettura, copia Dev, traslocata o occupata, altri nomi, spostamento fallito. |
+| [Tests/NXLibraryCoreTests/AppBundleRenameTests.swift](../../Tests/NXLibraryCoreTests/AppBundleRenameTests.swift) | Rinomina alla chiusura: nome vecchio, `Arcane Portal.app` già presente, cartella in sola lettura, copia Dev, traslocata o occupata, altri nomi, spostamento fallito. |
 | [Tests/NXLibraryCoreTests/AppRouterTests.swift](../../Tests/NXLibraryCoreTests/AppRouterTests.swift) | Route iniziale, ritorno, overlay, richieste Spotlight e precedenza/occlusione delle coperture fullscreen. |
 | [Tests/ArcanePortingTests/AppSettingsStoreTests.swift](../../Tests/ArcanePortingTests/AppSettingsStoreTests.swift) | Default, errori, recupero, compatibilità, chiavi del modulo tenute intatte e chiavi sconosciute scartate, ultima selezione persistita in background e alla chiusura, senza invalidare gli osservatori. |
 | [Tests/ArcanePortingTests/AppSizeCacheTests.swift](../../Tests/ArcanePortingTests/AppSizeCacheTests.swift) | Riuso delle dimensioni, invalidazione sui bundle modificati e scansione senza falso stato vuoto. |
@@ -818,7 +833,7 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | [Tests/NXLibraryCoreTests/AppUpdatePresentationTests.swift](../../Tests/NXLibraryCoreTests/AppUpdatePresentationTests.swift) | Verifica che i controlli manuali non permettano sostituzioni di copie di sviluppo, in sola lettura o con una versione uguale/più recente. |
 | [Tests/NXLibraryCoreTests/ArcaneWelcomeTests.swift](../../Tests/NXLibraryCoreTests/ArcaneWelcomeTests.swift) | Una volta dopo l'aggiornamento, mai dopo un primo Setup né con un recupero in corso, decodifica di un file vecchio, offerta di Steam, focus e uscite. |
 | [Tests/NXLibraryCoreTests/ShellOverlayInputTests.swift](../../Tests/NXLibraryCoreTests/ShellOverlayInputTests.swift) | Ogni monitor della tastiera che cede all'offerta di aggiornamento cede anche al benvenuto, così Invio non arriva alla schermata sotto. |
-| [Tests/NXLibraryCoreTests/ArcaneNameTests.swift](../../Tests/NXLibraryCoreTests/ArcaneNameTests.swift) | Nessun testo del catalogo, in nessuna lingua, mostra il vecchio nome; User-Agent con il nome Arcane e nessuna sorgente con il vecchio. |
+| [Tests/NXLibraryCoreTests/ArcaneNameTests.swift](../../Tests/NXLibraryCoreTests/ArcaneNameTests.swift) | Nessun testo del catalogo, in nessuna lingua, mostra il vecchio nome; User-Agent con il nome Arcane Portal e nessuna sorgente con il vecchio. |
 | [Tests/NXLibraryCoreTests/ArtworkPickerFocusTests.swift](../../Tests/NXLibraryCoreTests/ArtworkPickerFocusTests.swift) | Spostamenti nella griglia dei candidati e passaggi fra slot di artwork. |
 | [Tests/ArcanePortingTests/ArtworkPickerTests.swift](../../Tests/ArcanePortingTests/ArtworkPickerTests.swift) | Decodifica Title DB, candidati per slot e scelte manuali. |
 | [Tests/NXLibraryCoreTests/AutomaticIconTests.swift](../../Tests/NXLibraryCoreTests/AutomaticIconTests.swift) | Priorità delle fonti, ambiguità, edizioni, cache offline, immagini invalide e opt-out del sito. |
@@ -964,7 +979,7 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | [SteamKeyValuesTests.swift](../../Tests/NXLibraryCoreTests/SteamKeyValuesTests.swift) | Formato, escape, Unicode, duplicati, input troncati e limiti del parser. |
 | [SteamPlaytimeReaderTests.swift](../../Tests/NXLibraryCoreTests/SteamPlaytimeReaderTests.swift) | Campi letti, ultima partita, scelta dell’account, duplicati e tipi errati di blocchi/scalari, file grandi, malformati o non sicuri. |
 | [SteamPlaytimeBaselinesTests.swift](../../Tests/ArcanePortingTests/SteamPlaytimeBaselinesTests.swift) | Base mantenuta o ripartita, minuto conservato, cambio account, salvataggio e mappatura sul catalogo. |
-| [SteamReturnFocusTests.swift](../../Tests/NXLibraryCoreTests/SteamReturnFocusTests.swift) | Ritorno ad Arcane solo per Play premuto qui, gioco davanti e nessun altro gioco aperto. |
+| [SteamReturnFocusTests.swift](../../Tests/NXLibraryCoreTests/SteamReturnFocusTests.swift) | Ritorno ad Arcane Portal solo per Play premuto qui, gioco davanti e nessun altro gioco aperto. |
 | [SteamLaunchQuestionsTests.swift](../../Tests/NXLibraryCoreTests/SteamLaunchQuestionsTests.swift) | Fase `ShowInterstitials` a freddo, domande aperte o risposte subito, log per righe intere e sostituzione del file. |
 | [SteamPlaytimeSyncTests.swift](../../Tests/NXLibraryCoreTests/SteamPlaytimeSyncTests.swift) | Letture con o senza account, file illeggibili, file invariato, regole di pubblicazione e coda delle letture. |
 | [NativeMacApplicationTests.swift](../../Tests/NXLibraryCoreTests/NativeMacApplicationTests.swift) | Fixture native, classificazione, traversal/link, metadata non regolari e header invalidi. |
@@ -1022,13 +1037,14 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | File | Responsabilità |
 |---|---|
 | [scripts/build_app.sh](../../scripts/build_app.sh) | Compila in staging, prepara plist, runtime e risorse, verifica la firma e pubblica il bundle con sostituzione atomica. |
-| [scripts/install_built_app.swift](../../scripts/install_built_app.swift) | Piccolo ingresso CLI che riusa BuildOutputInstaller per installare Arcane dopo il packaging. |
+| [scripts/install_built_app.swift](../../scripts/install_built_app.swift) | Piccolo ingresso CLI che riusa BuildOutputInstaller per installare Arcane Portal dopo il packaging. |
 | [scripts/check_publication.py](../../scripts/check_publication.py) | Rifiuta contenuti personali o di gioco versionati e formati di segreto riconoscibili; verifica il runtime rispetto al lock prima del packaging. |
 | [scripts/build_dmg.sh](../../scripts/build_dmg.sh) | Confeziona un bundle già costruito in un’immagine DMG di sviluppo. |
 | [scripts/bundle_runtime.sh](../../scripts/bundle_runtime.sh) | Prepara Python e strumenti dalle versioni bloccate, verifica gli hash e firma il runtime incluso. |
 | [scripts/release.sh](../../scripts/release.sh) | Controlla prerequisiti, suite Swift e tutti gli script headless delle regressioni app; produce ZIP e DMG di release, con pubblicazione esplicita opzionale. |
 | [scripts/validate_update.py](../../scripts/validate_update.py) | Verifica struttura, percorsi e limiti degli archivi prima dell'estrazione, sia nel bundle sia durante il packaging delle release. |
 | [scripts/relink_macho.py](../../scripts/relink_macho.py) | Riscrive riferimenti Mach-O dei binari e delle librerie affinché il runtime incluso sia rilocabile. |
+| [scripts/make_portal_artwork.py](../../scripts/make_portal_artwork.py) | Deriva il master `Resources/IconArtwork.png` di Arcane Portal dall'artwork di Arcane (`Bium23/NxLibrary`, MIT), virando le pennellate in ottanio e viola e aprendo un portale luminoso dietro il cristallo. |
 | [scripts/make_icons.swift](../../scripts/make_icons.swift) | Genera le risorse dell’icona dell’app nelle varianti usate dal bundle. |
 | [scripts/import_selene_palettes.py](../../scripts/import_selene_palettes.py) | Converte le palette Selene nel catalogo JSON usato dall’app. |
 | [scripts/check_localizations.py](../../scripts/check_localizations.py) | Verifica copertura, placeholder, plurali e risorse nel bundle installato. |
@@ -1039,8 +1055,8 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 
 | File | Responsabilità aggiuntiva |
 |---|---|
-| [Resources/IconArtwork.png](../../Resources/IconArtwork.png) | Master quadrato originale dell’icona (cristallo nella sfera di vetro), fornito dall’utente e creato con AI. |
-| [Resources/IconArtwork.md](../../Resources/IconArtwork.md) | Provenienza dichiarata, brief e riproduzione delle varianti tramite il generatore. |
+| [Resources/IconArtwork.png](../../Resources/IconArtwork.png) | Master quadrato dell’icona di Arcane Portal (cristallo con portale nella sfera di vetro), derivato dall'artwork di Arcane tramite `scripts/make_portal_artwork.py`. |
+| [Resources/IconArtwork.md](../../Resources/IconArtwork.md) | Provenienza dichiarata dall'artwork di Arcane (`Bium23/NxLibrary`, MIT) e riproduzione del master e delle varianti tramite gli script. |
 | [crystal-arcane.png](../../Sources/NXLibraryCore/Resources/crystal-arcane.png) | Immagine ferma del trofeo Arcane, anche come ripiego del video. |
 | [crystal-arcane.mov](../../Sources/NXLibraryCore/Resources/crystal-arcane.mov) | Animazione con alpha del trofeo Arcane. |
 | [crystal-gold.png](../../Sources/NXLibraryCore/Resources/crystal-gold.png) | Immagine del trofeo Oro. |
@@ -1049,7 +1065,7 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 
 | File | Responsabilità |
 |---|---|
-| [Resources/AppIcon.icns](../../Resources/AppIcon.icns) | Icona macOS del bundle Arcane. |
+| [Resources/AppIcon.icns](../../Resources/AppIcon.icns) | Icona macOS del bundle Arcane Portal. |
 | [Resources/AppIcon-Dark.png](../../Resources/AppIcon-Dark.png) | Variante scura dell’icona dell’app. |
 | [Resources/AppIcon-Light.png](../../Resources/AppIcon-Light.png) | Variante chiara dell’icona dell’app. |
 | [Resources/AppIcon-Mono.png](../../Resources/AppIcon-Mono.png) | Variante monocromatica dell’icona dell’app. |

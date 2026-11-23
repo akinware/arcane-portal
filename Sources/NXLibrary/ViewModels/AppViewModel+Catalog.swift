@@ -36,7 +36,7 @@ extension AppViewModel {
                 return false
             }
             showSettingsNotice(title: L10n.text("Library not saved"),
-                               message: L10n.text("The build result is kept for this session. Free space if needed, then retry saving before closing Arcane."),
+                               message: L10n.text("The build result is kept for this session. Free space if needed, then retry saving before closing Arcane Portal."),
                                retry: { [weak self] in _ = self?.persistBuildOutcome(game, retrying: true) })
             return false
         }

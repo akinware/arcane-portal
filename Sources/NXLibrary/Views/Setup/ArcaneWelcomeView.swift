@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 import NXLibraryCore
 
-/// "Welcome to Arcane", once, for players who update from NX Library: the new name, what's new, Steam
+/// "Welcome to Arcane Portal", once, for players who update from NX Library: the new name, what's new, Steam
 /// when it is found and still off (Add / Not now) and Open library. Every exit marks it shown.
 struct ArcaneWelcomeView: View {
     @Environment(\.seleneCanvas) var canvas
@@ -36,7 +36,7 @@ struct ArcaneWelcomeView: View {
         ZStack {
             SeleneBackdrop()
             VStack(spacing: 0) {
-                Text(L10n.text("Welcome to Arcane")).seleneFont(46, .semibold).foregroundColor(SeleneTheme.ink)
+                Text(L10n.text("Welcome to Arcane Portal")).seleneFont(46, .semibold).foregroundColor(SeleneTheme.ink)
                     .multilineTextAlignment(.center)
                 Text(L10n.format("%@ has a new name: your games and settings are right where you left them.",
                                  [AppIdentity.formerName]))

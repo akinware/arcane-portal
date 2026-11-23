@@ -100,7 +100,7 @@ public final class ImportService {
                     .compactMap { $0 }
                     .compactMap(Self.normalizedTitleId)
                     .first
-                guard bundleId != "local.nxlibrary", let titleId else { continue }
+                guard bundleId != "io.github.akinware.arcaneportal", let titleId else { continue }
                 let name = (info["CFBundleDisplayName"] as? String)
                     ?? (info["CFBundleName"] as? String)
                     ?? item.deletingPathExtension().lastPathComponent

@@ -1,4 +1,4 @@
-# Arcane — i flussi principali
+# Arcane Portal — i flussi principali
 
 Ogni flusso segue un'azione dall'input all'effetto, nominando i tipi che se ne occupano. I dettagli e le regole di ogni passo sono nella sezione dell'area in [architecture.md](architecture.md); come costruire un pezzo nuovo è in [conventions.md](../working-on-it/conventions.md). Se un flusso cambia, il suo schema si aggiorna nello stesso commit.
 
@@ -20,14 +20,14 @@ flowchart TD
     B --> C["AppSettingsStore · lingua (AppLocalization)<br/>LaunchReveal: finestra pronta, poi fullscreen"]
     C --> D["CatalogStore legge catalog.json<br/>(conversione da library.json se serve)"]
     D -->|"archivio danneggiato"| R["Recupero esplicito: Retry / ripristino backup"]
-    D -->|"catalogo valido, legacy modificato"| L["Scelta Keep Arcane’s library"]
-    L --> LA["Rivalida impronte → archivia catalogo, backup e legacy<br/>Mantieni i giochi Arcane e riconosci la base legacy"]
+    D -->|"catalogo valido, legacy modificato"| L["Scelta Keep Arcane Portal’s library"]
+    L --> LA["Rivalida impronte → archivia catalogo, backup e legacy<br/>Mantieni i giochi Arcane Portal e riconosci la base legacy"]
     LA --> D
     D --> E["AppShellState prepara coordinatore, router, tema"]
     E --> F["AppShellView: AppViewModel, store, monitor, updater"]
     F --> G{"Primo avvio completato?<br/>(FirstRunSetup)"}
     G -->|"no"| H["Setup: found (Steam, app portate) → Open library<br/>oppure Porting → Get ready → Your games"]
-    G -->|"sì"| I["Benvenuto in Arcane una volta, per chi aggiorna<br/>altrimenti home scelta"]
+    G -->|"sì"| I["Benvenuto in Arcane Portal una volta, per chi aggiorna<br/>altrimenti home scelta"]
     H --> K["Prima home Spotlight: moonlight condiviso → entrata<br/>Entrance animation; niente volo con Riduci movimento"]
     I --> K
     F --> J["In background: recuperi dei salvataggi, installazioni in attesa,<br/>scansione Steam se attivo, controllo engine se attivo, aggiornamenti;<br/>avviso se la copia è temporanea (App Translocation)"]
@@ -40,7 +40,7 @@ Punti fissi:
 - La scelta Steam del primo Setup resta salvata anche alla chiusura; lettura e attivazione usano la cartella scelta nella fonte. Una lettura incompleta offre Retry, senza dichiarare la libreria vuota.
 - La cartella Game files ricordata resta una preferenza del selettore: l'avvio non ne enumera i sorgenti.
 - Menu e dialoghi nativi hanno precedenza sul routing della shell: `nativeDialogOwnsInput` ferma i comandi del controller anche se un benvenuto, Setup o dialogo dell'app è già aperto sotto.
-- Se GameController non espone nessun dispositivo, il PowerA `Lic Pro Controller` può inviare azioni alla stessa shell tramite HID. Al ritorno da un gioco le azioni sono di nuovo ammesse quando Arcane torna in primo piano.
+- Se GameController non espone nessun dispositivo, il PowerA `Lic Pro Controller` può inviare azioni alla stessa shell tramite HID. Al ritorno da un gioco le azioni sono di nuovo ammesse quando Arcane Portal torna in primo piano.
 
 ## 2. Dal disco alla libreria
 
@@ -99,7 +99,7 @@ flowchart TD
     G --> H["SteamPlaytimeSync rilegge le ore da localconfig.vdf"]
 ```
 
-Arcane legge le domande dal log di Steam. Durante `ShowInterstitials` l'attesa prosegue e il client può aprire le sue finestre dietro la schermata. Arcane non scrive mai i file di Steam e non apre l'app del gioco direttamente. Dettagli in [steam.md](steam.md).
+Arcane Portal legge le domande dal log di Steam. Durante `ShowInterstitials` l'attesa prosegue e il client può aprire le sue finestre dietro la schermata. Arcane Portal non scrive mai i file di Steam e non apre l'app del gioco direttamente. Dettagli in [steam.md](steam.md).
 
 Nella pagina Spotlight di un titolo Steam, Giù porta anche a **More like this** quando la fascia è presente. Invio, A o doppio clic selezionano la copertina sulla riga della libreria. Se il filtro la esclude, la libreria passa a **All games** come per Switch.
 
@@ -189,4 +189,4 @@ flowchart TD
     I --> J["Riavvio allo stesso percorso"]
 ```
 
-Alla chiusura successiva, una copia release che si chiama ancora `NX Library.app` diventa `Arcane.app` (`AppBundleRename`, chiamato da `AppDelegate.applicationWillTerminate`). Non succede se un riavvio è in programma, perché l'aiuto che riapre l'app usa il percorso attuale.
+Alla chiusura successiva, una copia release che si chiama ancora `NX Library.app` diventa `Arcane Portal.app` (`AppBundleRename`, chiamato da `AppDelegate.applicationWillTerminate`). Non succede se un riavvio è in programma, perché l'aiuto che riapre l'app usa il percorso attuale.
