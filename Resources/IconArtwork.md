@@ -1,7 +1,7 @@
 # App icon artwork
 
 Arcane Portal's icon is a glowing ring of runes, a portal, on a dark teal background. The project's
-maintainer supplied the image for this fork. Arcane's earlier crystal artwork (`Bium23/NxLibrary`, MIT)
+maintainer created the image for this fork with AI, using Google's Gemini image model (Nano Banana). Arcane's earlier crystal artwork (`Bium23/NxLibrary`, MIT)
 is no longer used.
 
 `IconArtwork.png` is the full-bleed 1254 × 1254 square master: the supplied image cropped to a square

@@ -1055,7 +1055,7 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | File | Responsabilità aggiuntiva |
 |---|---|
 | [Resources/IconArtwork.png](../../Resources/IconArtwork.png) | Master quadrato dell’icona di Arcane Portal: un anello di rune luminoso, un portale, su fondo ottanio scuro. |
-| [Resources/IconArtwork.md](../../Resources/IconArtwork.md) | Provenienza dell'immagine fornita dal maintainer, ritaglio del master e riproduzione delle varianti con `scripts/make_icons.swift`. |
+| [Resources/IconArtwork.md](../../Resources/IconArtwork.md) | Provenienza dell'immagine, creata dal maintainer con l'IA (modello di immagini Gemini di Google, Nano Banana), ritaglio del master e riproduzione delle varianti con `scripts/make_icons.swift`. |
 | [crystal-arcane.png](../../Sources/NXLibraryCore/Resources/crystal-arcane.png) | Immagine ferma del trofeo Arcane, anche come ripiego del video. |
 | [crystal-arcane.mov](../../Sources/NXLibraryCore/Resources/crystal-arcane.mov) | Animazione con alpha del trofeo Arcane. |
 | [crystal-gold.png](../../Sources/NXLibraryCore/Resources/crystal-gold.png) | Immagine del trofeo Oro. |
