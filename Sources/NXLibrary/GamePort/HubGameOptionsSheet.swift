@@ -91,6 +91,12 @@ struct HubGameOptionsSheet: View {
 
     private var sessions: [PlayRecord] { profile.map { gp.playSessions($0.id) } ?? [] }
 
+    private var fixes: [AutoFix] { profile.map { gp.gameport.autoFixes.fixes($0.id) } ?? [] }
+
+    private var communityAdvice: CommunityAdvice? {
+        game.steamAppID.flatMap { gp.gameport.communityAdvice(steamAppID: $0) }
+    }
+
     private var verdicts: [CommunityVerdict] {
         game.steamAppID.flatMap { gp.communityVerdicts[$0] } ?? []
     }
@@ -113,6 +119,15 @@ struct HubGameOptionsSheet: View {
                 ForEach(Array(sessions.prefix(4).enumerated()), id: \.offset) { _, session in
                     row(icon: icon(session.outcome), title: session.summary(), detail: setupText(session))
                 }
+            }
+            ForEach(Array(fixes.prefix(3).enumerated()), id: \.offset) { _, fix in
+                row(icon: fix.state == .undone ? "arrow.uturn.backward.circle" : "wand.and.stars",
+                    title: fix.state == .trying ? "Trying an automatic fix" : "Automatic fix",
+                    detail: fix.summary)
+            }
+            if let advice = communityAdvice, advice.prefersWindowsSteam {
+                row(icon: "person.2.fill", title: "Other players: Windows Steam works better",
+                    detail: "The Steam Bridge fails for most players with this game, while Windows Steam works, so Play uses Windows Steam.")
             }
             if !verdicts.isEmpty {
                 Text("Other players").font(.subheadline.weight(.semibold)).padding(.top, 6)
@@ -238,6 +253,8 @@ struct HubGameOptionsSheet: View {
         case .gameport: return "GamePort"
         case .recipe: return "Recipe"
         case .player: return "You"
+        case .community: return "Players"
+        case .autoFix: return "Auto-fix"
         }
     }
 
@@ -246,6 +263,8 @@ struct HubGameOptionsSheet: View {
         case .gameport: return .gray
         case .recipe: return .blue
         case .player: return .green
+        case .community: return .purple
+        case .autoFix: return .orange
         }
     }
 
@@ -254,6 +273,8 @@ struct HubGameOptionsSheet: View {
         case .gameport: return "GamePort's default for every game."
         case .recipe: return "Set by this game's recipe."
         case .player: return "You changed this below."
+        case .community: return "Other players' reports: enough Macs run the game well with this. Your own choice below always wins."
+        case .autoFix: return "GamePort changed this by itself after a crash. It stays because the game worked afterwards; change it below any time."
         }
     }
 

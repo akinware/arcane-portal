@@ -343,6 +343,11 @@ final class GamePortConsoleModel: ObservableObject {
         launchMonitorTask = Task.detached(priority: .utility) {
             await kit.monitorBridgeLaunch(profileID: profileID, title: title, process: process, gameLogStart: gameLogStart) { state in
                 Task { @MainActor in
+                    if case .needsAttention(let profileID, let diagnosis) = state,
+                       self.tryAutoFix(diagnosis, profileID: profileID, retry: { self.retryBridgeLaunch() }) {
+                        self.endLaunchGuard()
+                        return
+                    }
                     self.launchState = state
                     if case .idle = state { self.endLaunchGuard() }
                     if case .needsAttention = state { self.endLaunchGuard() }
@@ -545,12 +550,30 @@ final class GamePortConsoleModel: ObservableObject {
             await kit.monitorLaunch(profile: profile, recipe: recipe, cefStart: cefStart, bootstrapStart: bootstrapStart,
                                     marks: marks, closeSteamWhenGameExits: true) { state in
                 Task { @MainActor in
+                    if case .needsAttention(let profileID, let diagnosis) = state {
+                        self.endLaunchGuard()
+                        if self.tryAutoFix(diagnosis, profileID: profileID, retry: {
+                            guard let updated = try? kit.profiles.load(profileID) else { return }
+                            self.launchGame(profile: updated, recipe: recipe)
+                        }) { return }
+                    }
                     self.launchState = state
                     if case .idle = state { self.endLaunchGuard() }
-                    if case .needsAttention = state { self.endLaunchGuard() }
                 }
             }
         }
+    }
+
+    /// After a failed launch: when the log names a sure fix, GamePort applies it by itself and starts
+    /// the game once more (`GamePort.applyAutoFix`). Returns true when it did; otherwise the player
+    /// gets the diagnosis and its choices as before.
+    private func tryAutoFix(_ diagnosis: LaunchDiagnosis, profileID: String, retry: @escaping @MainActor () -> Void) -> Bool {
+        guard let fix = gameport.applyAutoFix(diagnosis, profileID: profileID) else { return false }
+        say("\(diagnosis.headline). GamePort did this by itself: \(fix.title). Starting the game again…")
+        launchState = .idle
+        refresh()
+        retry()
+        return true
     }
 
     private func endLaunchGuard() {

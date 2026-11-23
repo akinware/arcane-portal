@@ -186,7 +186,7 @@ extension GamePortConsoleModel {
             guard let appID else { return .profile(profileID: profile.id) }
             let win = windowsSteamHas(game, profileID: profile.id)
             // Windows Steam also wins when the Bridge failed the last time and Windows Steam worked.
-            if win.hasGame && (vac || !bridgeReady || playSessions(profile.id).prefersWindowsSteamOverBridge) {
+            if win.hasGame && (vac || !bridgeReady || bridgeLikelyFails(profileID: profile.id, appID: appID)) {
                 return .windowsSteam(profileID: profile.id)
             }
             if let exe, bridgeReady, !vac {
@@ -198,6 +198,15 @@ extension GamePortConsoleModel {
             if !vac { return .download(appID: appID) }
             return win.hasSteam ? .openWindowsSteam(profileID: profile.id) : .installWindowsSteam(profileID: profile.id)
         }
+    }
+
+    /// The Bridge failed here last time while Windows Steam worked, or it fails for most other players
+    /// (and has not worked on this Mac).
+    func bridgeLikelyFails(profileID: String, appID: Int) -> Bool {
+        let sessions = playSessions(profileID)
+        if sessions.prefersWindowsSteamOverBridge { return true }
+        guard sessions.lastConclusive(.bridge)?.outcome != .worked else { return false }
+        return gameport.communityAdvice(steamAppID: appID)?.prefersWindowsSteam == true
     }
 
     private func bottleRoute(_ item: CrossOverBottleLaunchItem) -> HubPlayRoute {
