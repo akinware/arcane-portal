@@ -4,6 +4,21 @@ User-visible changes to Arcane Portal are recorded here, newest first. Arcane Po
 [Arcane](https://github.com/Bium23/NxLibrary) (formerly NX Library); the entries from 0.2.1 down are Arcane's own
 releases, kept as they were. Engine changes also have their own [upgrade notes](docs/history/engine-upgrades/README.md).
 
+## Unreleased
+
+### Added
+
+- **Windows games in Collection.** Collection shows Windows games after the library's own, as Spotlight does: A plays,
+  Y opens Options, and search lands on them there.
+- **Change Artwork for Windows games.** A Windows game's Options has **Change Artwork…**: Steam's own art, SteamGridDB
+  (with your key), LaunchBox, the other online sources or a file, for the cover, background and logo. **Automatic**
+  takes the pick back.
+
+### Fixed
+
+- A Steam game without a library cover shows its store header instead of a blank tile; a Windows game without a
+  background shows the wallpaper instead of the previous game's.
+
 ## 0.3.1 — 2026-11-25
 
 ### Added

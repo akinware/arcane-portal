@@ -172,8 +172,22 @@ extension AppShellView {
                 .transition(overlayTransition)
                 .zIndex(2)
             }
+            if let game = viewModel.hubArtworkGame {
+                ChangeArtworkView(viewModel: viewModel, subject: PersonalizationSubject(hub: game)) {
+                    viewModel.hubArtworkGame = nil
+                }
+                .opacity(opacityBelowCover(2))
+                .allowsHitTesting(!currentBackdropCover.covers(2))
+                .id(game.id)
+                .transition(overlayTransition)
+                .zIndex(2)
+            }
         }
         .onPreferenceChange(SeleneBackdropRequestKey.self, perform: updateSharedBackdrop)
+        .onReceive(NotificationCenter.default.publisher(for: .nxHubChangeArtwork)) { note in
+            guard let game = note.object as? UnifiedHubGame, !viewModel.isGameOptionsOpen else { return }
+            viewModel.hubArtworkGame = game
+        }
     }
 
     /// Layers with environment, sheets and lifecycle; split from `body` for the type checker.

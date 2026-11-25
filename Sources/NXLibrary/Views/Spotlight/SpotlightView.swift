@@ -144,19 +144,7 @@ struct SpotlightView: View {
 
     var filteredHubGames: [UnifiedHubGame] {
         let existingSteamAppIDs = Set(viewModel.visibleCatalogGames.compactMap { $0.steamGame.map { Int($0.appID) } })
-        let base = hub.visibleHubGames(besidesSteamAppIDs: existingSteamAppIDs)
-        switch filter {
-        case .all:
-            return base
-        case .installed:
-            return base.filter(\.isReady)
-        case .recentlyPlayed:
-            return base.filter { $0.lastPlayed != nil || $0.isReady }
-        case .notPlayed:
-            return base.filter { $0.playtimeMinutes == 0 }
-        case .favorites:
-            return base.filter { hub.isFavorite($0) }
-        }
+        return hub.visibleHubGames(filter: filter, besidesSteamAppIDs: existingSteamAppIDs)
     }
 
     var selectedCatalogGame: CatalogGame? {

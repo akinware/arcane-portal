@@ -21,15 +21,29 @@ extension ChangeArtworkView {
         let names = gameNames
         var candidates: [ArtworkCandidate]
         found[slot] = []
-        if let steam = subject.steam, let appID = subject.steamAppID {
+        if subject.isComputerGame, let appID = subject.steamAppID {
             // Steam's own art for this AppID shows at once; the online sources take seconds and follow it.
-            let screenshots = SteamGameFacts.shared.metadata(for: steam)?.screenshots ?? []
+            let screenshots = SteamGameFacts.shared.metadata(appID: Int(appID))?.screenshots ?? []
             let own = ArtworkCandidates.steamList(for: slot, appID: appID, screenshots: screenshots)
             await collect(own, slot: slot, from: 0)
             guard !Task.isCancelled else { found[slot] = nil; return }
             if online == nil { online = await OnlineArtwork.find(names: names, platform: .mac) }
             candidates = ArtworkCandidates.steamList(for: slot, appID: appID, screenshots: screenshots, online: online ?? [])
             await collect(Array(candidates.dropFirst(own.count)), slot: slot, from: own.count)
+        } else if let hub = subject.hub {
+            // A Windows game without a Steam AppID (Epic, GOG, a CrossOver bottle): its store's art, then the
+            // computer sources found by name.
+            if online == nil { online = await OnlineArtwork.find(names: names, platform: .mac) }
+            let own: URL? = switch slot {
+            case .cover, .icon: hub.remotePosterURL
+            case .background: hub.remoteHeroURL
+            case .logo: hub.remoteLogoURL
+            }
+            candidates = own.map { [ArtworkCandidate(slot: slot, source: hub.storeBadge, url: $0)] } ?? []
+            for candidate in online ?? [] where candidate.slot == slot && !candidates.contains(where: { $0.url == candidate.url }) {
+                candidates.append(candidate)
+            }
+            await collect(candidates, slot: slot, from: 0)
         } else {
             let entries = slot == .cover ? await viewModel.boxArt.pickerEntries(names: names) : []
             if online == nil { online = await OnlineArtwork.find(names: names, platform: switch2 ? .switch2 : .switch) }
@@ -95,7 +109,7 @@ extension ChangeArtworkView {
         let round = browseRound
         if browseResult == nil {
             let key = source.needsKey ? SteamGridDBKey().load() : nil
-            let result = await source.search(browseQuery, gameNames: gameNames, switch2: switch2, computer: subject.steam != nil, key: key)
+            let result = await source.search(browseQuery, gameNames: gameNames, switch2: switch2, computer: subject.isComputerGame, key: key)
             guard round == browseRound, browsing == source, !Task.isCancelled else { return }
             browseResult = result
         }

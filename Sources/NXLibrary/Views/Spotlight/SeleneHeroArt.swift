@@ -85,18 +85,19 @@ final class SeleneHeroArt: ObservableObject {
 
     func hubHeroTaskKey(_ game: UnifiedHubGame?) -> String {
         guard let game else { return "none" }
-        return "hub-hero|\(game.id)|\(game.preferredHeroURL?.absoluteString ?? "")"
+        return "hub-hero|\(game.id)|\(game.preferredHeroURL?.absoluteString ?? "")|\(SteamPersonalizations.shared.artwork.revision)"
     }
 
     /// Loads full-screen hero backdrop art for a UnifiedHubGame (prefers instant 0ms local Steam
     /// librarycache files, falling back cleanly to Steam CDN / Epic artwork decoded off the main thread).
     func loadHubHero(game: UnifiedHubGame?, current: () -> UUID?, settle: UInt64 = 120_000_000) async {
         guard let game else { return }
-        let loadedFor = "\(game.id.uuidString)|hub|"
+        let loadedFor = "\(game.id.uuidString)|hub\(SteamPersonalizations.shared.artwork.revision)|"
         if key.hasPrefix(loadedFor) { return }
         try? await Task.sleep(nanoseconds: settle)
         guard !Task.isCancelled, current() == game.id else { return }
-        guard let url = game.preferredHeroURL else { return }
+        // A game without art of its own shows the wallpaper, never the previous game's backdrop.
+        guard let url = game.preferredHeroURL else { image = nil; key = "none"; return }
         let loaded: NSImage?
         if url.isFileURL {
             loaded = await GameArtLoader.decodeHero(at: url)
@@ -108,10 +109,8 @@ final class SeleneHeroArt: ObservableObject {
             }.value
         }
         guard !Task.isCancelled, current() == game.id else { return }
-        if let loaded {
-            image = loaded
-            key = loadedFor + "\(ObjectIdentifier(loaded).hashValue)"
-        }
+        image = loaded
+        key = loaded.map { loadedFor + "\(ObjectIdentifier($0).hashValue)" } ?? "none"
     }
 
     func loadLogo(game: PortedGame?, metadata: NintendoStoreMetadata?,

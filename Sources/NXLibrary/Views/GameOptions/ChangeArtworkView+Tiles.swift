@@ -91,7 +91,8 @@ extension ChangeArtworkView {
         switch tile {
         case .automatic:
             switch slot {
-            case _ where subject.steam != nil: return (L10n.text("Automatic"), steamAutomatic)
+            case _ where subject.steamAppID != nil && subject.isComputerGame: return (L10n.text("Automatic"), steamAutomatic)
+            case _ where subject.hub != nil: return (L10n.text("Automatic"), L10n.text("The store’s own art"))
             case .cover: return (L10n.text("Automatic"), L10n.text("GameTDB, or a composed cover"))
             case .background: return (L10n.text("Automatic"), L10n.text("The game's own art, then Title DB"))
             case .icon: return (L10n.text("Automatic"), L10n.text("The game's own icon, then Title DB"))

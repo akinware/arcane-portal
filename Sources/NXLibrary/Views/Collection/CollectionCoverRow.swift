@@ -12,6 +12,8 @@ struct CollectionCoverRow: View {
     @Environment(\.seleneReduceMotion) private var reduceMotion
 
     let games: [CatalogGame]
+    /// GamePort's Windows games, after the library's own (`GamePortConsoleModel.visibleHubGames`).
+    var hubGames: [UnifiedHubGame] = []
     let selectedID: UUID?
     let artwork: ArtworkStore
     let boxArt: BoxArtService
@@ -22,8 +24,30 @@ struct CollectionCoverRow: View {
     let needsMetadata: (PortedGame) -> Void
     /// The porting look of a game's cover (`PortingTileLook`).
     var tileLook: (PortedGame) -> PortingTileLook = { _ in .normal }
-    let onSelect: (CatalogGame) -> Void
-    let onActivate: (CatalogGame) -> Void
+    let onSelect: (UUID) -> Void
+    let onActivate: (UUID) -> Void
+
+    /// One cover: a library game or a Windows game.
+    enum Entry {
+        case catalog(CatalogGame)
+        case hub(UnifiedHubGame)
+
+        var id: UUID {
+            switch self {
+            case .catalog(let game): game.id
+            case .hub(let game): game.id
+            }
+        }
+
+        var name: String {
+            switch self {
+            case .catalog(let game): game.name
+            case .hub(let game): game.title
+            }
+        }
+    }
+
+    private var entries: [Entry] { games.map(Entry.catalog) + hubGames.map(Entry.hub) }
 
     /// The first cover lines up with Spotlight's 80 margin (Selene's list had 14).
     private static let startInset: CGFloat = 80
@@ -32,11 +56,12 @@ struct CollectionCoverRow: View {
     private static let glide = Animation.spring(response: 0.18, dampingFraction: 1)
 
     var body: some View {
-        let selected = selectedID.flatMap { id in games.firstIndex { $0.id == id } }
+        let entries = self.entries
+        let selected = selectedID.flatMap { id in entries.firstIndex { $0.id == id } }
         let offset = selected.map(CollectionRow.scrollOffset(selectedIndex:)) ?? 0
-        let window = visibleRange(offset: offset)
+        let window = visibleRange(count: entries.count, offset: offset)
         ZStack(alignment: .topLeading) {
-            ForEach(window.map { (index: $0, game: games[$0]) }, id: \.game.id) { entry in
+            ForEach(window.map { (index: $0, game: entries[$0]) }, id: \.game.id) { entry in
                 cover(entry.game, selected: entry.index == selected)
                     .offset(x: canvas.u(Self.startInset + CGFloat(entry.index) * CollectionRow.pitch),
                             y: canvas.u((CollectionRow.bandHeight - CollectionRow.coverHeight) / 2))
@@ -51,21 +76,52 @@ struct CollectionCoverRow: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .frame(height: canvas.u(CollectionRow.bandHeight), alignment: .topLeading)
         .animation(reduceMotion ? nil : Self.glide, value: selectedID)
-        .animation(reduceMotion ? nil : Self.glide, value: games.map(\.id))
+        .animation(reduceMotion ? nil : Self.glide, value: entries.map(\.id))
     }
 
     /// Covers from a few left of the screen to a few past its right edge (the same spare as Spotlight's row).
-    private func visibleRange(offset: Int) -> Range<Int> {
+    private func visibleRange(count: Int, offset: Int) -> Range<Int> {
         let pitch = max(canvas.u(CollectionRow.pitch), 1)
-        return SpotlightRowGeometry.window(count: games.count, offset: offset,
+        return SpotlightRowGeometry.window(count: count, offset: offset,
                                            tilesLeftOfStage: Int((canvas.stageOrigin.x / pitch).rounded(.up)),
                                            tilesAcross: Int((canvas.size.width / pitch).rounded(.up)))
     }
 
-    private func cover(_ game: CatalogGame, selected: Bool) -> some View {
+    private func cover(_ entry: Entry, selected: Bool) -> some View {
         let w = canvas.u(CollectionRow.coverWidth), h = canvas.u(CollectionRow.coverHeight)
         let face = RoundedRectangle(cornerRadius: canvas.u(12), style: .continuous)
         return ZStack {
+            switch entry {
+            case .catalog(let game):
+                catalogFace(game, width: w, height: h, face: face)
+            case .hub(let game):
+                UnifiedHubTileArtwork(game: game, width: w, height: h, showsBadge: false)
+                    .clipShape(face)
+                    .shadow(color: .black.opacity(0.55), radius: canvas.u(9))
+            }
+            SeleneShine(cornerRadius: canvas.u(12), active: selected)
+                .frame(width: w, height: h)
+            SeleneTileRing(cornerRadius: canvas.u(18), active: selected)
+                .frame(width: w + canvas.u(12), height: h + canvas.u(12))
+        }
+        .frame(width: w, height: h)
+        .scaleEffect(selected ? CollectionRow.selectedScale : 1)
+        .contentShape(Rectangle())
+        // The single click selects at once; it does not wait for a possible double click.
+        .onTapGesture(count: 2) { onActivate(entry.id) }
+        .simultaneousGesture(TapGesture().onEnded { onSelect(entry.id) })
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(entry.name)
+        .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
+        .task(id: entry.id) {
+            if case .catalog(let game) = entry, let native = game.nxnativeGame { needsMetadata(native) }
+        }
+    }
+
+    @ViewBuilder
+    private func catalogFace(_ game: CatalogGame, width w: CGFloat, height h: CGFloat,
+                             face: RoundedRectangle) -> some View {
+        ZStack {
             Group {
                 if let native = game.nxnativeGame {
             SwitchBoxArtCover(game: native, width: w, height: h, officialName: officialName(native),
@@ -86,20 +142,6 @@ struct CollectionCoverRow: View {
             if game.nxnativeGame == nil {
                 PortingDownloadMark(look: PortingTileLook.make(catalog: game), width: w, height: h)
             }
-            SeleneShine(cornerRadius: canvas.u(12), active: selected)
-                .frame(width: w, height: h)
-            SeleneTileRing(cornerRadius: canvas.u(18), active: selected)
-                .frame(width: w + canvas.u(12), height: h + canvas.u(12))
         }
-        .frame(width: w, height: h)
-        .scaleEffect(selected ? CollectionRow.selectedScale : 1)
-        .contentShape(Rectangle())
-        // The single click selects at once; it does not wait for a possible double click.
-        .onTapGesture(count: 2) { onActivate(game) }
-        .simultaneousGesture(TapGesture().onEnded { onSelect(game) })
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(game.name)
-        .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
-        .task(id: game.id) { if let native = game.nxnativeGame { needsMetadata(native) } }
     }
 }

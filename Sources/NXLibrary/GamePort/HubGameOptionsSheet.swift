@@ -374,7 +374,13 @@ struct HubGameOptionsSheet: View {
                 dismiss()
                 gp.setHidden(true, game)
             }
-            .help("Takes the game out of Spotlight and search. Bring it back in Settings → Library → Games.")
+            .help("Takes the game out of Spotlight, Collection and search. Bring it back in Settings → Library → Games.")
+            Button("Change Artwork…") {
+                dismiss()
+                // The picker is a full-screen panel of the app shell (`AppShellView+Layers`), opened once this sheet is gone.
+                DispatchQueue.main.async { NotificationCenter.default.post(name: .nxHubChangeArtwork, object: game) }
+            }
+            .help("Choose the cover, background and logo: Steam's own art, SteamGridDB, LaunchBox or a file.")
             Spacer()
             Button(focusRecipeID == nil ? "Stores & Setup…" : "Advanced Settings…") {
                 dismiss()
@@ -415,4 +421,9 @@ struct HubGameOptionsSheet: View {
             }
         }
     }
+}
+
+extension Notification.Name {
+    /// Opens Change Artwork for the `UnifiedHubGame` in the notification's object.
+    static let nxHubChangeArtwork = Notification.Name("NXHubChangeArtwork")
 }

@@ -16,6 +16,8 @@ struct UnifiedHubSpotlightInfo: View {
     var focused: Int? = nil
     var onPill: (Int) -> Void = { _ in }
     var onHoverPill: (Int) -> Void = { _ in }
+    /// Collection's head: its logo layout and no pills (A plays, Y opens Options, as on its other games).
+    var collection = false
     let onOpenCatalog: () -> Void
 
     @State private var logo: NSImage?
@@ -33,17 +35,19 @@ struct UnifiedHubSpotlightInfo: View {
     var body: some View {
         let route = route
         VStack(alignment: .leading, spacing: 0) {
-            GameLogoArea(title: game.title, logo: logo)
+            GameLogoArea(title: game.title, logo: logo, collection: collection)
                 .offset(x: slid ? 0 : canvas.u(SpotlightGameInfoView.logoSlideDistance))
                 .opacity(shown ? 1 : 0)
             VStack(alignment: .leading, spacing: 0) {
-                GamePrimaryActions(primaryTitle: primaryTitle(route),
-                                   isFavorite: gp.isFavorite(game),
-                                   focused: focused,
-                                   primaryEnabled: primaryEnabled,
-                                   primaryWaveDots: isStarting,
-                                   onAction: onPill, onHover: onHoverPill)
-                    .padding(.leading, canvas.u(2)).padding(.top, canvas.u(18))
+                if !collection {
+                    GamePrimaryActions(primaryTitle: primaryTitle(route),
+                                       isFavorite: gp.isFavorite(game),
+                                       focused: focused,
+                                       primaryEnabled: primaryEnabled,
+                                       primaryWaveDots: isStarting,
+                                       onAction: onPill, onHover: onHoverPill)
+                        .padding(.leading, canvas.u(2)).padding(.top, canvas.u(18))
+                }
                 SeleneStatsRow(items: stats)
                     .padding(.leading, canvas.u(4)).padding(.top, canvas.u(26))
                 howLine(route)
@@ -56,7 +60,7 @@ struct UnifiedHubSpotlightInfo: View {
         }
         .frame(width: canvas.u(900), alignment: .leading)
         .onAppear { reveal() }
-        .task(id: game.id) { await loadLogo() }
+        .task(id: "\(game.id)|\(game.preferredLogoURL?.absoluteString ?? "")") { await loadLogo() }
         .sheet(isPresented: optionsPresented) {
             HubGameOptionsSheet(game: game, onOpenCatalog: onOpenCatalog)
         }
@@ -213,11 +217,27 @@ extension HubPlayRoute {
     }
 }
 
-/// Square glossy tile artwork rendered inside Arcane's `SpotlightRowView` for every `UnifiedHubGame`.
-/// Uses instant 0 ms local Steam `librarycache` images first, falling back to Steam CDN / Epic art.
+/// Glossy tile artwork for every `UnifiedHubGame`: square on Spotlight's row, portrait on Collection's.
+/// The player's pick comes first, then instant local Steam `librarycache` images, then Steam CDN / store art.
+/// A Steam game without a library cover falls back to its store header, then to its name.
 struct UnifiedHubTileArtwork: View {
     let game: UnifiedHubGame
-    let side: CGFloat
+    let width: CGFloat
+    let height: CGFloat
+    /// Collection's covers carry no status badge (its info column says it).
+    var showsBadge = true
+    /// A pick redraws the tile.
+    @ObservedObject private var picks = SteamPersonalizations.shared.artwork
+
+    init(game: UnifiedHubGame, side: CGFloat) {
+        self.game = game; width = side; height = side
+    }
+
+    init(game: UnifiedHubGame, width: CGFloat, height: CGFloat, showsBadge: Bool = true) {
+        self.game = game; self.width = width; self.height = height; self.showsBadge = showsBadge
+    }
+
+    private var side: CGFloat { min(width, height) }
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -225,41 +245,52 @@ struct UnifiedHubTileArtwork: View {
                 Image(nsImage: img)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: side, height: side)
+                    .frame(width: width, height: height)
             } else if let url = game.preferredTileURL, !url.isFileURL {
                 AsyncImage(url: url) { phase in
                     if let img = phase.image {
                         img.resizable().aspectRatio(contentMode: .fill)
+                    } else if case .failure = phase, let header = game.steamHeaderURL, header != url {
+                        AsyncImage(url: header) { headerPhase in
+                            if let img = headerPhase.image {
+                                img.resizable().aspectRatio(contentMode: .fill)
+                            } else {
+                                placeholderFace
+                            }
+                        }
                     } else {
                         placeholderFace
                     }
                 }
-                .frame(width: side, height: side)
+                .frame(width: width, height: height)
             } else {
                 placeholderFace
             }
 
-            // Subtle bottom gradient + small status dot/badge so ready vs not-installed is clear at a glance
-            LinearGradient(colors: [.clear, .black.opacity(0.68)], startPoint: .center, endPoint: .bottom)
-                .frame(width: side, height: side)
-                .allowsHitTesting(false)
+            if showsBadge {
+                // Subtle bottom gradient + small status dot/badge so ready vs not-installed is clear at a glance
+                LinearGradient(colors: [.clear, .black.opacity(0.68)], startPoint: .center, endPoint: .bottom)
+                    .frame(width: width, height: height)
+                    .allowsHitTesting(false)
 
-            HStack(spacing: 4) {
-                Circle()
-                    .fill(game.isReady ? Color.green : Color.white.opacity(0.45))
-                    .frame(width: max(5, side * 0.045), height: max(5, side * 0.045))
-                Text(game.supportsMacOS ? "Mac" : (game.storeBadge == "Steam" ? game.runnerBadge : game.storeBadge))
-                    .font(.system(size: max(9, side * 0.068), weight: .semibold))
-                    .foregroundColor(.white.opacity(0.92))
-                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(game.isReady ? Color.green : Color.white.opacity(0.45))
+                        .frame(width: max(5, side * 0.045), height: max(5, side * 0.045))
+                    Text(game.supportsMacOS ? "Mac" : (game.storeBadge == "Steam" ? game.runnerBadge : game.storeBadge))
+                        .font(.system(size: max(9, side * 0.068), weight: .semibold))
+                        .foregroundColor(.white.opacity(0.92))
+                        .lineLimit(1)
+                }
+                .padding(.horizontal, max(6, side * 0.05))
+                .padding(.vertical, max(3, side * 0.025))
+                .background(.black.opacity(0.55), in: Capsule())
+                .padding(max(6, side * 0.05))
             }
-            .padding(.horizontal, max(6, side * 0.05))
-            .padding(.vertical, max(3, side * 0.025))
-            .background(.black.opacity(0.55), in: Capsule())
-            .padding(max(6, side * 0.05))
         }
-        .frame(width: side, height: side)
+        .frame(width: width, height: height)
         .clipped()
+        .id(picks.revision)
     }
 
     private var placeholderFace: some View {
@@ -276,6 +307,6 @@ struct UnifiedHubTileArtwork: View {
                 .lineLimit(3)
                 .padding(max(10, side * 0.08))
         }
-        .frame(width: side, height: side)
+        .frame(width: width, height: height)
     }
 }

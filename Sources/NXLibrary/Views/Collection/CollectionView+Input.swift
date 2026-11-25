@@ -7,18 +7,17 @@ import ArcanePorting
 extension CollectionView {
     func handle(_ action: GamepadAction) {
         var moved = false
-        let all = viewModel.visibleCatalogGames
+        let ids = rowIDs
         switch action {
         case .navigateLeft, .navigateRight:
             let before = viewModel.librarySelection.selectedGameID
-            viewModel.librarySelection.moveCatalog(by: action == .navigateLeft ? -1 : 1,
-                                            in: all, history: playSessions)
+            viewModel.librarySelection.moveIDs(ids, by: action == .navigateLeft ? -1 : 1)
             moved = viewModel.librarySelection.selectedGameID != before
         case .navigateUp, .navigateDown:
             break
         case .jumpToStart, .jumpToEnd:
             let before = viewModel.librarySelection.selectedGameID
-            viewModel.librarySelection.jumpCatalog(toEnd: action == .jumpToEnd, in: all, history: playSessions)
+            viewModel.librarySelection.jumpIDs(ids, toEnd: action == .jumpToEnd)
             moved = viewModel.librarySelection.selectedGameID != before
         case .tabPrevious:
             setFilter(filter.shifted(by: -1))
@@ -27,8 +26,8 @@ extension CollectionView {
         case .rightStickPress:
             setFilter(filter.cycled())
         case .confirm:
-            if let record = selectedCatalogGame {
-                activateCatalog(record)
+            if let id = viewModel.librarySelection.selectedGameID, selectedCatalogGame != nil || selectedHubGame != nil {
+                activate(id)
             } else if !hasAnyGame, !viewModel.isScanningLibrary {
                 SoundEffectService.shared.play(.click)
                 router.openAddGame()
@@ -37,6 +36,11 @@ extension CollectionView {
             // A Steam game's details are its Spotlight page; Collection has no Details screen for it.
             if let game = selectedCatalogGame, game.integration != .steam { router.showDetail(game.id) }
         case .contextAction:
+            if let hubGame = selectedHubGame {
+                SoundEffectService.shared.play(.click)
+                hub.hubOptionsGameID = hubGame.id
+                return
+            }
             if let steam = selectedCatalogGame, steam.integration == .steam {
                 SoundEffectService.shared.play(.click)
                 viewModel.openSteamOptions(steam, from: .collection)
@@ -55,6 +59,19 @@ extension CollectionView {
             router.openSettings(.startUp)
         }
         if moved { SoundEffectService.shared.play(.focus) }
+    }
+
+    /// A on a cover, or a double click: the library's games play or open Details; a Windows game plays the
+    /// way GamePort picks (`HubPlayRoute`), or opens Stores & Setup when nothing can play it yet.
+    func activate(_ id: UUID) {
+        if let record = games.first(where: { $0.id == id }) {
+            activateCatalog(record)
+        } else if let hubGame = hubGames.first(where: { $0.id == id }) {
+            SoundEffectService.shared.play(.click)
+            guard hub.busy == nil, !hub.launchState.isLaunching else { return }
+            if hub.playRoute(for: hubGame) == .storesSetup { router.openWindowsGames() }
+            else { hub.activateUnifiedGame(hubGame) }
+        }
     }
 
     func activateCatalog(_ record: CatalogGame) {

@@ -68660,6 +68660,53 @@
         }
       }
     },
+    "The store’s own art": {
+      "comment": "ChangeArtworkView+Tiles.swift",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The store’s own art"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’immagine del negozio"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’image de la boutique"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Bild des Stores"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La imagen de la tienda"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A imagem da loja"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商店自带的图片"
+          }
+        }
+      }
+    },
     "The sync folder is unavailable. Choose another folder.": {
       "comment": "AppViewModel.swift",
       "localizations": {
@@ -75334,49 +75381,49 @@
         }
       }
     },
-    "Windows game · out of Spotlight and search.": {
+    "Windows game · out of Spotlight, Collection and search.": {
       "comment": "SettingsLibraryGamesSection.swift",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Windows game · out of Spotlight and search."
+            "value": "Windows game · out of Spotlight, Collection and search."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gioco Windows · escluso da Spotlight e ricerca."
+            "value": "Gioco Windows · escluso da Spotlight, Raccolta e ricerca."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Jeu Windows · exclu d’À la une et de la recherche."
+            "value": "Jeu Windows · exclu d’À la une, de la Collection et de la recherche."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Windows-Spiel · aus Spotlight und der Suche ausgeblendet."
+            "value": "Windows-Spiel · aus Spotlight, Sammlung und Suche ausgeblendet."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Juego de Windows · fuera de Destacados y las búsquedas."
+            "value": "Juego de Windows · fuera de Destacados, Colección y las búsquedas."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Jogo do Windows · fora de Destaques e buscas."
+            "value": "Jogo do Windows · fora de Destaques, Coleção e buscas."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Windows 游戏 · 不出现在 Spotlight 和搜索中。"
+            "value": "Windows 游戏 · 不出现在 Spotlight、合集和搜索中。"
           }
         }
       }

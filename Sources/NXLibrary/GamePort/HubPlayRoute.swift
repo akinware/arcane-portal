@@ -439,13 +439,25 @@ extension GamePortConsoleModel {
             .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
     }
 
-    /// The Windows games Spotlight and search show: not hidden, and not already in the library as a Steam game.
+    /// The Windows games Spotlight, Collection and search show: not hidden, and not already in the library as a Steam game.
     func visibleHubGames(besidesSteamAppIDs existing: Set<Int>) -> [UnifiedHubGame] {
         let hidden = hubHidden
         return unifiedGames.filter { game in
             if hidden.contains(game.id) { return false }
             if let appID = game.steamAppID, existing.contains(appID) { return false }
             return true
+        }
+    }
+
+    /// The Windows games a home tab (Spotlight's or Collection's) shows, after the library's own games.
+    func visibleHubGames(filter: LibraryFilter, besidesSteamAppIDs existing: Set<Int>) -> [UnifiedHubGame] {
+        let base = visibleHubGames(besidesSteamAppIDs: existing)
+        switch filter {
+        case .all: return base
+        case .installed: return base.filter(\.isReady)
+        case .recentlyPlayed: return base.filter { $0.lastPlayed != nil || $0.isReady }
+        case .notPlayed: return base.filter { $0.playtimeMinutes == 0 }
+        case .favorites: return base.filter { isFavorite($0) }
         }
     }
 }

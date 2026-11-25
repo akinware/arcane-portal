@@ -25,6 +25,10 @@ struct CollectionView: View {
     @ObservedObject var picks = ArtworkPicks.shared
     /// Steam Play phases drive the A hint.
     @ObservedObject var steamPlayer = SteamPlayCoordinator.shared
+    /// GamePort's Windows games, after the library's own (as on Spotlight).
+    @ObservedObject var hub = GamePortConsoleModel.shared
+    /// A pick redraws a Windows game's backdrop.
+    @ObservedObject var steamPicks = SteamPersonalizations.shared.artwork
     @State var keyMonitor: Any?
 
     init(viewModel: AppViewModel, router: AppRouter, settings: AppSettingsStore,
@@ -46,7 +50,27 @@ struct CollectionView: View {
         viewModel.librarySelection.query.applyCatalog(to: viewModel.visibleCatalogGames, history: playSessions)
     }
 
-    var hasAnyGame: Bool { !viewModel.visibleCatalogGames.isEmpty }
+    /// The Windows games this tab shows, besides Steam games the library already has.
+    var hubGames: [UnifiedHubGame] {
+        let existing = Set(viewModel.visibleCatalogGames.compactMap { $0.steamGame.map { Int($0.appID) } })
+        return hub.visibleHubGames(filter: filter, besidesSteamAppIDs: existing)
+    }
+
+    /// Every cover's ID, in row order: the library's games, then the Windows games.
+    func rowIDs(games: [CatalogGame], hubGames: [UnifiedHubGame]) -> [UUID] {
+        games.map(\.id) + hubGames.map(\.id)
+    }
+
+    var rowIDs: [UUID] { rowIDs(games: games, hubGames: hubGames) }
+
+    var hasAnyGame: Bool {
+        !viewModel.visibleCatalogGames.isEmpty || !hub.visibleHubGames(besidesSteamAppIDs: []).isEmpty
+    }
+
+    var selectedHubGame: UnifiedHubGame? {
+        guard let id = viewModel.librarySelection.selectedGameID else { return nil }
+        return hubGames.first { $0.id == id }
+    }
 
     func selectedGame(in games: [CatalogGame]) -> PortedGame? {
         guard let id = viewModel.librarySelection.selectedGameID else { return nil }
@@ -60,6 +84,7 @@ struct CollectionView: View {
 
     var body: some View {
         let games = self.games
+        let hubGames = self.hubGames
         let game = selectedGame(in: games)
         SeleneHomeChrome(
             leftHints: HintItem.homeGlobals(other: "Spotlight",
@@ -72,7 +97,7 @@ struct CollectionView: View {
                                     shade: settings.settings.backgroundShade,
                                     showsArt: !settings.settings.keepWallpaperOnGames)
             },
-            stage: { stage(games: games, game: game) })
+            stage: { stage(games: games, hubGames: hubGames, game: game) })
         .onAppear(perform: appear)
         // A launch on Collection: Spotlight's entrance belongs to the first home only (`SpotlightView+Entrance`).
         .onAppear { viewModel.homeSeen = true }
@@ -83,6 +108,8 @@ struct CollectionView: View {
         }
         .onChange(of: viewModel.catalogSourceConfigurations) { reconcile() }
         .onChange(of: filter) { reconcile() }
+        .onChange(of: hub.unifiedGames.count) { reconcile() }
+        .onChange(of: hub.hubHidden) { reconcile() }
         .onChange(of: viewModel.librarySelection.selectedGameID) { selectionChanged() }
         .onReceive(NotificationCenter.default.publisher(for: .nxCollectionGamepadAction)) { note in
             guard viewModel.alertMessage == nil, viewModel.settingsNotice == nil else { return }
@@ -91,7 +118,7 @@ struct CollectionView: View {
         .onReceive(NotificationCenter.default.publisher(for: .nxFindGameSelect)) { note in
             guard let id = note.object as? UUID else { return }
             // Find a game lands on Collection; a tab without the game gives way to All games.
-            if !games.contains(where: { $0.id == id }) { setFilter(.all) }
+            if !rowIDs.contains(id) { setFilter(.all) }
             select(id)
         }
         .onChange(of: playSessions.sessions.count) { reconcile() }
@@ -99,9 +126,12 @@ struct CollectionView: View {
         .task(id: art.heroTaskKey(game, metadata: game.flatMap { store.storeMetadata[$0.id] })) { await loadHero(game) }
         .task(id: art.steamHeroTaskKey(selectedCatalogGame)) { await art.loadSteamHero(game: selectedCatalogGame, current: { selectedCatalogGame?.id }, artwork: artwork) }
         .task(id: art.logoTaskKey(game, metadata: game.flatMap { store.storeMetadata[$0.id] })) { await loadLogo(game) }
+        .task(id: art.hubHeroTaskKey(selectedHubGame)) {
+            await art.loadHubHero(game: selectedHubGame, current: { selectedHubGame?.id })
+        }
     }
 
-    private func stage(games: [CatalogGame], game: PortedGame?) -> some View {
+    private func stage(games: [CatalogGame], hubGames: [UnifiedHubGame], game: PortedGame?) -> some View {
         ZStack(alignment: .topLeading) {
             SpotlightTopBar(filter: filter, showClock: settings.settings.showClock,
                             onSelect: { setFilter($0) })
@@ -122,14 +152,20 @@ struct CollectionView: View {
                     .id(record.id)
                     .frame(width: canvas.u(1100), alignment: .topLeading)
                     .offset(x: canvas.u(80), y: canvas.u(110))
+            } else if let hubGame = selectedHubGame {
+                UnifiedHubSpotlightInfo(game: hubGame, collection: true, onOpenCatalog: { router.openWindowsGames() })
+                    .id(hubGame.id)
+                    .frame(width: canvas.u(1100), alignment: .topLeading)
+                    .offset(x: canvas.u(80), y: canvas.u(110))
             }
 
-            if games.isEmpty {
+            if games.isEmpty && hubGames.isEmpty {
                 emptyState
                     .frame(width: canvas.stageSize.width, height: canvas.u(980), alignment: .center)
             } else {
                 CollectionCoverRow(
                     games: games,
+                    hubGames: hubGames,
                     selectedID: viewModel.librarySelection.selectedGameID,
                     artwork: artwork,
                     boxArt: viewModel.boxArt,
@@ -137,8 +173,8 @@ struct CollectionView: View {
                     officialName: { store.storeMetadata[$0.id]?.name },
                     needsMetadata: { store.loadStoreMetadata(for: $0) },
                     tileLook: viewModel.portingTileLook,
-                    onSelect: { select($0.id) },
-                    onActivate: { record in select(record.id); activateCatalog(record) })
+                    onSelect: { select($0) },
+                    onActivate: { id in select(id); activate(id) })
                     .offset(y: canvas.u(576))
             }
         }
@@ -177,6 +213,11 @@ struct CollectionView: View {
     // MARK: - Hints
 
     private func contextHints(_ game: PortedGame?) -> [HintItem] {
+        if let hubGame = selectedHubGame {
+            let play = hub.playRoute(for: hubGame)
+            return [HintItem(.a, play.isPlayable ? L10n.text("Play") : play.title),
+                    HintItem(.y, L10n.text("Game options")), HintItem(.rs, L10n.text("Filter"))]
+        }
         if let steam = selectedCatalogGame, steam.integration == .steam {
             return SteamPlayCoordinator.shared.hint(for: steam)
                 + [HintItem(.y, L10n.text("Game options")), HintItem(.rs, L10n.text("Filter"))]
@@ -210,8 +251,7 @@ struct CollectionView: View {
     /// Keeps the selection inside the filtered list, in the same frame as any change to it.
     func reconcile() {
         var state = viewModel.librarySelection
-        state.reconcileCatalog(with: viewModel.visibleCatalogGames, history: playSessions,
-                        preferredGameID: settings.settings.restoreLastGame ? settings.lastSelectedGameID : nil)
+        state.reconcileIDs(rowIDs, preferred: settings.settings.restoreLastGame ? settings.lastSelectedGameID : nil)
         if state != viewModel.librarySelection { viewModel.librarySelection = state }
     }
 
@@ -228,7 +268,7 @@ struct CollectionView: View {
 
     private func selectionChanged() {
         let game = selectedGame
-        if let id = game?.id ?? selectedCatalogGame?.id { settings.rememberLastSelectedGame(id) }
+        if let id = game?.id ?? selectedCatalogGame?.id ?? selectedHubGame?.id { settings.rememberLastSelectedGame(id) }
         if let game { store.loadStoreMetadata(for: game) }
     }
 
@@ -238,7 +278,7 @@ struct CollectionView: View {
         // On a Steam game the nxnative art stays until the Steam hero replaces it, so the change is one crossfade.
         await art.loadHero(game: game, current: { selectedGame?.id },
                            metadata: game.flatMap { store.storeMetadata[$0.id] }, artwork: artwork, personalizations: viewModel.personalizations,
-                           keepsWithoutGame: selectedCatalogGame?.integration == .steam)
+                           keepsWithoutGame: selectedCatalogGame?.integration == .steam || selectedHubGame != nil)
     }
 
     private func loadLogo(_ game: PortedGame?) async {

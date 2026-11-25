@@ -81,7 +81,7 @@ struct SettingsLibraryGamesSection: View {
                 }
                 ForEach(hub.hiddenHubGames) { game in
                     SeleneButtonRow(game.title, id: "hidden-\(game.id)",
-                                    subtitle: "Windows game · out of Spotlight and search.", verbatimTitle: true,
+                                    subtitle: "Windows game · out of Spotlight, Collection and search.", verbatimTitle: true,
                                     buttonTitle: "Show") { unhide(game) }
                 }
             }

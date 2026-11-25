@@ -2,6 +2,7 @@ import AppKit
 import CryptoKit
 import Foundation
 import GamePortKit
+import NXLibraryCore
 
 /// One unified PC/Mac game tile displayed directly on Arcane's main Spotlight carousel.
 /// Combines GamePort PowerKit profiles, CrossOver bottle games, signed-in Mac Steam owned games,
@@ -45,16 +46,36 @@ struct UnifiedHubGame: Identifiable, Equatable {
         ))
     }
 
+    /// The key of the player's own art (Game Options → Change Artwork), kept with Steam games' picks.
+    /// A Steam game keeps its art by AppID, so the pick survives setting it up in GamePort.
+    var artworkKey: String {
+        steamAppID.map { "windows-steam-\($0)" } ?? "windows-\(id.uuidString)"
+    }
+
+    /// The art the player chose for this slot, if any.
+    @MainActor
+    func pickedArtwork(_ slot: ArtworkSlot) -> URL? {
+        SteamPersonalizations.shared.artwork.url(titleID: artworkKey, slot: slot)
+    }
+
+    @MainActor
     var preferredTileURL: URL? {
-        localArtwork?.poster ?? localArtwork?.header ?? remotePosterURL
+        pickedArtwork(.cover) ?? localArtwork?.poster ?? localArtwork?.header ?? remotePosterURL
     }
 
+    /// Steam's wide header: almost every app has one, unlike the portrait library cover.
+    var steamHeaderURL: URL? {
+        steamAppID.flatMap { URL(string: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/\($0)/header.jpg") }
+    }
+
+    @MainActor
     var preferredHeroURL: URL? {
-        localArtwork?.hero ?? localArtwork?.header ?? remoteHeroURL
+        pickedArtwork(.background) ?? localArtwork?.hero ?? localArtwork?.header ?? remoteHeroURL
     }
 
+    @MainActor
     var preferredLogoURL: URL? {
-        localArtwork?.logo ?? remoteLogoURL
+        pickedArtwork(.logo) ?? localArtwork?.logo ?? remoteLogoURL
     }
 
     var playtimeSummary: String? {

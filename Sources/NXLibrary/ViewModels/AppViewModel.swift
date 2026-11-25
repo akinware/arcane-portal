@@ -104,10 +104,12 @@ final class AppViewModel: ObservableObject {
     @Published var gameForSettingsSheet: PortedGame? = nil
     /// The Steam game whose Options are open (`SteamOptionsView`); never open with `gameForSettingsSheet`.
     @Published var steamOptionsGame: CatalogGame? = nil
+    /// The Windows game whose Change Artwork is open (from its Options sheet); never open with the two above.
+    @Published var hubArtworkGame: UnifiedHubGame? = nil
     /// Any game's Options are open: the screens underneath stop reading input.
-    var isGameOptionsOpen: Bool { gameForSettingsSheet != nil || steamOptionsGame != nil }
+    var isGameOptionsOpen: Bool { gameForSettingsSheet != nil || steamOptionsGame != nil || hubArtworkGame != nil }
     /// The game whose Options are open, for the panels' own key monitors.
-    var optionsGameID: UUID? { gameForSettingsSheet?.id ?? steamOptionsGame?.id }
+    var optionsGameID: UUID? { gameForSettingsSheet?.id ?? steamOptionsGame?.id ?? hubArtworkGame?.id }
     /// Where the open Game options came from; decides its rows (Move is Spotlight-only).
     @Published var gameOptionsOrigin: GameOptionsOrigin = .collection
     /// Game options opens straight on its Mods panel (the Details page's Mods band).

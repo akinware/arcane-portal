@@ -211,8 +211,8 @@ struct FindGameView: View {
         guard let game else { return }
         SoundEffectService.shared.play(.click)
         router.isSearchPresented = false
-        // Windows games live on Spotlight only: from Collection, Spotlight opens on the game.
-        if case .hub = game, router.route != .library {
+        // Windows games are on Spotlight and Collection: from anywhere else, Spotlight opens on the game.
+        if case .hub = game, router.route != .library, router.route != .collection {
             router.requestSpotlightSelect(game.id)
             router.showLibrary()
             return
