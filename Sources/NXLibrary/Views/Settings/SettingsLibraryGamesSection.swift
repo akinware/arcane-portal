@@ -8,6 +8,8 @@ struct SettingsLibraryGamesSection: View {
     @ObservedObject var settings: AppSettingsStore
     let onActions: ([SettingsRowAction]) -> Void
     @Environment(\.seleneCanvas) private var canvas
+    /// Windows games hidden from their Options come back here too.
+    @ObservedObject private var hub = GamePortConsoleModel.shared
 
     /// Games hidden from Game options, by name (the library keeps them sorted).
     private var hiddenGames: [PortedGame] {
@@ -17,6 +19,11 @@ struct SettingsLibraryGamesSection: View {
     private func unhide(_ game: PortedGame) {
         SoundEffectService.shared.play(.click)
         viewModel.toggleHidden(game)
+    }
+
+    private func unhide(_ game: UnifiedHubGame) {
+        SoundEffectService.shared.play(.click)
+        hub.setHidden(false, game)
     }
 
     private var surprisePoolTitle: String {
@@ -60,7 +67,7 @@ struct SettingsLibraryGamesSection: View {
 
             SettingsSubheading(L10n.text("Hidden games"))
 
-            if hiddenGames.isEmpty {
+            if hiddenGames.isEmpty && hub.hiddenHubGames.isEmpty {
                 Text(L10n.text("No hidden games. Hide one from its Game options; it comes back here."))
                     .seleneFont(15)
                     .foregroundColor(SeleneTheme.ink60)
@@ -72,18 +79,27 @@ struct SettingsLibraryGamesSection: View {
                                     subtitle: "Out of Spotlight, Collection, Surprise me and search.", verbatimTitle: true,
                                     buttonTitle: "Show") { unhide(game) }
                 }
+                ForEach(hub.hiddenHubGames) { game in
+                    SeleneButtonRow(game.title, id: "hidden-\(game.id)",
+                                    subtitle: "Windows game · out of Spotlight and search.", verbatimTitle: true,
+                                    buttonTitle: "Show") { unhide(game) }
+                }
             }
 
         }
         .onAppear(perform: publishActions)
         .onChange(of: hiddenGames.map(\.id)) { publishActions() }
+        .onChange(of: hub.hiddenHubGames.map(\.id)) { publishActions() }
     }
 
     private func publishActions() {
         let hidden = hiddenGames.map { game in
             SettingsRowAction(id: "hidden-\(game.id)", title: game.name, rowID: "hidden-\(game.id)") { unhide(game) }
         }
-        onActions(launchActions + hidden)
+        let hiddenWindows = hub.hiddenHubGames.map { game in
+            SettingsRowAction(id: "hidden-\(game.id)", title: game.title, rowID: "hidden-\(game.id)") { unhide(game) }
+        }
+        onActions(launchActions + hidden + hiddenWindows)
     }
 
     private var launchActions: [SettingsRowAction] {

@@ -213,6 +213,8 @@ extension GamePortConsoleModel {
             if owned.supportsMacOS { return .installMac(appID: owned.appID) }
             if let exe, bridgeReady, !vac { return .bridge(appID: owned.appID, exe: exe, offline: false) }
             if let item = crossOverItem(for: game) { return bottleRoute(item) }
+            // Files already on this Mac are never downloaded again: Mac Steam tries once more.
+            if let route = macSteamWindowsRoute(appID) { return route }
             return vac ? .setUp(appID: owned.appID) : .download(appID: owned.appID)
         case .profile(let profile, let recipe):
             if recipe?.launch == .battlenet { return .battleNet(profileID: profile.id) }
@@ -222,12 +224,19 @@ extension GamePortConsoleModel {
             if win.hasGame && (vac || !bridgeReady || bridgeLikelyFails(profileID: profile.id, appID: appID)) {
                 return .windowsSteam(profileID: profile.id)
             }
+            // A profile without a copy of its own (no GamePort download, nothing in its Windows Steam) plays the
+            // copy Mac Steam installed, the way Mac Steam was set up, unless that did not work this time.
+            let ownCopy = win.hasGame || gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title) != nil
+            if !ownCopy, let route = macSteamWindowsRoute(appID), !macSteamStartFailed.contains(appID) {
+                return route
+            }
             if let exe, bridgeReady, !vac {
                 // A copy only in Windows Steam's library is still played through the Bridge: no Windows Steam start.
                 return .bridge(appID: appID, exe: exe, offline: false)
             }
             if win.hasGame { return .windowsSteam(profileID: profile.id) }
             if let item = crossOverItem(for: game) { return bottleRoute(item) }
+            if let route = macSteamWindowsRoute(appID) { return route }
             if !vac { return .download(appID: appID) }
             return win.hasSteam ? .openWindowsSteam(profileID: profile.id) : .installWindowsSteam(profileID: profile.id)
         }
@@ -402,6 +411,42 @@ extension GamePortConsoleModel {
         var set = hubFavorites
         if !set.insert(game.id).inserted { set.remove(game.id) }
         AppData.preferences.set(set.map(\.uuidString).sorted(), forKey: Self.hubFavoritesKey)
+    }
+
+    // MARK: - Hidden
+
+    private static let hubHiddenKey = "GamePort.hubHidden"
+
+    /// Windows games the player hid from Game options: out of Spotlight and search, back from Settings.
+    var hubHidden: Set<UUID> {
+        let stored = AppData.preferences.stringArray(forKey: Self.hubHiddenKey) ?? []
+        return Set(stored.compactMap(UUID.init(uuidString:)))
+    }
+
+    func isHidden(_ game: UnifiedHubGame) -> Bool { hubHidden.contains(game.id) }
+
+    func setHidden(_ hidden: Bool, _ game: UnifiedHubGame) {
+        objectWillChange.send()
+        var set = hubHidden
+        if hidden { set.insert(game.id) } else { set.remove(game.id) }
+        AppData.preferences.set(set.map(\.uuidString).sorted(), forKey: Self.hubHiddenKey)
+    }
+
+    /// The hidden Windows games still found on this Mac, by name.
+    var hiddenHubGames: [UnifiedHubGame] {
+        let hidden = hubHidden
+        return unifiedGames.filter { hidden.contains($0.id) }
+            .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+    }
+
+    /// The Windows games Spotlight and search show: not hidden, and not already in the library as a Steam game.
+    func visibleHubGames(besidesSteamAppIDs existing: Set<Int>) -> [UnifiedHubGame] {
+        let hidden = hubHidden
+        return unifiedGames.filter { game in
+            if hidden.contains(game.id) { return false }
+            if let appID = game.steamAppID, existing.contains(appID) { return false }
+            return true
+        }
     }
 }
 

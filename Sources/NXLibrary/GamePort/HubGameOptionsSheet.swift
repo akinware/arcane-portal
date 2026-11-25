@@ -370,6 +370,11 @@ struct HubGameOptionsSheet: View {
                 gp.stopAllWindowsApps()
             }
             .help("Quits Windows Steam, games and any Wine processes left running, in every profile.")
+            Button("Hide from Library") {
+                dismiss()
+                gp.setHidden(true, game)
+            }
+            .help("Takes the game out of Spotlight and search. Bring it back in Settings → Library → Games.")
             Spacer()
             Button(focusRecipeID == nil ? "Stores & Setup…" : "Advanced Settings…") {
                 dismiss()

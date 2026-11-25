@@ -4,6 +4,20 @@ User-visible changes to Arcane Portal are recorded here, newest first. Arcane Po
 [Arcane](https://github.com/Bium23/NxLibrary) (formerly NX Library); the entries from 0.2.1 down are Arcane's own
 releases, kept as they were. Engine changes also have their own [upgrade notes](docs/history/engine-upgrades/README.md).
 
+## Unreleased
+
+### Added
+
+- **Hide Windows games.** A Windows game's Options has **Hide from Library**: the game leaves Spotlight and search,
+  and **Settings → Library → Games → Hidden games** brings it back.
+- **Find a game finds Windows games.** Search lists CrossOver, Mac Steam, GamePort and store games after the
+  library's own; choosing one selects it on Spotlight.
+
+### Fixed
+
+- A Windows game Mac Steam installed no longer asks to be downloaded again after GamePort was set up, or after Mac
+  Steam failed to start it once: Play uses the copy Mac Steam installed unless GamePort has a copy of its own.
+
 ## 0.3.0 — 2026-11-23
 
 Arcane Portal's first release, based on Arcane 0.2.1. Alpha: ad-hoc signed and not notarised (see the README).

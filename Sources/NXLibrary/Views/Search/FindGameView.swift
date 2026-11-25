@@ -14,6 +14,8 @@ struct FindGameView: View {
     @ObservedObject var viewModel: AppViewModel
     @ObservedObject var playSessions: PlaySessionStore
     let artwork: ArtworkStore
+    /// Windows games (CrossOver, Mac Steam, GamePort, other stores) are found too.
+    @ObservedObject private var hub = GamePortConsoleModel.shared
 
     @Environment(\.seleneCanvas) private var canvas
     @Environment(\.seleneReduceMotion) private var reduceMotion
@@ -26,11 +28,41 @@ struct FindGameView: View {
     private static let columns = 6
     private static let limit = 12
 
-    private var results: [CatalogGame] {
+    /// A library game or a Windows game.
+    enum Result: Identifiable {
+        case catalog(CatalogGame)
+        case hub(UnifiedHubGame)
+
+        var id: UUID {
+            switch self {
+            case .catalog(let game): return game.id
+            case .hub(let game): return game.id
+            }
+        }
+
+        var name: String {
+            switch self {
+            case .catalog(let game): return game.name
+            case .hub(let game): return game.title
+            }
+        }
+    }
+
+    private var results: [Result] {
         guard !query.trimmingCharacters(in: .whitespaces).isEmpty else { return [] }
-        let all = LibraryQuery(filter: .all, searchText: query)
+        let catalog = LibraryQuery(filter: .all, searchText: query)
             .applyCatalog(to: viewModel.visibleCatalogGames, history: playSessions)
-        return Array(all.prefix(Self.limit))
+        let steamAppIDs = Set(viewModel.visibleCatalogGames.compactMap { $0.steamGame.map { Int($0.appID) } })
+        let needle = Self.normalized(query)
+        let windows = hub.visibleHubGames(besidesSteamAppIDs: steamAppIDs)
+            .filter { Self.normalized($0.title).contains(needle) }
+            .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+        return Array((catalog.map(Result.catalog) + windows.map(Result.hub)).prefix(Self.limit))
+    }
+
+    private static func normalized(_ value: String) -> String {
+        value.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     var body: some View {
@@ -106,11 +138,16 @@ struct FindGameView: View {
         }
     }
 
-    private func tile(_ game: CatalogGame, selected: Bool) -> some View {
+    private func tile(_ game: Result, selected: Bool) -> some View {
         VStack(spacing: canvas.u(10)) {
             Group {
-                if let native = game.nxnativeGame { SpotlightTileArtwork(game: native, side: canvas.u(160), artwork: artwork) }
-                else { CatalogNativeArtwork(game: game, role: .square) }
+                switch game {
+                case .catalog(let game):
+                    if let native = game.nxnativeGame { SpotlightTileArtwork(game: native, side: canvas.u(160), artwork: artwork) }
+                    else { CatalogNativeArtwork(game: game, role: .square) }
+                case .hub(let game):
+                    UnifiedHubTileArtwork(game: game, side: canvas.u(160))
+                }
             }
                 .frame(width: canvas.u(160), height: canvas.u(160))
                 .clipShape(RoundedRectangle(cornerRadius: canvas.u(12), style: .continuous))
@@ -170,10 +207,16 @@ struct FindGameView: View {
         SoundEffectService.shared.play(.focus)
     }
 
-    private func pick(_ game: CatalogGame?) {
+    private func pick(_ game: Result?) {
         guard let game else { return }
         SoundEffectService.shared.play(.click)
         router.isSearchPresented = false
+        // Windows games live on Spotlight only: from Collection, Spotlight opens on the game.
+        if case .hub = game, router.route != .library {
+            router.requestSpotlightSelect(game.id)
+            router.showLibrary()
+            return
+        }
         // The home screen applies its own landing rule.
         NotificationCenter.default.post(name: .nxFindGameSelect, object: game.id)
     }

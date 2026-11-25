@@ -75334,6 +75334,53 @@
         }
       }
     },
+    "Windows game · out of Spotlight and search.": {
+      "comment": "SettingsLibraryGamesSection.swift",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows game · out of Spotlight and search."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gioco Windows · escluso da Spotlight e ricerca."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeu Windows · exclu d’À la une et de la recherche."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows-Spiel · aus Spotlight und der Suche ausgeblendet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Juego de Windows · fuera de Destacados y las búsquedas."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jogo do Windows · fora de Destaques e buscas."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Windows 游戏 · 不出现在 Spotlight 和搜索中。"
+          }
+        }
+      }
+    },
     "Working": {
       "comment": "SavesPanel.swift",
       "localizations": {

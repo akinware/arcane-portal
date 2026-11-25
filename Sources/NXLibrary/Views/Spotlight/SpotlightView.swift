@@ -144,10 +144,7 @@ struct SpotlightView: View {
 
     var filteredHubGames: [UnifiedHubGame] {
         let existingSteamAppIDs = Set(viewModel.visibleCatalogGames.compactMap { $0.steamGame.map { Int($0.appID) } })
-        let base = hub.unifiedGames.filter { game in
-            if let aid = game.steamAppID, existingSteamAppIDs.contains(aid) { return false }
-            return true
-        }
+        let base = hub.visibleHubGames(besidesSteamAppIDs: existingSteamAppIDs)
         switch filter {
         case .all:
             return base
@@ -371,6 +368,8 @@ struct SpotlightView: View {
         content
         .onChange(of: playSessions.sessions.count) { reconcile() }
         .onChange(of: hub.unifiedGames.count) { gamesChanged() }
+        // Hiding or showing a Windows game changes the row without changing the list.
+        .onChange(of: hub.hubHidden) { gamesChanged() }
         .task(id: art.heroTaskKey(model.selectedGame, metadata: model.selectedGame.flatMap { store.storeMetadata[$0.id] })) { await loadHero(model.selectedGame) }
         .task(id: art.steamHeroTaskKey(model.selectedCatalogGame)) {
             await art.loadSteamHero(game: model.selectedCatalogGame, current: { selectedCatalogGame?.id }, artwork: artwork, settle: 420_000_000)
