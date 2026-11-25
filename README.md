@@ -194,7 +194,7 @@ your Steam account, username or paths). Turn it off in **Settings → Windows & 
 
 Scroll down for screenshots, the game description and **More like this** when matching titles are in your library. Steam games can show playtime and an **Achievements** card with rarity, unlocked items and crystal tiers. The animated Arcane crystal appears when every achievement is unlocked.
 
-Use **Find a game** for search, **Game Options** for title-specific actions, and the menu for themes, Settings and running-game controls. Windows games show on Spotlight and Collection, and Find a game lists them. A Windows game's Options has **Change Artwork…** (Steam, SteamGridDB, LaunchBox or a file) and **Hide from Library**; hidden games, Windows ones included, can be restored under **Settings → Library → Games → Hidden games**.
+Use **Find a game** for search, **Game Options** for title-specific actions, and the menu for themes, Settings and running-game controls. Windows games show on Spotlight and Collection, and Find a game lists them; Play shows the same launch screen and session card as Arcane's own games. A Windows game's Options has **Change Artwork…** (Steam, SteamGridDB, LaunchBox or a file) and **Hide from Library**; hidden games, Windows ones included, can be restored under **Settings → Library → Games → Hidden games**.
 
 When you quit a game, Arcane Portal comes back to the front, unless you had moved to another app or another game is still open. A **session card** in the top right shows how long you played this time and in total; sessions under 10 seconds show none. Turn it off in **Settings → Library → Games → Session card**.
 

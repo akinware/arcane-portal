@@ -277,6 +277,16 @@ extension SpotlightView {
                                     urls: metadata?.screenshots ?? [],
                                     known: steamFacts.isKnown(appID: hubGame.steamAppID), state: state)
                 }
+
+                // About this game, Details and More like this, from the Steam store, as for a Steam game.
+                if belowShown, let record = hubGame.steamPageRecord {
+                    let request = SteamRelatedRequest(
+                        appIDs: Set(model.catalogGamesByID.values.compactMap { $0.isHidden ? nil : $0.steamGame?.appID }),
+                        language: SteamMetadata.language(localization.language))
+                    steamPageBelow(steamPage(for: record), state: state)
+                        .task(id: request) { await loadCachedSteamRelated(request) }
+                        .transition(.opacity)
+                }
             }
             .task(id: "\(hubGame.steamAppID ?? 0)|\(localization.language.rawValue)") {
                 if let appID = hubGame.steamAppID.flatMap({ UInt32(exactly: $0) }) {

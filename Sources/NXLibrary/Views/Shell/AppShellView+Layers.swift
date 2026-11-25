@@ -282,6 +282,10 @@ extension AppShellView {
         .onReceive(SteamPlayCoordinator.shared.$endedSession) { summary in
             sessionCard.ended(summary, enabled: settings.settings.showsSessionCard)
         }
+        .onReceive(NotificationCenter.default.publisher(for: .nxHubPlayStarted)) { note in
+            guard let start = note.object as? HubPlayStart else { return }
+            startWindowsLaunch(start)
+        }
         .onReceive(SteamPlayCoordinator.shared.$launchScreen) { screen in
             // A Steam game's launch screen is the nxnative one: shown on Play, leaving when the coordinator says.
             guard let screen else { return }
@@ -373,6 +377,29 @@ extension AppShellView {
                 }
             default:
                 break
+            }
+        }
+    }
+
+    // MARK: - Windows games
+
+    /// A Windows game Play started: the launch screen covers the wait, as for Arcane's own games, and leaves when
+    /// the game is up or the start failed; the session card follows when it quits (`HubPlayWatch`).
+    func startWindowsLaunch(_ start: HubPlayStart) {
+        // Another game's screen already up keeps the screen; this game is still followed for its session card.
+        if viewModel.launchOverlay == nil {
+            viewModel.launchOverlay = LaunchOverlayState(game: .windows(start.game))
+        }
+        HubPlayWatch.shared.watch(start, model: GamePortConsoleModel.shared) { event in
+            switch event {
+            case .ready(let gameID):
+                guard viewModel.launchOverlay?.game.id == gameID else { return }
+                SoundEffectService.shared.play(.gameReady)
+                viewModel.launchOverlay?.isReady = true
+            case .failed(let gameID):
+                if viewModel.launchOverlay?.game.id == gameID { viewModel.dismissLaunchOverlay() }
+            case .ended(let summary):
+                sessionCard.ended(summary, enabled: settings.settings.showsSessionCard)
             }
         }
     }

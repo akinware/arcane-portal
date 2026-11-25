@@ -296,6 +296,11 @@ extension GamePortConsoleModel {
     func perform(_ route: HubPlayRoute, for game: UnifiedHubGame) {
         guard busy == nil else { return }
         let title = game.title
+        // The launch screen and the session card follow the game (`HubPlayWatch`). Posted before the route runs:
+        // a route that hands over to another (an adopted bottle) posts again, and the later one is followed.
+        if route.isPlayable {
+            NotificationCenter.default.post(name: .nxHubPlayStarted, object: HubPlayStart(game: game, route: route))
+        }
         switch route {
         case .macSteam(let appID):
             if let url = URL(string: "steam://rungameid/\(appID)") { NSWorkspace.shared.open(url) }

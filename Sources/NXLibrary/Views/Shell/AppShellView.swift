@@ -125,10 +125,12 @@ struct AppShellView: View {
             catalogRecovery: general && !viewModel.isBuilding && !viewModel.catalogBuildRecoveries.isEmpty)
     }
 
-    /// A game the session card or the launch screen names: a library build, else a Steam game of the catalog.
+    /// A game the session card or the launch screen names: a library build, a Steam game of the catalog, else a
+    /// Windows game (GamePort).
     func playedGame(_ id: UUID) -> PlayedGame? {
         if let game = viewModel.libraryGames.first(where: { $0.id == id }) { return .nxnative(game) }
-        return viewModel.catalogGames.first { $0.id == id && $0.integration == .steam }.map(PlayedGame.steam)
+        if let steam = viewModel.catalogGames.first(where: { $0.id == id && $0.integration == .steam }) { return .steam(steam) }
+        return GamePortConsoleModel.shared.unifiedGamesByID[id].map(PlayedGame.windows)
     }
 
     /// The launch screen, in its own window over every app and Space (`LaunchCoverWindow`). Its window has its own

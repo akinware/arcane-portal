@@ -58,6 +58,13 @@ struct UnifiedHubGame: Identifiable, Equatable {
         SteamPersonalizations.shared.artwork.url(titleID: artworkKey, slot: slot)
     }
 
+    /// A Steam-shaped record for Spotlight's page below the head (About this game, Details, More like this),
+    /// read from the store by AppID like a Steam game's. Nothing on this Mac is attached to it.
+    var steamPageRecord: CatalogGame? {
+        guard let appID = steamAppID.flatMap({ UInt32(exactly: $0) }) else { return nil }
+        return CatalogGame(steam: SteamCatalogGame(id: id, appID: appID, name: title))
+    }
+
     @MainActor
     var preferredTileURL: URL? {
         pickedArtwork(.cover) ?? localArtwork?.poster ?? localArtwork?.header ?? remotePosterURL

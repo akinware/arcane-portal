@@ -13,6 +13,11 @@ releases, kept as they were. Engine changes also have their own [upgrade notes](
 - **Change Artwork for Windows games.** A Windows game's Options has **Change Artwork…**: Steam's own art, SteamGridDB
   (with your key), LaunchBox, the other online sources or a file, for the cover, background and logo. **Automatic**
   takes the pick back.
+- **Launch screen and session card for Windows games.** Play shows the game's art and logo while it starts, as for
+  Arcane's own and Steam games, and leaves once the game's window is up (or at once if the start failed). When the
+  game quits, the session card shows this session and the total. Settings → Library → Games sets both up.
+- **About this game for Windows games.** A Windows game with a Steam ID has Spotlight's page below the screenshots:
+  the store description, Details, the store and HowLongToBeat links, and More like this.
 
 ### Fixed
 

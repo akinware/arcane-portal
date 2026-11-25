@@ -10,6 +10,7 @@ extension GameArtLoader {
         switch game {
         case .nxnative(let game): return cachedHero(for: game)
         case .steam(let game): return steamArt.object(forKey: Self.steamKey(game, .hero))
+        case .windows(let game): return steamArt.object(forKey: Self.windowsKey(game, .hero))
         }
     }
 
@@ -17,6 +18,7 @@ extension GameArtLoader {
         switch game {
         case .nxnative(let game): return cachedLogo(for: game)
         case .steam(let game): return steamArt.object(forKey: Self.steamKey(game, .logo))
+        case .windows(let game): return steamArt.object(forKey: Self.windowsKey(game, .logo))
         }
     }
 
@@ -32,6 +34,17 @@ extension GameArtLoader {
                   let image = await Self.decodeHero(at: url) else { return nil }
             steamArt.setObject(image, forKey: key)
             return image
+        case .windows(let game):
+            if let cached = cachedHero(for: .windows(game)) { return cached }
+            // The player's pick or the game's own backdrop, then a store screenshot, then Steam's header.
+            let shots = SteamGameFacts.shared.metadata(appID: game.steamAppID)?.screenshots ?? []
+            for url in [game.preferredHeroURL, shots.first, game.steamHeaderURL].compactMap({ $0 }) {
+                if let image = await Self.windowsImage(at: url, maxPixelSize: 2560) {
+                    steamArt.setObject(image, forKey: Self.windowsKey(game, .hero))
+                    return image
+                }
+            }
+            return nil
         }
     }
 
@@ -47,7 +60,28 @@ extension GameArtLoader {
                   let image = await Self.decodeLogo(at: url) else { return nil }
             steamArt.setObject(image, forKey: key)
             return image
+        case .windows(let game):
+            if let cached = cachedLogo(for: .windows(game)) { return cached }
+            var url = game.preferredLogoURL.flatMap { $0.isFileURL ? $0 : nil }
+            if url == nil, let appID = game.steamAppID.flatMap({ UInt32(exactly: $0) }) {
+                url = await SteamMetadataService.shared.image(appID: appID, slot: .logo, remote: game.remoteLogoURL)
+            }
+            guard let url, let image = await Self.windowsImage(at: url, maxPixelSize: 1600) else { return nil }
+            steamArt.setObject(image, forKey: Self.windowsKey(game, .logo))
+            return image
         }
+    }
+
+    /// A file decoded off the main thread; a web image downloaded first (store art has no local copy).
+    private static func windowsImage(at url: URL, maxPixelSize: Int) async -> NSImage? {
+        if url.isFileURL { return await decode(at: url, maxPixelSize: maxPixelSize) }
+        guard let (data, response) = try? await URLSession.shared.data(from: url),
+              (response as? HTTPURLResponse)?.statusCode == 200, !Task.isCancelled else { return nil }
+        return await Task.detached(priority: .utility) { NSImage(data: data) }.value
+    }
+
+    private static func windowsKey(_ game: UnifiedHubGame, _ role: LibraryArtworkRole) -> NSString {
+        "windows|\(game.id.uuidString)|\(role.rawValue)|\(SteamPersonalizations.shared.artwork.revision)" as NSString
     }
 
     /// A Steam game's hero: the player's pick, else the automatic choice kept from last time, else a new one
