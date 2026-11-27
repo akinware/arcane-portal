@@ -14,6 +14,11 @@ Il README apre con l'icona di Arcane Portal, il nome e la descrizione. Spotlight
 | [static-wallpapers.webp](static-wallpapers.webp) | Artwork, themes and sound, sfondi statici. |
 | [live-wallpapers.webp](live-wallpapers.webp) | Artwork, themes and sound, sfondi animati. |
 | [mod-store.webp](mod-store.webp) | Mods, store con banner e righe. |
+| [windows-spotlight-icons.webp](windows-spotlight-icons.webp) | Windows games, Spotlight con le icone quadrate. |
+| [windows-game-details.webp](windows-game-details.webp) | Windows games, About this game e Details di un gioco Windows. |
+| [windows-game-options.webp](windows-game-options.webp) | Windows games, Options con l'interruttore Use GamePort's settings. |
+| [windows-collection.webp](windows-collection.webp) | Your library, giochi Windows in Collection. |
+| [windows-change-artwork.webp](windows-change-artwork.webp) | Your library, Change Artwork per un gioco Windows. |
 
 Le copie WebP sono larghe 1920 pixel, mantengono le proporzioni delle catture e usano il profilo colore sRGB. Le didascalie e i testi alternativi sono in inglese. [settings.webp](settings.webp) documenta l'interfaccia di NX Library precedente alla riorganizzazione di Settings.
 

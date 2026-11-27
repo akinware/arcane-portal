@@ -171,6 +171,21 @@ Spotlight beside your other games, with a **Play** pill that says how the game w
 | **In a CrossOver bottle** | Starts it in that bottle with CrossOver; nothing is copied. |
 | **By Mac Steam with NotProton** (Steam Play forced to CrossOver) | Asks Mac Steam to start it. If the game has not started after 90 seconds, Arcane Portal offers the other ways to play it. |
 
+![Spotlight with Windows games beside Mac games, Forza Horizon 6 selected with its square icon](docs/media/windows-spotlight-icons.webp)
+
+<p align="center"><strong>Windows games beside your others.</strong><br>Square icons on Spotlight, a badge for how each one runs.</p>
+
+Play shows the game's launch screen until the game's own window is up, then brings the game to the front, over Steam
+and any other app, so it can go full screen. With **Keep Steam in the background**, Mac Steam stays out of view.
+
+![A Windows game's page with About this game and Details: installed on Macintosh HD, a critic score, Reveal in Finder](docs/media/windows-game-details.webp)
+
+<p align="center"><strong>The same page as a Steam game.</strong><br>About this game, Details with size, place and critic score, and More like this.</p>
+
+![A Windows game's Options with the Use GamePort's settings switch above the Steam, engine and graphics settings](docs/media/windows-game-options.webp)
+
+<p align="center"><strong>Use GamePort's settings.</strong><br>For a game NotProton or CrossOver can run: off keeps their way and hides GamePort's settings.</p>
+
 **Settings → Windows & Engines** installs the engine and holds **Storage & External APFS SSD**: **Move to Another
 Drive…** moves every game, engine and Windows copy to an external drive (APFS recommended) or back to the internal
 SSD, with progress and **Cancel**; nothing changes until the copy is complete and verified.
@@ -195,6 +210,14 @@ your Steam account, username or paths). Turn it off in **Settings → Windows & 
 Scroll down for screenshots, the game description and **More like this** when matching titles are in your library. Steam games can show playtime and an **Achievements** card with rarity, unlocked items and crystal tiers. The animated Arcane crystal appears when every achievement is unlocked.
 
 Use **Find a game** for search, **Game Options** for title-specific actions, and the menu for themes, Settings and running-game controls. Windows games show on Spotlight and Collection, and Find a game lists them; Play shows the same launch screen and session card as Arcane's own games. A Windows game's Options has **Change Artwork…** (Steam, SteamGridDB, LaunchBox or a file) and **Hide from Library**; hidden games, Windows ones included, can be restored under **Settings → Library → Games → Hidden games**.
+
+![Collection with Windows game covers, Dead by Daylight selected](docs/media/windows-collection.webp)
+
+<p align="center"><strong>Windows games in Collection.</strong><br>Covers, play time and how the game runs.</p>
+
+![Change Artwork for a Windows game on the Icon tab, with LaunchBox, SteamGridDB, Xbox Store and Nintendo Europe choices](docs/media/windows-change-artwork.webp)
+
+<p align="center"><strong>Change Artwork for Windows games.</strong><br>Cover, background, icon and logo from Steam, SteamGridDB, LaunchBox or a file.</p>
 
 When you quit a game, Arcane Portal comes back to the front, unless you had moved to another app or another game is still open. A **session card** in the top right shows how long you played this time and in total; sessions under 10 seconds show none. Turn it off in **Settings → Library → Games → Session card**.
 

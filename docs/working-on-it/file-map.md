@@ -1091,6 +1091,11 @@ Cartelle `Sources/ArcanePorting/Mods/` e `ArcanePorting/Mods/GameBanana/`.
 | [docs/media/quick-menu.webp](../media/quick-menu.webp) | Illustra il menu rapido sopra la libreria. |
 | [docs/media/porting-progress.webp](../media/porting-progress.webp) | Mostra l'avanzamento di un porting dalla schermata Spotlight. |
 | [docs/media/settings.webp](../media/settings.webp) | Cattura storica di Settings in NX Library. |
+| [docs/media/windows-spotlight-icons.webp](../media/windows-spotlight-icons.webp) | Mostra i giochi Windows in Spotlight con le icone quadrate. |
+| [docs/media/windows-game-details.webp](../media/windows-game-details.webp) | Mostra About this game e Details di un gioco Windows. |
+| [docs/media/windows-game-options.webp](../media/windows-game-options.webp) | Mostra le Options di un gioco Windows con Use GamePort's settings. |
+| [docs/media/windows-collection.webp](../media/windows-collection.webp) | Mostra i giochi Windows in Collection. |
+| [docs/media/windows-change-artwork.webp](../media/windows-change-artwork.webp) | Mostra Change Artwork per un gioco Windows. |
 | [docs/media/color-themes.webp](../media/color-themes.webp) | Mostra la scelta delle palette con anteprima della libreria. |
 | [docs/media/static-wallpapers.webp](../media/static-wallpapers.webp) | Illustra il browser degli sfondi statici e la relativa anteprima. |
 | [docs/media/live-wallpapers.webp](../media/live-wallpapers.webp) | Mostra il selettore degli sfondi animati e l'importazione di video personali. |
