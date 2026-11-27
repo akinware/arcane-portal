@@ -1,5 +1,6 @@
 import AppKit
 import GamePortKit
+import NXLibraryCore
 
 /// A Windows game that Mac Steam installed itself (with NotProton or a similar tool), started by
 /// asking Mac Steam, which then runs it the way it was set up to. GamePort only watches for the game.
@@ -8,6 +9,44 @@ struct MacSteamStart: Equatable {
     let title: String
     let since: Date
     var running = false
+    /// Keep Steam in the background is on and Steam was hidden or not running before Play: it goes back out of
+    /// view once the game's window is up, and again when the game quits.
+    var steamWasOutOfView = false
+
+    private static var steam: NSRunningApplication? {
+        NSRunningApplication.runningApplications(withBundleIdentifier: SteamPlayCoordinator.steamBundleID)
+            .first { !$0.isTerminated }
+    }
+
+    /// Hides Steam, and with `again` once more two seconds later (Steam shows its window a moment after a game quits).
+    @MainActor
+    static func hideSteam(again: Bool = false) {
+        let hide = { if let steam, !steam.isHidden { steam.hide() } }
+        hide()
+        guard again else { return }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            hide()
+        }
+    }
+
+    /// Opens Mac Steam's request the way Arcane opens a Mac Steam game's: in the background, so Arcane's launch
+    /// screen stays in front until the game's window appears, and with Keep Steam in the background a Steam this
+    /// starts opens without its library (`-silent`). Returns whether Steam was out of view before.
+    @MainActor
+    static func open(_ url: URL, keepSteamInBackground background: Bool) -> Bool {
+        let running = steam
+        let outOfView = background && (running == nil || running?.isHidden == true)
+        guard let client = SteamPlayCoordinator.steamClientURL else {
+            NSWorkspace.shared.open(url)
+            return outOfView
+        }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = false
+        configuration.arguments = SteamBackgroundLaunch.arguments(enabled: background, steamRunning: running != nil)
+        NSWorkspace.shared.open([url], withApplicationAt: client, configuration: configuration)
+        return outOfView
+    }
 }
 
 extension GamePortConsoleModel {
@@ -25,9 +64,9 @@ extension GamePortConsoleModel {
         let exe = install.folder.flatMap { SteamDepotManager.discoverMainExecutable(in: $0, preferredName: title) }
         let markers = MacSteamWindowsLaunch.markers(installDir: install.installDir, executable: exe)
         SoundEffectService.shared.play(.launch)
-        NSWorkspace.shared.open(url)
+        let outOfView = MacSteamStart.open(url, keepSteamInBackground: keepsSteamInBackground)
         let started = Date()
-        macSteamStart = MacSteamStart(appID: appID, title: title, since: started)
+        macSteamStart = MacSteamStart(appID: appID, title: title, since: started, steamWasOutOfView: outOfView)
         say("Asked Mac Steam to start \(title)")
 
         macSteamStartTask?.cancel()
@@ -45,7 +84,8 @@ extension GamePortConsoleModel {
                     if !seen {
                         seen = true
                         self.macSteamStartFailed.remove(appID)
-                        self.macSteamStart = MacSteamStart(appID: appID, title: title, since: started, running: true)
+                        self.macSteamStart = MacSteamStart(appID: appID, title: title, since: started, running: true,
+                                                           steamWasOutOfView: outOfView)
                         self.say("✓ \(title) is running, started by Mac Steam")
                     }
                 } else if seen {

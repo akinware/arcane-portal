@@ -62,6 +62,27 @@ extension SpotlightView {
                                   more: ids.compactMap { byID[$0] }, buildBlocked: false)
     }
 
+    /// A Windows game's page: its Steam page by AppID, with where its files are on this Mac (size, place and
+    /// Reveal in Finder, as for a Mac Steam game) when GamePort knows the folder.
+    func hubPage(for game: UnifiedHubGame, record: CatalogGame) -> SpotlightPageModel {
+        let page = steamPage(for: record)
+        guard let place = hub.installPlace(for: game) else { return page }
+        var facts = page.facts.filter { $0.kind != .size && $0.kind != .location }
+        if let size = DetailsFacts.size(place.sizeBytes, locale: L10n.context.formatLocale) {
+            facts.append(DetailsFact(kind: .size, value: size))
+        }
+        let location = [place.installer, DetailsLink.volumeName(ofFolder: place.folder)].compactMap { $0 }
+        if !location.isEmpty { facts.append(DetailsFact(kind: .location, value: location.joined(separator: " · "))) }
+        let order = DetailsFact.Kind.allCases
+        facts.sort { (order.firstIndex(of: $0.kind) ?? 0) < (order.firstIndex(of: $1.kind) ?? 0) }
+        let reveal = DetailsLink(id: "app", title: L10n.text("Reveal in Finder")) { [viewModel] in
+            viewModel.revealInFinder(url: place.folder)
+        }
+        return SpotlightPageModel(presentation: page.presentation, facts: facts,
+                                  links: [reveal] + page.links.filter { $0.id != "app" },
+                                  more: page.more, buildBlocked: page.buildBlocked)
+    }
+
     func page(for game: PortedGame) -> SpotlightPageModel {
         let library = viewModel.libraryGames
         let playtimes = Dictionary(library.map { ($0.id, playSessions.totalDuration(for: $0.id)) },
@@ -147,6 +168,10 @@ extension SpotlightView {
     var selectedRatingQuery: CriticRatingQuery? {
         if let game = selectedGame {
             return CriticRatingQuery(game: game, name: store.storeMetadata[game.id]?.name)
+        }
+        if let game = selectedHubGame {
+            guard let appID = game.steamAppID.flatMap({ UInt32(exactly: $0) }) else { return nil }
+            return CriticRatingQuery(name: game.title, platform: game.supportsMacOS ? .mac : .windows, steamAppID: appID)
         }
         guard let game = selectedCatalogGame, let steam = game.steamGame else { return nil }
         return CriticRatingQuery(name: steam.name, platform: .mac, steamAppID: steam.appID)

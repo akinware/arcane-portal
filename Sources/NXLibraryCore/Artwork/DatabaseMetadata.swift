@@ -10,6 +10,7 @@ public enum MetadataDatabase: String, CaseIterable, Codable, Sendable {
         case .mac: return self == .launchBox ? ["Apple Mac OS", "Windows"] : ["Mac OS", "PC"]
         case .switch: return ["Nintendo Switch"]
         case .switch2: return ["Nintendo Switch 2"]
+        case .windows: return self == .launchBox ? ["Windows"] : ["PC"]
         }
     }
 }

@@ -163,7 +163,7 @@ extension SpotlightView {
 
     var currentPage: SpotlightPageModel? {
         if let game = selectedGame { return page(for: game) }
-        if let record = selectedHubGame?.steamPageRecord { return steamPage(for: record) }
+        if let game = selectedHubGame, let record = game.steamPageRecord { return hubPage(for: game, record: record) }
         return selectedCatalogGame.flatMap { $0.integration == .steam ? steamPage(for: $0) : nil }
     }
 }

@@ -69,6 +69,8 @@ final class GamePortConsoleModel: ObservableObject {
     @Published var steamDownloadPresented = false
     /// A Windows game Play handed to Mac Steam, while GamePort watches for it (`startInMacSteam`).
     @Published var macSteamStart: MacSteamStart?
+    /// Settings → Keep Steam in the background, mirrored by the shell for Mac Steam's Windows games.
+    var keepsSteamInBackground = false
     /// Games Mac Steam did not start this time: Play uses another way for them until Mac Steam is tried again.
     @Published var macSteamStartFailed: Set<Int> = []
 

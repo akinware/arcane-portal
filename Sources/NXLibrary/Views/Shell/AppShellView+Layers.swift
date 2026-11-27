@@ -310,6 +310,9 @@ extension AppShellView {
             sessionCard.becameActive()
             SteamPlaytimeCoordinator.shared.refresh()
         }
+        .onChange(of: settings.settings.steamInBackground, initial: true) { _, on in
+            GamePortConsoleModel.shared.keepsSteamInBackground = on
+        }
         .onChange(of: settings.settings.showsSessionCard) { _, on in
             if !on { sessionCard.clear() }
         }

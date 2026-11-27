@@ -283,7 +283,7 @@ extension SpotlightView {
                     let request = SteamRelatedRequest(
                         appIDs: Set(model.catalogGamesByID.values.compactMap { $0.isHidden ? nil : $0.steamGame?.appID }),
                         language: SteamMetadata.language(localization.language))
-                    steamPageBelow(steamPage(for: record), state: state)
+                    steamPageBelow(hubPage(for: hubGame, record: record), state: state)
                         .task(id: request) { await loadCachedSteamRelated(request) }
                         .transition(.opacity)
                 }

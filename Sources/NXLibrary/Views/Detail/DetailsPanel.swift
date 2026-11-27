@@ -41,6 +41,12 @@ extension DetailsLink {
         return volumeNames.name(for: library)
     }
 
+    /// The volume holding a folder by its localized name, for a Windows game's files. Read once per folder.
+    @MainActor
+    static func volumeName(ofFolder folder: URL) -> String? {
+        volumeNames.name(for: folder)
+    }
+
     @MainActor private static let folderNames = DisplayNameCache { folder in
         let name = FileManager.default.displayName(atPath: folder.path)
         return name.isEmpty ? nil : name

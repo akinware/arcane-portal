@@ -96,7 +96,7 @@ struct ChangeMetadataView: View {
         return CriticRatingQuery(name: igdbResult?.metadata?.name ?? query.name, platform: query.platform, steamAppID: query.steamAppID)
     }
     private var sources: [Source] {
-        igdbQuery.platform == .mac ? [.igdb, .launchBox, .theGamesDB] : Source.allCases
+        [.mac, .windows].contains(igdbQuery.platform) ? [.igdb, .launchBox, .theGamesDB] : Source.allCases
     }
 
     /// What Automatic shows: the Nintendo or Steam store's value.

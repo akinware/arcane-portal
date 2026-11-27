@@ -226,11 +226,16 @@ struct UnifiedHubTileArtwork: View {
     let height: CGFloat
     /// Collection's covers carry no status badge (its info column says it).
     var showsBadge = true
+    /// Square tiles (Spotlight's row, Find a game) show an icon, as Arcane's own games do: the player's icon
+    /// pick, else LaunchBox's square for the game. The cover stays until one is found, and when none is.
+    private var wantsIcon = false
+    @State private var icon: NSImage?
+    @State private var iconFor = ""
     /// A pick redraws the tile.
     @ObservedObject private var picks = SteamPersonalizations.shared.artwork
 
     init(game: UnifiedHubGame, side: CGFloat) {
-        self.game = game; width = side; height = side
+        self.game = game; width = side; height = side; wantsIcon = true
     }
 
     init(game: UnifiedHubGame, width: CGFloat, height: CGFloat, showsBadge: Bool = true) {
@@ -239,9 +244,22 @@ struct UnifiedHubTileArtwork: View {
 
     private var side: CGFloat { min(width, height) }
 
+    private var iconKey: String { "hubicon|\(game.artworkKey)|\(picks.revision)" }
+
+    private var shownIcon: NSImage? {
+        guard wantsIcon else { return nil }
+        if iconFor == iconKey, let icon { return icon }
+        return TileArtMemo.shared.object(forKey: iconKey as NSString)
+    }
+
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            if let url = game.preferredTileURL, url.isFileURL, let img = NSImage(contentsOf: url) {
+            if let icon = shownIcon {
+                Image(nsImage: icon)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: width, height: height)
+            } else if let url = game.preferredTileURL, url.isFileURL, let img = NSImage(contentsOf: url) {
                 Image(nsImage: img)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -290,7 +308,22 @@ struct UnifiedHubTileArtwork: View {
         }
         .frame(width: width, height: height)
         .clipped()
+        .task(id: wantsIcon ? iconKey : "") { await loadIcon() }
         .id(picks.revision)
+    }
+
+    private func loadIcon() async {
+        guard wantsIcon else { return }
+        let key = iconKey
+        guard TileArtMemo.shared.object(forKey: key as NSString) == nil else { return }
+        let url: URL?
+        if let picked = game.pickedArtwork(.icon) { url = picked }
+        else { url = await AppViewModel.automaticIconArtwork.automaticSteamIcon(titleID: game.artworkKey, names: [game.title]) }
+        guard !Task.isCancelled, let url,
+              let decoded = await GameArtLoader.decode(at: url, maxPixelSize: 512), !Task.isCancelled else { return }
+        TileArtMemo.store(decoded, for: key as NSString)
+        icon = decoded
+        iconFor = key
     }
 
     private var placeholderFace: some View {

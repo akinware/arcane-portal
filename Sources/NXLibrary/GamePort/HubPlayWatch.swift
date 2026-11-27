@@ -46,6 +46,9 @@ final class HubPlayWatch {
 
     /// GamePort's own launches can wait on a Steam update or sign-in for a long time; the session still counts.
     static let gamePortPatience: TimeInterval = 600
+    /// A game's process comes up seconds before its window (Wine starting, a splash, shaders): the launch screen
+    /// waits this long for the window after Steam or GamePort says the game runs, then leaves anyway.
+    static let windowPatience: TimeInterval = 60
 
     private var task: Task<Void, Never>?
 
@@ -57,55 +60,68 @@ final class HubPlayWatch {
         task = Task { @MainActor in
             let started = Date()
             let statusCount = model.statusLog.count
-            let baseline = signal == .window ? await Task.detached(priority: .utility) { HubWindowProbe.windowIDs() }.value : []
+            // Windows on screen before Play (Steam's, other apps') are never taken for the game's.
+            let baseline = await Task.detached(priority: .utility) { HubWindowProbe.windowIDs() }.value
+            var processSince: Date?
             var runningSince: Date?
             var pid: pid_t?
+            // Steam was out of view before Play (Keep Steam in the background): out of view again with the game.
+            var hidesSteam = false
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(runningSince == nil ? 1 : 3))
                 guard !Task.isCancelled else { return }
                 let waited = Date().timeIntervalSince(started)
                 if runningSince == nil {
-                    switch signal {
-                    case .gamePort:
-                        switch model.launchState {
-                        case .running: runningSince = Date()
-                        case .needsAttention: report(.failed(game.id)); return
-                        // Nothing started (another job held GamePort, or it refused at once).
-                        case .idle where waited > 10 && model.busy == nil: report(.failed(game.id)); return
-                        default: break
+                    // 1. Steam or GamePort says the game's process runs (the window way skips this).
+                    if processSince == nil {
+                        switch signal {
+                        case .gamePort:
+                            switch model.launchState {
+                            case .running: processSince = Date()
+                            case .needsAttention: report(.failed(game.id)); return
+                            // Nothing started (another job held GamePort, or it refused at once).
+                            case .idle where waited > 10 && model.busy == nil: report(.failed(game.id)); return
+                            default: break
+                            }
+                            if processSince == nil, waited > Self.gamePortPatience { return }
+                        case .macSteam(let appID):
+                            if let start = model.macSteamStart, start.appID == appID {
+                                if start.running { processSince = Date(); hidesSteam = start.steamWasOutOfView }
+                            } else if waited > 3 {
+                                // Mac Steam did not start it (`macSteamDidNotStart` says what Play does next).
+                                report(.failed(game.id)); return
+                            }
+                        case .window:
+                            if model.statusLog.count > statusCount, model.statusLog.last?.hasPrefix("✗") == true {
+                                report(.failed(game.id)); return
+                            } else if waited > LaunchScreenView.ceiling {
+                                return
+                            }
                         }
-                        if runningSince == nil, waited > Self.gamePortPatience { return }
-                    case .macSteam(let appID):
-                        if let start = model.macSteamStart, start.appID == appID {
-                            if start.running { runningSince = Date() }
-                        } else if waited > 3 {
-                            // Mac Steam did not start it (`macSteamDidNotStart` says what Play does next).
-                            report(.failed(game.id)); return
-                        }
-                    case .window:
-                        if let found = await Task.detached(priority: .utility, operation: {
-                            HubWindowProbe.newGameWindowOwner(excluding: baseline)
-                        }).value {
-                            pid = found
-                            runningSince = Date()
-                        } else if model.statusLog.count > statusCount, model.statusLog.last?.hasPrefix("✗") == true {
-                            report(.failed(game.id)); return
-                        } else if waited > LaunchScreenView.ceiling {
-                            return
-                        }
+                        if processSince == nil, signal != .window { continue }
+                    } else if Self.isOver(signal, model: model, pid: nil) {
+                        // The process quit before it showed a window: the start failed.
+                        report(.failed(game.id)); return
                     }
-                    if runningSince != nil { report(.ready(game.id)) }
+                    // 2. The game's own window: the launch screen leaves only then, and the game comes to the front
+                    // (Wine fills the screen and hides the menu bar only for the app in front).
+                    if let found = await Task.detached(priority: .utility, operation: {
+                        HubWindowProbe.newGameWindowOwner(excluding: baseline)
+                    }).value {
+                        pid = found
+                        runningSince = processSince ?? Date()
+                        if hidesSteam { MacSteamStart.hideSteam() }
+                        HubWindowProbe.bringForward(found)
+                        report(.ready(game.id))
+                    } else if let since = processSince, Date().timeIntervalSince(since) > Self.windowPatience {
+                        runningSince = since
+                        report(.ready(game.id))
+                    }
                 } else if let since = runningSince {
-                    let over: Bool
-                    switch signal {
-                    case .gamePort:
-                        if case .running = model.launchState { over = false } else { over = true }
-                    case .macSteam(let appID):
-                        over = !(model.macSteamStart?.appID == appID && model.macSteamStart?.running == true)
-                    case .window:
-                        over = pid.map { !HubWindowProbe.isAlive($0) } ?? true
-                    }
-                    guard over else { continue }
+                    // The window way has only the window's process to tell; the others keep their own signal.
+                    guard Self.isOver(signal, model: model, pid: signal == .window ? pid : nil) else { continue }
+                    // Steam puts its library in front as a game quits.
+                    if hidesSteam { MacSteamStart.hideSteam(again: true) }
                     let now = Date()
                     let session = PlaySession(gameID: game.id, titleID: "", bundleID: nil, startedAt: since,
                                               endedAt: now, lastHeartbeatAt: now)
@@ -117,6 +133,19 @@ final class HubPlayWatch {
                     return
                 }
             }
+        }
+    }
+
+    /// The game is no longer running, by its way's own signal (its window's process for the window way).
+    private static func isOver(_ signal: Signal, model: GamePortConsoleModel, pid: pid_t?) -> Bool {
+        switch signal {
+        case .gamePort:
+            if case .running = model.launchState { return false }
+            return true
+        case .macSteam(let appID):
+            return !(model.macSteamStart?.appID == appID && model.macSteamStart?.running == true)
+        case .window:
+            return pid.map { !HubWindowProbe.isAlive($0) } ?? true
         }
     }
 
@@ -181,6 +210,17 @@ enum HubWindowProbe {
     static func isLauncher(_ owner: String) -> Bool {
         let name = owner.lowercased()
         return notTheGame.contains { name.contains($0) }
+    }
+
+    /// Brings the game's app to the front, once, as its window appears: from Arcane's launch screen, which hands
+    /// the front over, or from Steam, which put itself there. A player who went to another app keeps it.
+    @MainActor
+    static func bringForward(_ pid: pid_t) {
+        guard let app = NSRunningApplication(processIdentifier: pid), !app.isTerminated, !app.isActive else { return }
+        let front = NSWorkspace.shared.frontmostApplication
+        guard NSApp.isActive || front?.bundleIdentifier == SteamPlayCoordinator.steamBundleID else { return }
+        NSApp.yieldActivation(to: app)
+        app.activate()
     }
 
     static func isAlive(_ pid: pid_t) -> Bool {

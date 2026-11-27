@@ -4,6 +4,25 @@ User-visible changes to Arcane Portal are recorded here, newest first. Arcane Po
 [Arcane](https://github.com/Bium23/NxLibrary) (formerly NX Library); the entries from 0.2.1 down are Arcane's own
 releases, kept as they were. Engine changes also have their own [upgrade notes](docs/history/engine-upgrades/README.md).
 
+## Unreleased
+
+### Added
+
+- **Icons for Windows games on Spotlight.** Spotlight's row and Find a game show a Windows game's square icon, as for
+  Mac games: your icon pick (Options → Change Artwork… → Icon), else LaunchBox's. Collection keeps the cover.
+- **More Details for Windows games.** Size on disk, Installed in and **Reveal in Finder** for a Windows game in Mac
+  Steam's library, a store's install or GamePort's download, and the critic score (from its PC release).
+
+### Fixed
+
+- **The launch screen waits for the game's window.** With Mac Steam (NotProton) and Windows Steam the screen used to
+  leave as soon as the game's process started, seconds before its window. It now waits for the window (up to a
+  minute).
+- **Mac Steam stays in the background and the game comes to the front.** Play asks Mac Steam in the background, as
+  for Mac games: with **Keep Steam in the background** Steam starts without its library and goes back out of view
+  once the game is up, and again when it quits. The game's window is brought to the front when it appears, so a
+  full-screen game covers the menu bar and Dock instead of opening behind Steam.
+
 ## 0.3.2 — 2026-11-25
 
 ### Added

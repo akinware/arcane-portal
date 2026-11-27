@@ -13,6 +13,14 @@ final class IGDBRatingTests: XCTestCase {
     private func response(_ request: URLRequest, _ data: Data, status: Int = 200) -> (Data, HTTPURLResponse) {
         (data, HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: nil, headerFields: nil)!)
     }
+    func testWindowsGamesMatchPCReleasesNotMacOnes() {
+        let windows = CriticRatingQuery(name: "Fixture", platform: .windows)
+        XCTAssertTrue(IGDBRatings.matches(name: "Fixture", aliases: [], platforms: [6], query: windows))
+        XCTAssertFalse(IGDBRatings.matches(name: "Fixture", aliases: [], platforms: [14], query: windows))
+        XCTAssertEqual(MetadataDatabase.launchBox.platforms(for: windows), ["Windows"])
+        XCTAssertEqual(MetadataDatabase.theGamesDB.platforms(for: windows), ["PC"])
+    }
+
     func testPersonalCredentialsStayPrivateAndAreNotSettings() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: root) }
