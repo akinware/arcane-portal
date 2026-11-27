@@ -49,11 +49,12 @@ struct HubGameOptionsSheet: View {
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
+                    let clean = Self.runsOutsideGamePort(route) && profile == nil
                     playSection(route, others: others)
-                    historySection
-                    usesSection(route)
+                    if !clean { historySection }
+                    usesSection(route, clean: clean)
                     if let profile { settingsSection(profile) }
-                    footer
+                    footer(clean: clean)
                 }
                 .padding(20)
             }
@@ -181,12 +182,21 @@ struct HubGameOptionsSheet: View {
 
     // MARK: - What this game uses
 
-    private func usesSection(_ route: HubPlayRoute) -> some View {
+    /// Mac Steam (NotProton), CrossOver or the Mac version runs the game with its own settings: GamePort's
+    /// sessions, recipe and Wine settings do not apply, so Options shows only what does.
+    static func runsOutsideGamePort(_ route: HubPlayRoute) -> Bool {
+        switch route {
+        case .macSteam, .macSteamWindows, .crossOverBottle: return true
+        default: return false
+        }
+    }
+
+    private func usesSection(_ route: HubPlayRoute, clean: Bool) -> some View {
         section("What this game uses") {
             if let steam = route.steamRoute {
                 setupRow(SetupLine("Steam", steam, why: steamWhy(route), origin: .gameport))
             }
-            if let setup {
+            if !clean, let setup {
                 if profile == nil {
                     Text("Not set up yet. These are the settings it will start with.")
                         .font(.caption).foregroundStyle(.secondary)
@@ -363,13 +373,22 @@ struct HubGameOptionsSheet: View {
         }
     }
 
-    private var footer: some View {
+    private func footer(clean: Bool) -> some View {
         HStack {
-            Button("Stop All Windows Apps") {
-                dismiss()
-                gp.stopAllWindowsApps()
+            if !clean {
+                Button("Stop All Windows Apps") {
+                    dismiss()
+                    gp.stopAllWindowsApps()
+                }
+                .help("Quits Windows Steam, games and any Wine processes left running, in every profile.")
             }
-            .help("Quits Windows Steam, games and any Wine processes left running, in every profile.")
+            if let place = gp.installPlace(for: game) {
+                Button("Show in Finder") {
+                    dismiss()
+                    NSWorkspace.shared.activateFileViewerSelecting([place.folder])
+                }
+                .help("Shows the game's folder in Finder.")
+            }
             Button("Hide from Library") {
                 dismiss()
                 gp.setHidden(true, game)
@@ -382,10 +401,12 @@ struct HubGameOptionsSheet: View {
             }
             .help("Choose the cover, background and logo: Steam's own art, SteamGridDB, LaunchBox or a file.")
             Spacer()
-            Button(focusRecipeID == nil ? "Stores & Setup…" : "Advanced Settings…") {
-                dismiss()
-                gp.focusRecipeID = focusRecipeID
-                onOpenCatalog()
+            if !clean {
+                Button(focusRecipeID == nil ? "Stores & Setup…" : "Advanced Settings…") {
+                    dismiss()
+                    gp.focusRecipeID = focusRecipeID
+                    onOpenCatalog()
+                }
             }
         }
     }

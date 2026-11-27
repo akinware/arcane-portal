@@ -4,6 +4,24 @@ User-visible changes to Arcane Portal are recorded here, newest first. Arcane Po
 [Arcane](https://github.com/Bium23/NxLibrary) (formerly NX Library); the entries from 0.2.1 down are Arcane's own
 releases, kept as they were. Engine changes also have their own [upgrade notes](docs/history/engine-upgrades/README.md).
 
+## Unreleased
+
+### Changed
+
+- **Cleaner Options for games that Mac Steam or CrossOver runs.** A Windows game that Mac Steam (NotProton),
+  CrossOver or its Mac version runs leaves out GamePort's own sessions, recipe and Wine buttons, which do not apply
+  to it, and has **Show in Finder** when its folder is known.
+
+### Fixed
+
+- **The game opens over every other window.** When the game's window appears, Arcane takes the front for a moment
+  and hands it to the game, so it is no longer left behind Steam or another open app (and can go full screen). For
+  20 seconds after, Steam or Arcane coming in front of it puts the game back in front.
+- **The launch screen no longer leaves for another program's window.** For a Windows game in Mac Steam's library
+  only a window of the game's own processes counts, not one of NotProton's, Wine's or a helper's.
+- **Steam's library no longer opens with the game.** Steam running with its window closed now counts as out of view
+  with **Keep Steam in the background**: its window is hidden again when it opens with the game.
+
 ## 0.3.3 — 2026-11-27
 
 ### Added

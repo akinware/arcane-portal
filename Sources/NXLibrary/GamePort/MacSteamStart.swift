@@ -12,6 +12,9 @@ struct MacSteamStart: Equatable {
     /// Keep Steam in the background is on and Steam was hidden or not running before Play: it goes back out of
     /// view once the game's window is up, and again when the game quits.
     var steamWasOutOfView = false
+    /// What only the game's processes have on their command line (`MacSteamWindowsLaunch.markers`): its window is
+    /// told from Steam's, NotProton's and Wine's own by them.
+    var markers: [String] = []
 
     private static var steam: NSRunningApplication? {
         NSRunningApplication.runningApplications(withBundleIdentifier: SteamPlayCoordinator.steamBundleID)
@@ -36,7 +39,8 @@ struct MacSteamStart: Equatable {
     @MainActor
     static func open(_ url: URL, keepSteamInBackground background: Bool) -> Bool {
         let running = steam
-        let outOfView = background && (running == nil || running?.isHidden == true)
+        // Steam running with its window closed is out of view too: the request would open its library.
+        let outOfView = background && (running.map { $0.isHidden || !HubWindowProbe.hasVisibleWindow(pid: $0.processIdentifier) } ?? true)
         guard let client = SteamPlayCoordinator.steamClientURL else {
             NSWorkspace.shared.open(url)
             return outOfView
@@ -66,7 +70,8 @@ extension GamePortConsoleModel {
         SoundEffectService.shared.play(.launch)
         let outOfView = MacSteamStart.open(url, keepSteamInBackground: keepsSteamInBackground)
         let started = Date()
-        macSteamStart = MacSteamStart(appID: appID, title: title, since: started, steamWasOutOfView: outOfView)
+        macSteamStart = MacSteamStart(appID: appID, title: title, since: started, steamWasOutOfView: outOfView,
+                                      markers: markers)
         say("Asked Mac Steam to start \(title)")
 
         macSteamStartTask?.cancel()
@@ -85,7 +90,7 @@ extension GamePortConsoleModel {
                         seen = true
                         self.macSteamStartFailed.remove(appID)
                         self.macSteamStart = MacSteamStart(appID: appID, title: title, since: started, running: true,
-                                                           steamWasOutOfView: outOfView)
+                                                           steamWasOutOfView: outOfView, markers: markers)
                         self.say("✓ \(title) is running, started by Mac Steam")
                     }
                 } else if seen {
