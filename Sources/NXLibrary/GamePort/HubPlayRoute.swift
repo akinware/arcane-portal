@@ -186,6 +186,8 @@ extension GamePortConsoleModel {
         // A Windows version Mac Steam installed itself runs the way the player set Mac Steam up (NotProton or
         // similar), unless that did not work this time. A GamePort profile for the game keeps its own way.
         let gamePort = usesGamePort(game)
+        // The player chose NotProton's or CrossOver's own way in Options.
+        if runner(for: game) == .own, let route = ownRunnerRoute(for: game) { return route }
         if !gamePort, case .ownedSteam = game.kind, let route = macSteamWindowsRoute(appID),
            let appID, !macSteamStartFailed.contains(appID) {
             return route
@@ -431,31 +433,41 @@ extension GamePortConsoleModel {
 
     func isHidden(_ game: UnifiedHubGame) -> Bool { hubHidden.contains(game.id) }
 
-    private static let hubUsesGamePortKey = "GamePort.hubUsesGamePort"
+    private static let hubRunnerKey = "GamePort.hubRunner"
 
-    /// Games the player set to run with GamePort's Wine settings (Options → Use GamePort's settings) although
-    /// Mac Steam (NotProton) or CrossOver can run them with their own.
-    var hubUsesGamePort: Set<UUID> {
-        Set((AppData.preferences.stringArray(forKey: Self.hubUsesGamePortKey) ?? []).compactMap(UUID.init(uuidString:)))
+    /// Who runs a Windows game that Mac Steam (NotProton) or CrossOver can run with their own settings, as the
+    /// player chose in Options (Use GamePort's settings). No choice: Play picks as usual.
+    enum HubRunner: String { case gamePort, own }
+
+    private var hubRunners: [String: String] {
+        (AppData.preferences.dictionary(forKey: Self.hubRunnerKey) as? [String: String]) ?? [:]
     }
 
-    func usesGamePort(_ game: UnifiedHubGame) -> Bool { hubUsesGamePort.contains(game.id) }
+    func runner(for game: UnifiedHubGame) -> HubRunner? {
+        hubRunners[game.id.uuidString].flatMap(HubRunner.init(rawValue:))
+    }
 
-    func setUsesGamePort(_ on: Bool, _ game: UnifiedHubGame) {
+    func usesGamePort(_ game: UnifiedHubGame) -> Bool { runner(for: game) == .gamePort }
+
+    func setRunner(_ runner: HubRunner, _ game: UnifiedHubGame) {
         objectWillChange.send()
-        var set = hubUsesGamePort
-        if on { set.insert(game.id) } else { set.remove(game.id) }
-        AppData.preferences.set(set.map(\.uuidString).sorted(), forKey: Self.hubUsesGamePortKey)
+        var all = hubRunners
+        all[game.id.uuidString] = runner.rawValue
+        AppData.preferences.set(all, forKey: Self.hubRunnerKey)
     }
 
-    /// Mac Steam (NotProton) or CrossOver can run this Windows game with its own settings, instead of GamePort.
-    func hasOwnRunner(_ game: UnifiedHubGame) -> Bool {
-        if case .crossOverBottle(let item) = game.kind {
-            if case .steam = item.kind { return crossOverInstallation?.hasExecutableWine == true }
-            return false
+    /// The way Mac Steam (NotProton) or CrossOver runs this game with its own settings, when there is one.
+    func ownRunnerRoute(for game: UnifiedHubGame) -> HubPlayRoute? {
+        let crossOver = crossOverInstallation?.hasExecutableWine == true
+        if case .crossOverBottle(let item) = game.kind { return crossOver ? .crossOverBottle(item) : nil }
+        if let appID = game.steamAppID, !macSteamStartFailed.contains(appID), let route = macSteamWindowsRoute(appID) {
+            return route
         }
-        return macSteamWindowsRoute(game.steamAppID) != nil || crossOverItem(for: game) != nil
+        if crossOver, let item = crossOverItem(for: game) { return .crossOverBottle(item) }
+        return nil
     }
+
+    func hasOwnRunner(_ game: UnifiedHubGame) -> Bool { ownRunnerRoute(for: game) != nil }
 
     func setHidden(_ hidden: Bool, _ game: UnifiedHubGame) {
         objectWillChange.send()

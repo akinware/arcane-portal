@@ -194,10 +194,12 @@ struct HubGameOptionsSheet: View {
     private func usesSection(_ route: HubPlayRoute, clean: Bool) -> some View {
         section("What this game uses") {
             if gp.hasOwnRunner(game) {
-                Toggle(isOn: Binding(get: { gp.usesGamePort(game) }, set: { gp.setUsesGamePort($0, game) })) {
+                // On when Play runs it GamePort's way now, whether the player chose that or Play did.
+                let onGamePort = !clean
+                Toggle(isOn: Binding(get: { onGamePort }, set: { gp.setRunner($0 ? .gamePort : .own, game) })) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Use GamePort's settings").fontWeight(.medium)
-                        Text(gp.usesGamePort(game)
+                        Text(onGamePort
                              ? "Play runs it with GamePort's Wine and the settings below, not \(ownRunnerName)."
                              : "Off: \(ownRunnerName) runs it with its own settings. Turn on to run it with GamePort's Wine settings instead.")
                             .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)

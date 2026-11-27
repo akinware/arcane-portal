@@ -9,10 +9,10 @@ releases, kept as they were. Engine changes also have their own [upgrade notes](
 ### Changed
 
 - **Use GamePort's settings, a switch in Options.** A Windows game that Mac Steam (NotProton) or CrossOver can run
-  has **Use GamePort's settings** in Options, off by default: Options then leaves out GamePort's sessions, recipe and
-  Wine settings, which do not apply, and Play keeps NotProton's or CrossOver's way. On, Play runs the game with
-  GamePort's Wine (the Steam Bridge, Windows Steam or GamePort's Wine for a bottle) and the settings show again.
-  Options also has **Show in Finder** when the game's folder is known.
+  has **Use GamePort's settings** in Options, showing which way Play uses now. Off, Play keeps NotProton's or
+  CrossOver's way and Options leaves out GamePort's sessions, recipe and Wine settings, which do not apply. On, Play
+  runs the game with GamePort's Wine (the Steam Bridge, Windows Steam or GamePort's Wine for a bottle) and the
+  settings show. The choice is kept per game. Options also has **Show in Finder** when the game's folder is known.
 
 ### Fixed
 
