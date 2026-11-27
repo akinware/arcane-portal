@@ -68660,6 +68660,53 @@
         }
       }
     },
+    "LaunchBox’s square icon, else the cover": {
+      "comment": "ChangeArtworkView+Tiles.swift",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LaunchBox’s square icon, else the cover"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’icona quadrata di LaunchBox, altrimenti la copertina"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’icône carrée de LaunchBox, sinon la jaquette"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das quadratische Symbol von LaunchBox, sonst das Cover"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El icono cuadrado de LaunchBox o, si no, la portada"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O ícone quadrado do LaunchBox ou, se não houver, a capa"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LaunchBox 的方形图标，没有时用封面"
+          }
+        }
+      }
+    },
     "The store’s own art": {
       "comment": "ChangeArtworkView+Tiles.swift",
       "localizations": {

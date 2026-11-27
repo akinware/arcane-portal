@@ -4,6 +4,13 @@ User-visible changes to Arcane Portal are recorded here, newest first. Arcane Po
 [Arcane](https://github.com/Bium23/NxLibrary) (formerly NX Library); the entries from 0.2.1 down are Arcane's own
 releases, kept as they were. Engine changes also have their own [upgrade notes](docs/history/engine-upgrades/README.md).
 
+## Unreleased
+
+### Fixed
+
+- Change Artwork's Icon tab no longer says "The Mac app's own icon" for a Windows game: Automatic is LaunchBox's
+  square icon, else the cover.
+
 ## 0.3.4 — 2026-11-27
 
 ### Changed

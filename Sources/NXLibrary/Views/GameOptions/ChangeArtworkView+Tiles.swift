@@ -91,6 +91,8 @@ extension ChangeArtworkView {
         switch tile {
         case .automatic:
             switch slot {
+            // A Windows game has no Mac app: its tiles' icon is LaunchBox's square (`UnifiedHubTileArtwork`).
+            case .icon where subject.hub != nil: return (L10n.text("Automatic"), L10n.text("LaunchBox’s square icon, else the cover"))
             case _ where subject.steamAppID != nil && subject.isComputerGame: return (L10n.text("Automatic"), steamAutomatic)
             case _ where subject.hub != nil: return (L10n.text("Automatic"), L10n.text("The store’s own art"))
             case .cover: return (L10n.text("Automatic"), L10n.text("GameTDB, or a composed cover"))
