@@ -49,7 +49,7 @@ struct HubGameOptionsSheet: View {
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
-                    let clean = Self.runsOutsideGamePort(route) && profile == nil
+                    let clean = Self.runsOutsideGamePort(route)
                     playSection(route, others: others)
                     if !clean { historySection }
                     usesSection(route, clean: clean)
@@ -193,6 +193,18 @@ struct HubGameOptionsSheet: View {
 
     private func usesSection(_ route: HubPlayRoute, clean: Bool) -> some View {
         section("What this game uses") {
+            if gp.hasOwnRunner(game) {
+                Toggle(isOn: Binding(get: { gp.usesGamePort(game) }, set: { gp.setUsesGamePort($0, game) })) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Use GamePort's settings").fontWeight(.medium)
+                        Text(gp.usesGamePort(game)
+                             ? "Play runs it with GamePort's Wine and the settings below, not \(ownRunnerName)."
+                             : "Off: \(ownRunnerName) runs it with its own settings. Turn on to run it with GamePort's Wine settings instead.")
+                            .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .toggleStyle(.switch)
+            }
             if let steam = route.steamRoute {
                 setupRow(SetupLine("Steam", steam, why: steamWhy(route), origin: .gameport))
             }
@@ -246,6 +258,7 @@ struct HubGameOptionsSheet: View {
         switch route {
         case .bridge: return "The game talks to your Mac Steam app through GamePort's Steam Bridge: no Windows Steam, achievements and Workshop work, and it starts fast."
         case .windowsSteam, .openWindowsSteam, .installWindowsSteam: return "A Windows Steam runs inside this game's own Windows copy, as on a PC. Needed for VAC multiplayer."
+        case .macSteamWindows(_, let tool): return "Mac Steam starts the Windows version itself, with \(tool ?? "the Steam Play tool you set up")."
         default: return "Steam for Mac starts the Mac version."
         }
     }
@@ -420,6 +433,15 @@ struct HubGameOptionsSheet: View {
     }
 
     private var engineName: String { gp.engineName(for: game) }
+
+    /// Who runs the game when GamePort's settings are off.
+    private var ownRunnerName: String {
+        if case .crossOverBottle = game.kind { return "CrossOver" }
+        if let appID = game.steamAppID, gp.externalEnv.macSteamWindowsGame(appID: appID) != nil {
+            return gp.externalEnv.notProtonInstalled ? "Mac Steam with NotProton" : "Mac Steam"
+        }
+        return "CrossOver"
+    }
 
     private var vac: Bool { gp.isVACBlockedForBridge(game) }
 

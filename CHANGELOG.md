@@ -8,9 +8,11 @@ releases, kept as they were. Engine changes also have their own [upgrade notes](
 
 ### Changed
 
-- **Cleaner Options for games that Mac Steam or CrossOver runs.** A Windows game that Mac Steam (NotProton),
-  CrossOver or its Mac version runs leaves out GamePort's own sessions, recipe and Wine buttons, which do not apply
-  to it, and has **Show in Finder** when its folder is known.
+- **Use GamePort's settings, a switch in Options.** A Windows game that Mac Steam (NotProton) or CrossOver can run
+  has **Use GamePort's settings** in Options, off by default: Options then leaves out GamePort's sessions, recipe and
+  Wine settings, which do not apply, and Play keeps NotProton's or CrossOver's way. On, Play runs the game with
+  GamePort's Wine (the Steam Bridge, Windows Steam or GamePort's Wine for a bottle) and the settings show again.
+  Options also has **Show in Finder** when the game's folder is known.
 
 ### Fixed
 
@@ -19,6 +21,7 @@ releases, kept as they were. Engine changes also have their own [upgrade notes](
   20 seconds after, Steam or Arcane coming in front of it puts the game back in front.
 - **The launch screen no longer leaves for another program's window.** For a Windows game in Mac Steam's library
   only a window of the game's own processes counts, not one of NotProton's, Wine's or a helper's.
+- Options no longer says "Steam for Mac starts the Mac version" for a Windows game Mac Steam runs with NotProton.
 - **Steam's library no longer opens with the game.** Steam running with its window closed now counts as out of view
   with **Keep Steam in the background**: its window is hidden again when it opens with the game.
 

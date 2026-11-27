@@ -185,7 +185,8 @@ extension GamePortConsoleModel {
         if let appID, externalEnv.macSteamNativeGame(appID: appID) != nil { return .macSteam(appID: appID) }
         // A Windows version Mac Steam installed itself runs the way the player set Mac Steam up (NotProton or
         // similar), unless that did not work this time. A GamePort profile for the game keeps its own way.
-        if case .ownedSteam = game.kind, let route = macSteamWindowsRoute(appID),
+        let gamePort = usesGamePort(game)
+        if !gamePort, case .ownedSteam = game.kind, let route = macSteamWindowsRoute(appID),
            let appID, !macSteamStartFailed.contains(appID) {
             return route
         }
@@ -204,7 +205,7 @@ extension GamePortConsoleModel {
         switch game.kind {
         case .crossOverBottle(let item):
             // Without a working CrossOver the bottle's Steam games still play, on GamePort's Wine.
-            if crossOverInstallation?.hasExecutableWine != true, case .steam = item.kind { return .gamePortWine(item) }
+            if crossOverInstallation?.hasExecutableWine != true || gamePort, case .steam = item.kind { return .gamePortWine(item) }
             return .crossOverBottle(item)
         case .storefront(let store):
             if store.isInstalled { return .storefront(store) }
@@ -212,9 +213,9 @@ extension GamePortConsoleModel {
         case .ownedSteam(let owned, _):
             if owned.supportsMacOS { return .installMac(appID: owned.appID) }
             if let exe, bridgeReady, !vac { return .bridge(appID: owned.appID, exe: exe, offline: false) }
-            if let item = crossOverItem(for: game) { return bottleRoute(item) }
+            if !gamePort, let item = crossOverItem(for: game) { return bottleRoute(item) }
             // Files already on this Mac are never downloaded again: Mac Steam tries once more.
-            if let route = macSteamWindowsRoute(appID) { return route }
+            if !gamePort, let route = macSteamWindowsRoute(appID) { return route }
             return vac ? .setUp(appID: owned.appID) : .download(appID: owned.appID)
         case .profile(let profile, let recipe):
             if recipe?.launch == .battlenet { return .battleNet(profileID: profile.id) }
@@ -227,7 +228,7 @@ extension GamePortConsoleModel {
             // A profile without a copy of its own (no GamePort download, nothing in its Windows Steam) plays the
             // copy Mac Steam installed, the way Mac Steam was set up, unless that did not work this time.
             let ownCopy = win.hasGame || gameport.steamDepot.downloadedExecutable(appID: appID, preferredName: game.title) != nil
-            if !ownCopy, let route = macSteamWindowsRoute(appID), !macSteamStartFailed.contains(appID) {
+            if !ownCopy, !gamePort, let route = macSteamWindowsRoute(appID), !macSteamStartFailed.contains(appID) {
                 return route
             }
             if let exe, bridgeReady, !vac {
@@ -235,8 +236,8 @@ extension GamePortConsoleModel {
                 return .bridge(appID: appID, exe: exe, offline: false)
             }
             if win.hasGame { return .windowsSteam(profileID: profile.id) }
-            if let item = crossOverItem(for: game) { return bottleRoute(item) }
-            if let route = macSteamWindowsRoute(appID) { return route }
+            if !gamePort, let item = crossOverItem(for: game) { return bottleRoute(item) }
+            if !gamePort, let route = macSteamWindowsRoute(appID) { return route }
             if !vac { return .download(appID: appID) }
             return win.hasSteam ? .openWindowsSteam(profileID: profile.id) : .installWindowsSteam(profileID: profile.id)
         }
@@ -429,6 +430,32 @@ extension GamePortConsoleModel {
     }
 
     func isHidden(_ game: UnifiedHubGame) -> Bool { hubHidden.contains(game.id) }
+
+    private static let hubUsesGamePortKey = "GamePort.hubUsesGamePort"
+
+    /// Games the player set to run with GamePort's Wine settings (Options → Use GamePort's settings) although
+    /// Mac Steam (NotProton) or CrossOver can run them with their own.
+    var hubUsesGamePort: Set<UUID> {
+        Set((AppData.preferences.stringArray(forKey: Self.hubUsesGamePortKey) ?? []).compactMap(UUID.init(uuidString:)))
+    }
+
+    func usesGamePort(_ game: UnifiedHubGame) -> Bool { hubUsesGamePort.contains(game.id) }
+
+    func setUsesGamePort(_ on: Bool, _ game: UnifiedHubGame) {
+        objectWillChange.send()
+        var set = hubUsesGamePort
+        if on { set.insert(game.id) } else { set.remove(game.id) }
+        AppData.preferences.set(set.map(\.uuidString).sorted(), forKey: Self.hubUsesGamePortKey)
+    }
+
+    /// Mac Steam (NotProton) or CrossOver can run this Windows game with its own settings, instead of GamePort.
+    func hasOwnRunner(_ game: UnifiedHubGame) -> Bool {
+        if case .crossOverBottle(let item) = game.kind {
+            if case .steam = item.kind { return crossOverInstallation?.hasExecutableWine == true }
+            return false
+        }
+        return macSteamWindowsRoute(game.steamAppID) != nil || crossOverItem(for: game) != nil
+    }
 
     func setHidden(_ hidden: Bool, _ game: UnifiedHubGame) {
         objectWillChange.send()
